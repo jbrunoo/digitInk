@@ -66,4 +66,12 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // viewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    // navigation
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    // mlkit - digitInk
+    implementation("com.google.mlkit:digital-ink-recognition:18.1.0")
+
 }
