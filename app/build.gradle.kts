@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -77,5 +79,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     // mlkit - digitInk
     implementation("com.google.mlkit:digital-ink-recognition:18.1.0")
-
+    // hilt
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 }
