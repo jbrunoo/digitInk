@@ -1,15 +1,14 @@
 package com.jbrunoo.digitink.presentation
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,7 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
@@ -26,147 +25,196 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.jbrunoo.digitink.classify
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.tensorflow.lite.support.common.ops.NormalizeOp
-import org.tensorflow.lite.support.image.ImageProcessor
-import org.tensorflow.lite.support.image.ops.ResizeOp
 
 @Composable
-fun PlayScreen() {
-    var answerTrue by remember { mutableStateOf(false) }
-    val imageProcessor = ImageProcessor.Builder()
-        .add(NormalizeOp(0.0f, 255.0f))  // 이 줄 추가 안해서 입력값 달랐음
-        .add(
-            ResizeOp(
-                28,
-                28,
-                ResizeOp.ResizeMethod.BILINEAR
-            )
-        ) // RGB 이미지만 resizeOp 가능, grayScale 전 실행
-//        .add(TransformToGrayscaleOp()) // 회색조 이미지, 라이브러리 tensorflow lite support 0.3.1 필요
-        .build()
-    val context = LocalContext.current
-    val question = generateQnaPair()
-    var floatArray by remember { mutableStateOf(floatArrayOf()) }
-    var bitmap: ImageBitmap? by remember { mutableStateOf(null) }
+fun PlayScreen(
+    viewModel: PlayViewModel = hiltViewModel()
+) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val isCorrect = viewModel.isCorrect.collectAsStateWithLifecycle()
 
-    Column {
-        Row(Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically) {
-            QuestionView(question = question.first)
-//            if (answerTrue) {
-//                AnswerView(answer = question.second)
-//            } else {
-            DrawDigitView {
-                bitmap = it
-                floatArray = classify(context, it, imageProcessor)
-//                    if (question.second == answer) answerTrue = true
-            }
-//            }
+    when (val state = uiState.value) {
+        is PlayUiState.Loading -> {
+            CircularProgressIndicator()
         }
-        bitmap?.let { Image(bitmap = it, contentDescription = null) }
-        floatArray.forEach {
-            Text(text = "$it")
+
+        is PlayUiState.Success -> {
+            ContentPager(
+                state.timer,
+                state.qnaPairList,
+                onValidate = { bmp, answer ->
+                    viewModel.validateAnswer(bmp, answer)
+                },
+                isCorrect = isCorrect.value
+            )
+        }
+
+        is PlayUiState.Error -> {
+            Text(text = state.message)
         }
     }
 }
 
 @Composable
-fun QuestionView(question: String) {
+fun ContentPager(
+    timer: Int,
+    qnaList: List<Pair<String, Int>>,
+    onValidate: (ImageBitmap, Int) -> Unit,
+    isCorrect: Boolean?
+) {
+    Column {
+        TimerLayout(timer)
+//    VerticalPager(state =) {
+//
+//    }
+        Row {
+            QuestionLayout(question = "1+1=")
+            DrawDigitLayout(
+                onValidateCorrect = { bmp ->
+                    onValidate(bmp, qnaList[0].second)
+                },
+                isCorrect = isCorrect
+            )
+        }
+    }
+}
+
+@Composable
+fun TimerLayout(timer: Int) {
+    Text(text = "$timer")
+}
+
+@Composable
+fun QuestionLayout(question: String) {
     Text(question)
 }
 
-fun generateQnaPair(): Pair<String, Int> {
-    while (true) {
-        val num1 = (1..9).random()
-        val num2 = (1..9).random()
-        val operator = if ((0..1).random() == 0) "+" else "-"
-        val result = if (operator == "+") num1 + num2 else num1 - num2
-        if (result in 1..9) {
-            return Pair("$num1 $operator $num2 =", result)
-        }
-    }
-}
-
 @Composable
-fun AnswerView(answer: Int) {
-    Text(text = "$answer")
-}
-
-@Composable
-fun DrawDigitView(
-    onClick: (ImageBitmap) -> Unit
+fun DrawDigitLayout(
+    onValidateCorrect: (ImageBitmap) -> Unit,
+    isCorrect: Boolean? = null,
 ) {
-    val customPaths = remember { mutableStateListOf<CustomPath>() }
+    val userPaths = remember { mutableStateListOf<UserPath>() }
     val coroutineScope = rememberCoroutineScope()
     val graphicsLayer = rememberGraphicsLayer()
 
-    Column(
-        modifier = Modifier
-            .background(Color.Gray)
+    var isDrag by remember { mutableStateOf(false) }
+
+    Canvas(modifier = Modifier
+        .size(200.dp)
+        .background(Color.Black)
+        .clipToBounds() // 외부까지 그려지는 것 방지, 그려지지만 않을 뿐 드래그 이벤트 중이라 로그는 찍힘
+        .pointerInput(Unit) {
+            detectDragGestures { change, dragAmount ->
+                isDrag = true
+//                Log.d("change", "$change")
+//                Log.d("dragAmount", "$dragAmount")
+                val userPath =
+                    UserPath(start = change.position - dragAmount, end = change.position)
+                userPaths.add(userPath)
+                isDrag = false
+            }
+        }
+        .drawWithContent {
+            graphicsLayer.record {
+                // draw the contents of the composable into the graphics layer
+                this@drawWithContent.drawContent()
+            }
+            // draw the graphics layer on the visible canvas
+            drawLayer(graphicsLayer)
+        }
     ) {
-        Canvas(modifier = Modifier
-            .size(200.dp)
-            .background(Color.Green)
-            .clipToBounds() // 외부까지 그려지는 것 방지, 그려지지만 않을 뿐 드래그 이벤트 중이라 로그는 찍힘
-            .pointerInput(Unit) {
-                detectDragGestures { change, dragAmount ->
-                    Log.d("change", "$change")
-                    Log.d("dragAmount", "$dragAmount")
-                    val customPath =
-                        CustomPath(start = change.position - dragAmount, end = change.position)
-                    customPaths.add(customPath)
-                }
-            }
-            .drawWithContent {
-                graphicsLayer.record {
-                    // draw the contents of the composable into the graphics layer
-                    this@drawWithContent.drawContent()
-                }
-                // draw the graphics layer on the visible canvas
-                drawLayer(graphicsLayer)
-            }
-        ) {
-            customPaths.forEach { customPath ->
-                val path = Path().apply {
-                    moveTo(customPath.start.x, customPath.start.y)
-                    lineTo(customPath.end.x, customPath.end.y)
-                }
-                drawPath(
-                    path = path,
-                    color = customPath.color,
-                    alpha = customPath.alpha,
-                    style = Stroke(width = customPath.strokeWidth.toPx())
-                )
-            }
+        drawUserPaths(userPaths)
+        isCorrect?.let {
+            if (it) drawCorrectIndicator()
+            else drawIncorrectIndicator()
         }
 
-        Button(onClick = { customPaths.clear() }) {
-            Text("클리어")
-        }
-        Button(onClick = {
-            coroutineScope.launch {
-                val bitmap = graphicsLayer.toImageBitmap()
-                onClick(bitmap)
+    }
+    //    LaunchedEffect(isDrag) {
+//        coroutineScope.launch {
+//            val bmp = graphicsLayer.toImageBitmap()
+//            Log.d("bmp", bmp.toString())
+//            delay(5000)
+//            onValidateCorrect(bmp)
+//        }
+//    }
+//    var cameraLauncher = rememberLauncherForActivityResult(contract =, onResult =)
+    var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+    Button(onClick = {
+        coroutineScope.launch {
+            async {
+                val bmp = graphicsLayer.toImageBitmap()
+                imageBitmap = bmp
+                delay(5000)
+            }.await()
+            imageBitmap?.let {
+                onValidateCorrect(it)
             }
-        }) {
-            Text("인식")
         }
+    }) {
+        Text(text = "인식")   
+    }
+    imageBitmap?.let {
+        Image(bitmap = it, contentDescription = null)
     }
 }
 
-data class CustomPath(
+private fun DrawScope.drawUserPaths(userPaths: SnapshotStateList<UserPath>) {
+    userPaths.forEach { customPath ->
+        val path = Path().apply {
+            moveTo(customPath.start.x, customPath.start.y)
+            lineTo(customPath.end.x, customPath.end.y)
+        }
+        drawPath(
+            path = path,
+            color = customPath.color,
+            alpha = customPath.alpha,
+            style = Stroke(width = customPath.strokeWidth.toPx())
+        )
+    }
+}
+
+private fun DrawScope.drawCorrectIndicator() {
+    drawCircle(
+        color = Color.Green,
+        center = Offset(size.width / 2, size.height / 2),
+        radius = size.minDimension / 4,
+        style = Stroke(width = 10f)
+    )
+}
+
+private fun DrawScope.drawIncorrectIndicator() {
+    drawLine(
+        color = Color.Red,
+        start = Offset(size.width / 4, size.height / 4),
+        end = Offset(size.width * 3 / 4, size.height * 3 / 4),
+        strokeWidth = 10f
+    )
+    drawLine(
+        color = Color.Red,
+        start = Offset(size.width * 3 / 4, size.height / 4),
+        end = Offset(size.width / 4, size.height * 3 / 4),
+        strokeWidth = 10f
+    )
+}
+
+data class UserPath(
     val start: Offset,
     val end: Offset,
-    val color: Color = Color.Black,
+    val color: Color = Color.White,
     val alpha: Float = 0.8f,
     val strokeWidth: Dp = 4.dp
 )
