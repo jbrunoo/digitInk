@@ -30,17 +30,17 @@ class PlayViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<PlayUiState>(PlayUiState.Loading)
     private val _pathsList = MutableStateFlow<List<List<PathState>>>(emptyList())
 
-    val uiState = _uiState.combine(_pathsList) { _uiState, _pathsList ->
-        when (_uiState) {
+    val playUiState = _uiState.combine(_pathsList) { uiState, pathsList ->
+        when (uiState) {
             is PlayUiState.Success -> {
                 PlayUiState.Success(
-                    timer = _uiState.timer,
-                    qnaList = _uiState.qnaList,
-                    pathsList = _pathsList
+                    timer = uiState.timer,
+                    qnaList = uiState.qnaList,
+                    pathsList = pathsList
                 )
             }
 
-            else -> _uiState
+            else -> uiState
         }
     }.stateIn(
         viewModelScope,
@@ -105,8 +105,8 @@ class PlayViewModel @Inject constructor(
                     val userGuess = classifyBmp(bmp)
                     val qnaList = state.qnaList.toMutableList()
                     val qnaState = state.qnaList[index]
-                    val isCorrect = userGuess?.let { it == qnaState.answer } ?: false
-                    qnaList[index] = qnaState.copy(isCorrect = isCorrect)
+                    val checkDrawResult = userGuess?.let { it == qnaState.answer } ?: false
+                    qnaList[index] = qnaState.copy(checkDrawResult = checkDrawResult)
                     state.copy(qnaList = qnaList)
                 }
 
@@ -143,7 +143,7 @@ sealed class PlayUiState {
 data class QnaState(
     val question: String,
     val answer: Int,
-    val isCorrect: Boolean? = null
+    val checkDrawResult: Boolean? = null
 )
 
 data class PathState(
