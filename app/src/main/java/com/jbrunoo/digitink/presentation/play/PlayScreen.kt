@@ -2,18 +2,19 @@ package com.jbrunoo.digitink.presentation.play
 
 import android.util.Log
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -44,7 +45,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -132,10 +132,6 @@ fun ContentCarousel(
     onPathsUpdate: (List<PathState>) -> Unit,
     onCheckDrawResult: (ImageBitmap?, Int) -> Unit
 ) {
-    val configuration = LocalConfiguration.current
-    val topPadding = paddingValues.calculateTopPadding()
-    val itemHeight = (configuration.screenHeightDp.dp - topPadding) / 5
-
     /* 스크롤 처리 */
     // 0. 다음 문제가 없으면 스크롤 종료
     // 1. 5초 동안 유저 입력 받기
@@ -147,65 +143,84 @@ fun ContentCarousel(
     var isDraw by remember { mutableStateOf(false) }
     var delayJob: Job? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(key1 = autoScroll, key2 = isDraw) { // Unit -> userDrawKey: animateScroll 전에 업데이트 방지
+    LaunchedEffect(
+        key1 = autoScroll,
+        key2 = isDraw
+    ) {
         val nextIdx = listState.firstVisibleItemIndex + 1
-        if (nextIdx >= qnaList.size) {
-            onCheckDrawResult(null, nextIdx - 1)
-            onTerminate()
-        }
-        if(!isDraw) {
+        if (!isDraw) {
             delayJob = launch {
-                try {
+                try { // cancelException 예외 처리
                     delay(5.seconds)
                     onCheckDrawResult(null, nextIdx - 1) // checkDrawResult == false
                     delay(0.5.seconds)
                     Log.d("autoScroll", "autoScroll")
+                    if (nextIdx >= qnaList.size) onTerminate()
                     listState.scrollToItem(nextIdx)
                 } finally {
                     autoScroll = !autoScroll
                 }
             }
         } else {
-            delayJob?.cancelAndJoin() // cancelException 예외 처리해야 하는지
+            delayJob?.cancelAndJoin()
             delay(0.5.seconds)
             Log.d("ScrollImmediately", "ScrollImmediately")
+            if (nextIdx >= qnaList.size) onTerminate()
             listState.scrollToItem(nextIdx)
             isDraw = false
         }
     }
+    
+    BoxWithConstraints {
+        val maxHeight = this.maxHeight
+        val topBarPadding = paddingValues.calculateTopPadding()
+        val itemDp = (maxHeight - topBarPadding - 16.dp) / 5
 
-
-    LazyColumn(
-        modifier = Modifier
-            .padding(top = paddingValues.calculateTopPadding())
-            .fillMaxSize(),
-        state = listState,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        userScrollEnabled = false
-    ) {
-        items(4) {
-            Spacer(modifier = Modifier.height(itemHeight)) // 화면 높이 이상의 빈 공간
-        }
-        itemsIndexed(qnaList) { idx, qnaState ->
-            val paths = if (idx < pathsList.size) pathsList[idx] else emptyList()
-            val isCurrentQuestion by remember { derivedStateOf{ listState.firstVisibleItemIndex == idx } }
-            Row(
-                modifier = Modifier.height(itemHeight)
-            ) {
-                QuestionLayout(
-                    question = qnaState.question,
-                    borderColor = if (isCurrentQuestion) Color.White else Color.Transparent
-                )
-                DrawDigitLayout(
-                    paths = paths,
-                    checkDrawResult = qnaState.checkDrawResult,
-                    onCheckDrawResult = { bmp ->
-                        isDraw = true
-                        onCheckDrawResult(bmp, idx)
-                    },
-                    onPathsUpdate = { onPathsUpdate(it) }
-                )
+        LazyColumn(
+            modifier = Modifier
+                .padding(top = topBarPadding)
+                .fillMaxWidth(),
+            state = listState,
+            contentPadding = PaddingValues(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            userScrollEnabled = false
+        ) {
+            items(4) {
+                Spacer(modifier = Modifier.height(itemDp))
+            }
+            itemsIndexed(qnaList) { idx, qnaState ->
+                val paths = if (idx < pathsList.size) pathsList[idx] else emptyList()
+                val isCurrentQuestion by remember { derivedStateOf { listState.firstVisibleItemIndex == idx } }
+                val borderColor = if (isCurrentQuestion) Color.White else Color.Transparent
+                Row(
+                    modifier = Modifier
+                        .height(itemDp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    QuestionLayout(
+                        question = qnaState.question,
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .border(1.dp, borderColor)
+                    )
+                    DrawDigitLayout(
+                        paths = paths,
+                        checkDrawResult = qnaState.checkDrawResult,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(itemDp)
+                            .clipToBounds() // 외부까지 그려지는 것 방지, ui에서 그려지지 않을 뿐 드래그 로그는 찍힘
+                            .border(1.dp, borderColor),
+                        onCheckDrawResult = { bmp ->
+                            isDraw = true
+                            onCheckDrawResult(bmp, idx)
+                        },
+                        onPathsUpdate = { onPathsUpdate(it) }
+                    )
+                }
             }
         }
     }
@@ -234,11 +249,9 @@ fun TimerLayout(timer: Int, onTerminate: () -> Unit) {
 }
 
 @Composable
-fun QuestionLayout(question: String, borderColor: Color) {
+fun QuestionLayout(question: String, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
-            .wrapContentSize()
-            .border(1.dp, borderColor)
+        modifier = modifier
     ) {
         Text(
             question, style = TextStyle(
@@ -253,6 +266,7 @@ fun QuestionLayout(question: String, borderColor: Color) {
 fun DrawDigitLayout(
     paths: List<PathState>,
     checkDrawResult: Boolean?,
+    modifier: Modifier = Modifier,
     onPathsUpdate: (List<PathState>) -> Unit,
     onCheckDrawResult: (ImageBitmap) -> Unit,
 ) {
@@ -268,12 +282,7 @@ fun DrawDigitLayout(
         }
     }
 
-    val modifier = Modifier
-        .size(200.dp)
-        .background(Color.Black)
-
     val drawModifier = modifier
-        .clipToBounds() // 외부까지 그려지는 것 방지, 그려지지만 않을 뿐 드래그 이벤트 중이라 로그는 찍힘
         .pointerInput(Unit) {
             if (checkDrawResult == null) {
                 detectDragGestures(
