@@ -3,11 +3,7 @@ package com.jbrunoo.digitink.presentation.play
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -38,11 +34,11 @@ class PlayViewModel @Inject constructor(
 
     private val _limitTime = MutableStateFlow(questionCount * 5000L) // milliseconds
     val limitTime = _limitTime.asStateFlow()
-    var correctCount by mutableIntStateOf(0)
-        private set
+
+    private var correctCount by mutableIntStateOf(0)
 
     private val _qnaList = MutableStateFlow<List<QnaState>>(emptyList())
-    private val _pathsList = MutableStateFlow<List<List<PathState>>>(emptyList())
+    private val _pathsList = MutableStateFlow<List<List<PathState>>>(List(questionCount) { emptyList()} )
 
     val uiState: StateFlow<PlayUiState> =
         combine(_qnaList, _pathsList) { qnaList, pathsList ->
@@ -60,20 +56,19 @@ class PlayViewModel @Inject constructor(
         resetGame()
     }
 
-    fun resetGame() {
+    private fun resetGame() {
         generateQnaPairs(questionCount)
-        _pathsList.value = emptyList()
+        _pathsList.value = List(questionCount) { emptyList() }
         _limitTime.value = questionCount * 5000L
         correctCount = 0
         countDownTime()
     }
 
     private fun countDownTime() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             while(_limitTime.value > 0L) {
                 delay(10L)
                 _limitTime.update { it - 10L }
-//                _limitTime.value -= 10L
             }
         }
     }
@@ -116,16 +111,17 @@ class PlayViewModel @Inject constructor(
         }
     }
 
-    fun onPathsUpdate(paths: List<PathState>) {
+    fun onPathsUpdate(paths: List<PathState>, index: Int) {
         _pathsList.update { currentPathsList ->
             val updatedPathsList = currentPathsList.toMutableList()
-            updatedPathsList.add(paths)
+            updatedPathsList[index] = paths
             updatedPathsList
         }
     }
 
     fun saveResultEntry() {
-        val key = when (questionCount) {
+        val score = calcScore()
+        val key:GameResultKey? = when (questionCount) {
             5 -> GameResultKey.SPEED_GAME_5
             10 -> GameResultKey.SPEED_GAME_10
             15 -> GameResultKey.SPEED_GAME_15
@@ -133,35 +129,9 @@ class PlayViewModel @Inject constructor(
             else -> null
         }
         viewModelScope.launch(Dispatchers.IO) {
-            key?.let { resultRepository.saveResult(key, correctCount.toString()) }
+            key?.let { resultRepository.saveResult(key, score.toString()) }
         }
     }
-}
 
-sealed interface PlayUiState {
-    data object LOADING: PlayUiState
-    data class SUCCESS(
-        val qnaList: List<QnaState>,
-        val pathsList: List<List<PathState>>
-    ): PlayUiState
-}
-
-data class QnaState(
-    val question: String,
-    val answer: Int,
-    val checkDrawResult: Boolean? = null
-)
-
-data class PathState(
-    val start: Offset,
-    val end: Offset,
-    val color: Color = Color.White,
-    val alpha: Float = 0.8f,
-    val strokeWidth: Dp = 4.dp
-)
-
-sealed class GameResultType(val message: String) {
-    data object SUCCESS : GameResultType("Congratulations") // 절반 이상 정답
-    data object FAILED : GameResultType("Shameful") // 절반 이상 오답
-    data object TIMEOUT : GameResultType("Time-out")
+    private fun calcScore() = correctCount * (100 / questionCount) + _limitTime.value / 1000
 }
