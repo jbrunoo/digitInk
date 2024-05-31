@@ -120,16 +120,19 @@ class PlayViewModel @Inject constructor(
     }
 
     fun saveResultEntry() {
-        val score = calcScore()
-        val key:GameResultKey? = when (questionCount) {
+        val score = calcScore().toInt()
+        val key = getDataStoreKey(questionCount)
+        viewModelScope.launch(Dispatchers.IO) {
+            key?.let { resultRepository.saveValue(key, score) }
+        }
+    }
+    private fun getDataStoreKey(questionCount: Int): GameResultKey? {
+        return when (questionCount) {
             5 -> GameResultKey.SPEED_GAME_5
             10 -> GameResultKey.SPEED_GAME_10
             15 -> GameResultKey.SPEED_GAME_15
             20 -> GameResultKey.SPEED_GAME_20
             else -> null
-        }
-        viewModelScope.launch(Dispatchers.IO) {
-            key?.let { resultRepository.saveResult(key, score.toString()) }
         }
     }
 
