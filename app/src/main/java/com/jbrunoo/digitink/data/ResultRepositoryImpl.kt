@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.jbrunoo.digitink.domain.model.Result
 import com.jbrunoo.digitink.domain.ResultRepository
 import com.jbrunoo.digitink.utils.Constants.GAME_RESULT
 import com.jbrunoo.digitink.utils.GameResultKey
@@ -21,9 +22,14 @@ class ResultRepositoryImpl(
         }
     }
 
-    override fun readResult(key: GameResultKey): Flow<String> {
+    override fun readResult(): Flow<Result> {
         return context.dataStore.data.map { preferences ->
-            preferences[stringPreferencesKey(key.key)] ?: "no-result"
+            Result(
+                speedGame5 = preferences[stringPreferencesKey(GameResultKey.SPEED_GAME_5.key)] ?: "no-result",
+                speedGame10 = preferences[stringPreferencesKey(GameResultKey.SPEED_GAME_10.key)] ?: "no-result",
+                speedGame15 = preferences[stringPreferencesKey(GameResultKey.SPEED_GAME_15.key)] ?: "no-result",
+                speedGame20 = preferences[stringPreferencesKey(GameResultKey.SPEED_GAME_20.key)] ?: "no-result"
+            )
         }
     }
 }
