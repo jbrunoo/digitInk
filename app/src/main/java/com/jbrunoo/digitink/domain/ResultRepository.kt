@@ -5,7 +5,7 @@ import com.jbrunoo.digitink.utils.GameResultKey
 import kotlinx.coroutines.flow.Flow
 
 interface ResultRepository {
-    suspend fun saveResult(key: GameResultKey, value: String)
+    suspend fun saveValue(gameResultKey: GameResultKey, value: Int)
 
     fun readResult(): Flow<Result>
 }

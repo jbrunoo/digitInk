@@ -16,9 +16,11 @@ import kotlinx.coroutines.flow.map
 class ResultRepositoryImpl(
     private val context: Context
 ): ResultRepository {
-    override suspend fun saveResult(key: GameResultKey, value: String) {
+    override suspend fun saveValue(gameResultKey: GameResultKey, value: Int) {
         context.dataStore.edit { settings ->
-            settings[stringPreferencesKey(key.key)] = value
+            val key = stringPreferencesKey(gameResultKey.key)
+            val currentValue = settings[key] ?: "0"
+            if(value > currentValue.toInt()) settings[key] = value.toString()
         }
     }
 
@@ -35,4 +37,3 @@ class ResultRepositoryImpl(
 }
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = GAME_RESULT)
-
