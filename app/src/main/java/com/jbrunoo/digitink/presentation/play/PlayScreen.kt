@@ -1,6 +1,5 @@
 package com.jbrunoo.digitink.presentation.play
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -8,20 +7,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,6 +46,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.jbrunoo.digitink.presentation.Screen
+import com.jbrunoo.digitink.presentation.navigateWithPopUp
 import com.jbrunoo.digitink.presentation.play.component.drawCorrectIndicator
 import com.jbrunoo.digitink.presentation.play.component.drawIncorrectIndicator
 import com.jbrunoo.digitink.presentation.play.component.drawUserPaths
@@ -69,44 +69,29 @@ fun PlayScreen(
     when (val state = uiState.value) {
         is PlayUiState.LOADING -> CircularProgressIndicator()
         is PlayUiState.SUCCESS -> {
-            var showResultDialog by remember { mutableStateOf(false) }
-            Column {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 TimerLayout(
                     limitTime = { limitTime.value },
-                    onTerminate = { showResultDialog = true }
+                    onTerminate = {
+                        viewModel.saveResultEntry()
+                        navController.navigateWithPopUp(Screen.RESULT.route)
+                    }
                 )
-                ContentCarousel(
+                Content(
                     qnaList = state.qnaList,
                     pathsList = state.pathsList,
-                    onTerminate = { showResultDialog = true },
-                    onPathsUpdate = {
-                        viewModel.onPathsUpdate(it)
+                    onTerminate = {
+                        viewModel.saveResultEntry()
+                        navController.navigateWithPopUp(Screen.RESULT.route)
+                    },
+                    onPathsUpdate = { paths, idx ->
+                        viewModel.onPathsUpdate(paths, idx)
                     },
                     onCheckDrawResult = { bmp, idx ->
                         viewModel.onCheckCorrect(bmp, idx)
-                    }
-                )
-            }
-            if (showResultDialog) {
-                AlertDialog(
-                    onDismissRequest = {
-                        showResultDialog = false
-                    }, confirmButton = {
-                        Button(onClick = {
-                            viewModel.resetGame()
-                            showResultDialog = false
-                        }) {
-                            Text(text = "RESTART")
-                        }
-                    },
-                    dismissButton = {
-                        Button(onClick = { navController.navigateUp() }) {
-                            Text(text = "HOME")
-                        }
-                    },
-                    title = { Text(text = "CONGRATULATIONS") },
-                    text = {
-                        Text(text = "SCORE: ${viewModel.correctCount}")
                     }
                 )
             }
@@ -115,11 +100,11 @@ fun PlayScreen(
 }
 
 @Composable
-fun ContentCarousel(
+fun Content(
     qnaList: List<QnaState>,
     pathsList: List<List<PathState>>,
     onTerminate: () -> Unit,
-    onPathsUpdate: (List<PathState>) -> Unit,
+    onPathsUpdate: (List<PathState>, Int) -> Unit,
     onCheckDrawResult: (ImageBitmap?, Int) -> Unit
 ) {
     /* 스크롤 처리 */
@@ -144,44 +129,40 @@ fun ContentCarousel(
                     delay(5.seconds)
                     onCheckDrawResult(null, nextIdx - 1) // checkDrawResult == false
                     delay(0.5.seconds)
-                    Log.d("autoScroll", "autoScroll")
-                    if (nextIdx >= qnaList.size - 1) onTerminate()
-
-                    listState.scrollToItem(nextIdx)
+                    listState.animateScrollToItem(nextIdx)
                 } finally {
-                    autoScroll = !autoScroll
+                    if (nextIdx == qnaList.size) onTerminate()
+                    else if (!isDraw) autoScroll = !autoScroll
                 }
             }
         } else {
             delayJob?.cancelAndJoin()
             delay(0.5.seconds)
-            Log.d("ScrollImmediately", "ScrollImmediately")
-            if (nextIdx >= qnaList.size - 1) onTerminate()
-            listState.scrollToItem(nextIdx)
-            isDraw = false
+            if (nextIdx < qnaList.size) {
+                listState.animateScrollToItem(nextIdx)
+                isDraw = false
+            }
         }
     }
 
     BoxWithConstraints {
         val maxHeight = this.maxHeight
-        val itemDp = (maxHeight - 16.dp) / 5
-
+        val itemDp = (maxHeight) / 5
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth(),
             state = listState,
-            contentPadding = PaddingValues(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+//            contentPadding = PaddingValues(vertical = 0.5.dp),
             userScrollEnabled = false
         ) {
             items(4) {
                 Spacer(modifier = Modifier.height(itemDp))
             }
             itemsIndexed(qnaList) { idx, qnaState ->
-                val paths = if (idx < pathsList.size) pathsList[idx] else emptyList()
-                val isCurrentQuestion by remember { derivedStateOf { listState.firstVisibleItemIndex == idx } }
-                val borderColor = if (isCurrentQuestion) Color.White else Color.Transparent
+                val paths = pathsList[idx]
+                val isCurrentQuestion =
+                    remember { derivedStateOf { listState.firstVisibleItemIndex == idx } }
+                val borderColor = if (isCurrentQuestion.value) Color.White else Color.Transparent
                 Row(
                     modifier = Modifier
                         .height(itemDp)
@@ -207,7 +188,9 @@ fun ContentCarousel(
                             isDraw = true
                             onCheckDrawResult(bmp, idx)
                         },
-                        onPathsUpdate = { onPathsUpdate(it) }
+                        onPathsUpdate = { paths ->
+                            onPathsUpdate(paths, idx)
+                        }
                     )
                 }
             }
@@ -223,17 +206,15 @@ fun TimerLayout(limitTime: () -> Long, onTerminate: () -> Unit) {
     if (time == 0L) onTerminate()
     Text(
         text = String.format("Timer: %d.%02d", seconds, milliSeconds),
-        style = TextStyle(
-            fontSize = 30.sp,
-            fontWeight = FontWeight.ExtraBold
-        )
+        modifier = Modifier.padding(top = 16.dp),
+        style = MaterialTheme.typography.titleLarge
     )
 }
 
 @Composable
 fun QuestionLayout(question: String, modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier
+        modifier = modifier.padding(4.dp)
     ) {
         Text(
             question, style = TextStyle(
