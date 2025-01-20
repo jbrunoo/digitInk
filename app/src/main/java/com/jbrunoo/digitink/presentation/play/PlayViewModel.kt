@@ -27,7 +27,7 @@ import javax.inject.Inject
 class PlayViewModel @Inject constructor(
     private val classifier: Classifier,
     private val resultRepository: ResultRepository,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val questionCount: Int =
         checkNotNull(savedStateHandle["questionCount"]) // 기본적으로 nullable type
@@ -38,7 +38,8 @@ class PlayViewModel @Inject constructor(
     private var correctCount by mutableIntStateOf(0)
 
     private val _qnaList = MutableStateFlow<List<QnaState>>(emptyList())
-    private val _pathsList = MutableStateFlow<List<List<PathState>>>(List(questionCount) { emptyList()} )
+    private val _pathsList =
+        MutableStateFlow<List<List<PathState>>>(List(questionCount) { emptyList() })
 
     val uiState: StateFlow<PlayUiState> =
         combine(_qnaList, _pathsList) { qnaList, pathsList ->
@@ -66,7 +67,7 @@ class PlayViewModel @Inject constructor(
 
     private fun countDownTime() {
         viewModelScope.launch {
-            while(_limitTime.value > 0L) {
+            while (_limitTime.value > 0L) {
                 delay(10L)
                 _limitTime.update { it - 10L }
             }
@@ -120,12 +121,13 @@ class PlayViewModel @Inject constructor(
     }
 
     fun saveResultEntry() {
-        val score = calcScore().toInt()
+        val score = calcScore()
         val key = getDataStoreKey(questionCount)
         viewModelScope.launch(Dispatchers.IO) {
             key?.let { resultRepository.saveValue(key, score) }
         }
     }
+
     private fun getDataStoreKey(questionCount: Int): GameResultKey? {
         return when (questionCount) {
             5 -> GameResultKey.SPEED_GAME_5
@@ -136,5 +138,5 @@ class PlayViewModel @Inject constructor(
         }
     }
 
-    private fun calcScore() = correctCount * (100 / questionCount) + _limitTime.value / 1000
+    private fun calcScore() = correctCount * (100 / questionCount)
 }

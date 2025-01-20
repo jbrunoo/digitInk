@@ -8,4 +8,6 @@ interface ResultRepository {
     suspend fun saveValue(gameResultKey: GameResultKey, value: Int)
 
     fun readResult(): Flow<Result>
+
+    suspend fun clearResult()
 }

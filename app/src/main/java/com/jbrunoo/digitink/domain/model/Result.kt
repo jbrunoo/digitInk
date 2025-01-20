@@ -1,8 +1,8 @@
 package com.jbrunoo.digitink.domain.model
 
 data class Result(
-    val speedGame5: String = "no-result",
-    val speedGame10: String = "no-result",
-    val speedGame15: String = "no-result",
-    val speedGame20: String = "no-result"
+    val speedGame5: Int = 0,
+    val speedGame10: Int = 0,
+    val speedGame15: Int = 0,
+    val speedGame20: Int = 0,
 )
