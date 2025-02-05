@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -12,6 +14,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,19 +26,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.jbrunoo.digitink.presentation.Screen
 import com.jbrunoo.digitink.presentation.component.BigText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(
+    onClickPlay: (Int) -> Unit = {},
+    onClickResult: () -> Unit = {},
+) {
     val questionCounts = listOf(5, 10, 15, 20)
     var selectedQuestionCount by remember { mutableIntStateOf(questionCounts[0]) }
     var expanded by remember { mutableStateOf(false) }
 
-    Box {
+    Box(modifier = Modifier.fillMaxSize().padding(bottom = 16.dp)) {
         Row(
             modifier = Modifier.align(Alignment.Center),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -45,7 +50,7 @@ fun HomeScreen(navController: NavHostController) {
                 expanded = expanded, onExpandedChange = { expanded = !expanded }) {
                 Box(
                     modifier = Modifier
-                        .menuAnchor() // FocusRequester is not initialized 에러
+                        .menuAnchor(type = MenuAnchorType.PrimaryEditable) // FocusRequester is not initialized 에러
                         .clickable { expanded = true }
                         .size(50.dp)
                         .border(1.dp, Color.White)
@@ -72,7 +77,7 @@ fun HomeScreen(navController: NavHostController) {
                 }
             }
             Button(
-                onClick = { navController.navigate(Screen.PLAY.route + "/${selectedQuestionCount}") }
+                onClick = { onClickPlay(selectedQuestionCount) }
             ) {
                 BigText("Play")
             }
@@ -80,10 +85,16 @@ fun HomeScreen(navController: NavHostController) {
         Text(
             "Result",
             modifier = Modifier
-                .clickable { navController.navigate(Screen.RESULT.route) }
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp),
+                .heightIn(min = 48.dp)
+                .clickable(onClick = onClickResult)
+                .align(Alignment.BottomCenter),
             textDecoration = TextDecoration.Underline
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeScreenPreview() {
+    HomeScreen()
 }

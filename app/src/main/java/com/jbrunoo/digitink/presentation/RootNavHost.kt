@@ -12,19 +12,29 @@ import com.jbrunoo.digitink.presentation.result.ResultScreen
 
 @Composable
 fun RootNavHost(navController: NavHostController) {
-    NavHost(navController = navController,
-        startDestination = Screen.HOME.route) {
+    NavHost(
+        navController = navController,
+        startDestination = Screen.HOME.route
+    ) {
         composable(Screen.HOME.route) {
-            HomeScreen(navController)
+            HomeScreen(
+                onClickPlay = { navController.navigate(Screen.PLAY.route + "/$it") },
+                onClickResult = { navController.navigate(Screen.RESULT.route) }
+            )
         }
+
         composable(
             Screen.PLAY.route + "/{questionCount}",
             arguments = listOf(navArgument("questionCount") { type = NavType.IntType })
         ) {
-            PlayScreen(navController)
+            PlayScreen(
+                onTerminate = { navController.navigateWithPopUp(Screen.RESULT.route) })
         }
+
         composable(Screen.RESULT.route) {
-            ResultScreen(navController)
+            ResultScreen(
+                navigateToHome = { navController.navigateWithPopUp(Screen.HOME.route) }
+            )
         }
     }
 }

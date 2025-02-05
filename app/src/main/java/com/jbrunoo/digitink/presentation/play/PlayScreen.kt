@@ -41,13 +41,11 @@ import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import com.jbrunoo.digitink.presentation.Screen
-import com.jbrunoo.digitink.presentation.navigateWithPopUp
 import com.jbrunoo.digitink.presentation.play.component.drawCorrectIndicator
 import com.jbrunoo.digitink.presentation.play.component.drawIncorrectIndicator
 import com.jbrunoo.digitink.presentation.play.component.drawUserPaths
@@ -56,12 +54,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun PlayScreen(
-    navController: NavHostController,
-    viewModel: PlayViewModel = hiltViewModel()
+    onTerminate: () -> Unit = {},
+    viewModel: PlayViewModel = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val limitTime = viewModel.limitTime.collectAsStateWithLifecycle()
@@ -77,7 +76,7 @@ fun PlayScreen(
                     limitTime = { limitTime.value },
                     onTerminate = {
                         viewModel.saveResultEntry()
-                        navController.navigateWithPopUp(Screen.RESULT.route)
+                        onTerminate()
                     }
                 )
                 Content(
@@ -85,7 +84,7 @@ fun PlayScreen(
                     pathsList = state.pathsList,
                     onTerminate = {
                         viewModel.saveResultEntry()
-                        navController.navigateWithPopUp(Screen.RESULT.route)
+                        onTerminate()
                     },
                     onPathsUpdate = { paths, idx ->
                         viewModel.onPathsUpdate(paths, idx)
@@ -100,12 +99,12 @@ fun PlayScreen(
 }
 
 @Composable
-fun Content(
+private fun Content(
     qnaList: List<QnaState>,
     pathsList: List<List<PathState>>,
     onTerminate: () -> Unit,
     onPathsUpdate: (List<PathState>, Int) -> Unit,
-    onCheckDrawResult: (ImageBitmap?, Int) -> Unit
+    onCheckDrawResult: (ImageBitmap?, Int) -> Unit,
 ) {
     /* 스크롤 처리 */
     // 0. 다음 문제가 없으면 스크롤 종료
@@ -199,13 +198,13 @@ fun Content(
 }
 
 @Composable
-fun TimerLayout(limitTime: () -> Long, onTerminate: () -> Unit) {
+private fun TimerLayout(limitTime: () -> Long, onTerminate: () -> Unit) {
     val time = limitTime()
     val seconds = time / 1000
     val milliSeconds = (time % 1000) / 10
     if (time == 0L) onTerminate()
     Text(
-        text = String.format("Timer: %d.%02d", seconds, milliSeconds),
+        text = String.format(Locale.ROOT, "Timer: %d.%02d", seconds, milliSeconds),
         modifier = Modifier.padding(top = 16.dp),
         style = MaterialTheme.typography.titleLarge
     )
@@ -226,7 +225,7 @@ fun QuestionLayout(question: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun DrawDigitLayout(
+private fun DrawDigitLayout(
     paths: List<PathState>,
     checkDrawResult: Boolean?,
     modifier: Modifier = Modifier,
@@ -285,4 +284,10 @@ fun DrawDigitLayout(
             else drawIncorrectIndicator()
         }
     }
+}
+
+@Preview
+@Composable
+private fun PlayScreenPreview() {
+    PlayScreen()
 }
