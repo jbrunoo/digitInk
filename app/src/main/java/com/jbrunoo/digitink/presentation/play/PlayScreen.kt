@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jbrunoo.digitink.R
 import com.jbrunoo.digitink.presentation.play.component.drawCorrectIndicator
 import com.jbrunoo.digitink.presentation.play.component.drawIncorrectIndicator
 import com.jbrunoo.digitink.presentation.play.component.drawUserPaths
@@ -221,7 +223,8 @@ private fun TimerLayout(limitTime: () -> Long, onTerminate: () -> Unit) {
     val milliSeconds = (time % 1000) / 10
     if (time == 0L) onTerminate()
     Text(
-        text = String.format(Locale.ROOT, "Timer: %d.%02d", seconds, milliSeconds),
+        text = String.format(Locale.ROOT,
+            stringResource(R.string.game_timer_text), seconds, milliSeconds),
         modifier = Modifier.padding(top = 16.dp),
         style = MaterialTheme.typography.titleLarge
     )

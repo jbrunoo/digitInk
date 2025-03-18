@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="game_mode_nomal">Modo Normal</string>
+    <string name="game_result_text">Resultado</string>
+    <string name="game_timer_text">Cronômetro: : %d.%02d</string>
+    <string name="question_count_prefix">%1$s perguntas</string>
+</resources>

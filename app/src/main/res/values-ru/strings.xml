@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="game_mode_nomal">обычный режим</string>
+    <string name="game_result_text">Пезультат</string>
+    <string name="game_timer_text">Таймер</string>
+    <string name="question_count_prefix">"%1$s вопросов "</string>
+</resources>

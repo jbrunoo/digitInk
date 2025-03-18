@@ -25,9 +25,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jbrunoo.digitink.R
 import com.jbrunoo.digitink.presentation.component.BigText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +42,9 @@ fun HomeScreen(
     var selectedQuestionCount by remember { mutableIntStateOf(questionCounts[0]) }
     var expanded by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize().padding(bottom = 16.dp)) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(bottom = 16.dp)) {
         Row(
             modifier = Modifier.align(Alignment.Center),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -79,11 +83,11 @@ fun HomeScreen(
             Button(
                 onClick = { onClickPlay(selectedQuestionCount) }
             ) {
-                BigText("Play")
+                BigText(text = stringResource(R.string.game_mode_nomal))
             }
         }
         Text(
-            "Result",
+            text = stringResource(R.string.game_result_text),
             modifier = Modifier
                 .heightIn(min = 48.dp)
                 .clickable(onClick = onClickResult)

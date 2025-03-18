@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="game_mode_nomal">普通模式</string>
+    <string name="game_result_text">结果</string>
+    <string name="game_timer_text">计时器: %d.%02d</string>
+    <string name="question_count_prefix">%1$s 个问题</string>
+</resources>

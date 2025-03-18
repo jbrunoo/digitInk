@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">digitInk</string>
+    <string name="app_name" translatable="false">QuizAI</string>
+    <string name="game_mode_nomal">Normal</string>
+    <string name="game_result_text">Result</string>
+    <string name="question_count_prefix">%1$s Questions</string>
+    <string name="game_timer_text">Timer: %d.%02d</string>
 </resources>
