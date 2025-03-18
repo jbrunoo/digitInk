@@ -60,6 +60,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
@@ -73,6 +74,7 @@ fun PlayScreen(
 
     when (val state = uiState.value) {
         is PlayUiState.LOADING -> CircularProgressIndicator()
+
         is PlayUiState.SUCCESS -> {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -138,7 +140,7 @@ private fun Content(
                         delay(5.seconds)
                         onCheckDrawResult(null, nextIdx - 1) // checkDrawResult == false
                         delay(0.5.seconds)
-                        listState.animateScrollToItem(nextIdx)
+                        withContext(Dispatchers.Main) { listState.animateScrollToItem(nextIdx) }
                     } finally {
                         if (!isDraw) autoScroll = !autoScroll
                     }
