@@ -30,6 +30,8 @@ import com.jbrunoo.digitink.domain.model.Result
 import com.jbrunoo.digitink.presentation.component.BigText
 import kotlinx.coroutines.launch
 
+private const val DELIMITER = ": "
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultScreen(
@@ -44,7 +46,10 @@ fun ResultScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = stringResource(R.string.game_result_text), style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        text = stringResource(R.string.game_result_text),
+                        style = MaterialTheme.typography.titleLarge
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = navigateToHome) {
@@ -76,14 +81,19 @@ fun ResultScreen(
 
 @Composable
 private fun ResultSet(result: Result) {
+    val countList = listOf(5, 10, 15, 20)
+
     Column {
-        BigText(text = stringResource(R.string.game_result_prefix, 5) + result.speedGame5)
-        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-        BigText(text = stringResource(R.string.game_result_prefix, 10) + result.speedGame10)
-        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-        BigText(text = stringResource(R.string.game_result_prefix, 15) + result.speedGame15)
-        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-        BigText(text = stringResource(R.string.game_result_prefix, 20) + result.speedGame20)
+        for ((idx, count) in countList.withIndex()) {
+            BigText(
+                text = stringResource(
+                    R.string.question_count_prefix,
+                    count
+                ) + DELIMITER + result.find(count),
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+            if (idx != countList.size - 1) HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+        }
     }
 }
 
