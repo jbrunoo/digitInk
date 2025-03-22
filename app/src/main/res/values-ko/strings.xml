@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="game_mode_nomal">일반 모드</string>
+    <string name="game_result_text">결과</string>
+    <string name="game_timer_text">타이머: %d.%02d</string>
+    <string name="question_count_prefix">%1$s 문제</string>
+</resources>

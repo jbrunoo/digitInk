@@ -1,5 +1,6 @@
 package com.jbrunoo.digitink.presentation.play
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -25,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +41,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,14 +49,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jbrunoo.digitink.R
 import com.jbrunoo.digitink.presentation.play.component.drawCorrectIndicator
 import com.jbrunoo.digitink.presentation.play.component.drawIncorrectIndicator
 import com.jbrunoo.digitink.presentation.play.component.drawUserPaths
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
@@ -67,6 +74,7 @@ fun PlayScreen(
 
     when (val state = uiState.value) {
         is PlayUiState.LOADING -> CircularProgressIndicator()
+
         is PlayUiState.SUCCESS -> {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -113,35 +121,48 @@ private fun Content(
     // 2-2. 유저 입력 시, onCheckDrawResult() 후 5초 딜레이 취소
     // 3. 0.5초 후 다음 문제 스크롤
     val listState = rememberLazyListState()
+    var nextIdx by remember { mutableIntStateOf(0) }
     var autoScroll by remember { mutableStateOf(false) }
     var isDraw by remember { mutableStateOf(false) }
     var delayJob: Job? by remember { mutableStateOf(null) }
+    val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        Log.e("CoroutineError", "Exception in coroutine: $exception")
+    }
 
     LaunchedEffect(
         key1 = autoScroll,
         key2 = isDraw
     ) {
-        val nextIdx = listState.firstVisibleItemIndex + 1
-        if (!isDraw) {
-            delayJob = launch {
-                try { // cancelException 예외 처리
-                    delay(5.seconds)
-                    onCheckDrawResult(null, nextIdx - 1) // checkDrawResult == false
-                    delay(0.5.seconds)
-                    listState.animateScrollToItem(nextIdx)
-                } finally {
-                    if (nextIdx == qnaList.size) onTerminate()
-                    else if (!isDraw) autoScroll = !autoScroll
+        when(isDraw) {
+            false -> {
+                delayJob = launch(Dispatchers.Default + coroutineExceptionHandler) {
+                    try {
+                        delay(5.seconds)
+                        onCheckDrawResult(null, nextIdx - 1) // checkDrawResult == false
+                        delay(0.5.seconds)
+                        withContext(Dispatchers.Main) { listState.animateScrollToItem(nextIdx) }
+                    } finally {
+                        if (!isDraw) autoScroll = !autoScroll
+                    }
                 }
             }
-        } else {
-            delayJob?.cancelAndJoin()
-            delay(0.5.seconds)
-            if (nextIdx < qnaList.size) {
-                listState.animateScrollToItem(nextIdx)
-                isDraw = false
+
+            else -> {
+                delayJob?.cancelAndJoin()
+                delayJob = null
+
+                delay(0.5.seconds)
+
+                if (nextIdx < qnaList.size) {
+                    isDraw = false
+                }
             }
         }
+
+        if (nextIdx == qnaList.size) onTerminate()
+
+        listState.animateScrollToItem(nextIdx)
+        nextIdx++
     }
 
     BoxWithConstraints {
@@ -160,7 +181,7 @@ private fun Content(
             itemsIndexed(qnaList) { idx, qnaState ->
                 val paths = pathsList[idx]
                 val isCurrentQuestion =
-                    remember { derivedStateOf { listState.firstVisibleItemIndex == idx } }
+                    remember { derivedStateOf { nextIdx - 1 == idx } }
                 val borderColor = if (isCurrentQuestion.value) Color.White else Color.Transparent
                 Row(
                     modifier = Modifier
@@ -204,7 +225,8 @@ private fun TimerLayout(limitTime: () -> Long, onTerminate: () -> Unit) {
     val milliSeconds = (time % 1000) / 10
     if (time == 0L) onTerminate()
     Text(
-        text = String.format(Locale.ROOT, "Timer: %d.%02d", seconds, milliSeconds),
+        text = String.format(Locale.ROOT,
+            stringResource(R.string.game_timer_text), seconds, milliSeconds),
         modifier = Modifier.padding(top = 16.dp),
         style = MaterialTheme.typography.titleLarge
     )
