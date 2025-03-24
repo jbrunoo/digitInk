@@ -117,4 +117,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
+    // gms
+
+    implementation("com.google.android.gms:play-services-games-v2:20.1.2")
 }
