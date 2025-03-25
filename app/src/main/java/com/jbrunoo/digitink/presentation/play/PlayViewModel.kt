@@ -138,5 +138,5 @@ class PlayViewModel @Inject constructor(
         }
     }
 
-    private fun calcScore() = correctCount * (100 / questionCount)
+    private fun calcScore() = (correctCount / questionCount) * 100 + _limitTime.value
 }
