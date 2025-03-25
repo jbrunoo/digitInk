@@ -118,6 +118,9 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
     // gms
-
     implementation("com.google.android.gms:play-services-games-v2:20.1.2")
+    // logger
+    implementation("com.jakewharton.timber:timber:5.0.1")
+    // startUp
+    implementation("androidx.startup:startup-runtime:1.2.0")
 }
