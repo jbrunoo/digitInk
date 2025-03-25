@@ -62,7 +62,7 @@ class PlayGamesManager {
             }
     }
 
-    fun submitScore(leaderBoardId: String, score: Long) {
+    fun submitScore(leaderBoardKey: String, score: Long) {
         checkAuth()
 
         if (!_isAuthenticated.value) {
@@ -70,7 +70,7 @@ class PlayGamesManager {
             return
         }
 
-        leaderboardsClient.submitScore(leaderBoardId, score)
+        leaderboardsClient.submitScore(leaderBoardKey, score)
     }
 
     companion object {

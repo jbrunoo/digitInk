@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import com.jbrunoo.digitink.domain.ResultRepository
 import com.jbrunoo.digitink.domain.model.Result
-import com.jbrunoo.digitink.utils.GameResultKey
+import com.jbrunoo.digitink.utils.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -16,9 +16,9 @@ class ResultRepositoryImpl
 constructor(
     private val dataStore: DataStore<Preferences>,
 ) : ResultRepository {
-    override suspend fun saveValue(gameResultKey: GameResultKey, score: Long) {
+    override suspend fun saveValue(dataStoreKey: String, score: Long) {
         dataStore.edit { settings ->
-            val key = longPreferencesKey(gameResultKey.key)
+            val key = longPreferencesKey(dataStoreKey)
             val currentValue = settings[key] ?: 0
             if (score > currentValue) settings[key] = score
         }
@@ -27,10 +27,10 @@ constructor(
     override fun readResult(): Flow<Result> {
         return dataStore.data.map { preferences ->
             Result(
-                speedGame5 = preferences[longPreferencesKey(GameResultKey.SPEED_GAME_5.key)] ?: 0,
-                speedGame10 = preferences[longPreferencesKey(GameResultKey.SPEED_GAME_10.key)] ?: 0,
-                speedGame15 = preferences[longPreferencesKey(GameResultKey.SPEED_GAME_15.key)] ?: 0,
-                speedGame20 = preferences[longPreferencesKey(GameResultKey.SPEED_GAME_20.key)] ?: 0
+                speedGame5 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_5)] ?: 0,
+                speedGame10 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_10)] ?: 0,
+                speedGame15 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_15)] ?: 0,
+                speedGame20 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_20)] ?: 0
             )
         }
     }

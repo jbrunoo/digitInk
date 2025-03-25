@@ -9,7 +9,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jbrunoo.digitink.domain.Classifier
 import com.jbrunoo.digitink.domain.ResultRepository
-import com.jbrunoo.digitink.utils.GameResultKey
+import com.jbrunoo.digitink.playgames.PlayGamesManager
+import com.jbrunoo.digitink.utils.datastoreKey
+import com.jbrunoo.digitink.utils.leaderBoardKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -27,6 +29,7 @@ import javax.inject.Inject
 class PlayViewModel @Inject constructor(
     private val classifier: Classifier,
     private val resultRepository: ResultRepository,
+    private val playGamesManager: PlayGamesManager,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val questionCount: Int =
@@ -106,8 +109,11 @@ class PlayViewModel @Inject constructor(
             val qnaState = qnaMuList[index]
             val userGuess = classifyBmp(bmp)
             val checkDrawResult = userGuess?.let { it == qnaState.answer } ?: false
+
             if (checkDrawResult) correctCount++
+
             qnaMuList[index] = qnaState.copy(checkDrawResult = checkDrawResult)
+
             qnaMuList
         }
     }
@@ -115,6 +121,7 @@ class PlayViewModel @Inject constructor(
     fun onPathsUpdate(paths: List<PathState>, index: Int) {
         _pathsList.update { currentPathsList ->
             val updatedPathsList = currentPathsList.toMutableList()
+
             updatedPathsList[index] = paths
             updatedPathsList
         }
@@ -122,19 +129,12 @@ class PlayViewModel @Inject constructor(
 
     fun saveResultEntry() {
         val score = calcScore()
-        val key = getDataStoreKey(questionCount)
-        viewModelScope.launch(Dispatchers.IO) {
-            key?.let { resultRepository.saveValue(key, score) }
-        }
-    }
+        val dataStoreKey = questionCount.datastoreKey() ?: return
+        val leaderBoardKey = questionCount.leaderBoardKey() ?: return
 
-    private fun getDataStoreKey(questionCount: Int): GameResultKey? {
-        return when (questionCount) {
-            5 -> GameResultKey.SPEED_GAME_5
-            10 -> GameResultKey.SPEED_GAME_10
-            15 -> GameResultKey.SPEED_GAME_15
-            20 -> GameResultKey.SPEED_GAME_20
-            else -> null
+        viewModelScope.launch(Dispatchers.IO) {
+            playGamesManager.submitScore(leaderBoardKey, score)
+            resultRepository.saveValue(dataStoreKey, score)
         }
     }
 
