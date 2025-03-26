@@ -83,16 +83,14 @@ fun PlayScreen(
                 TimerLayout(
                     limitTime = { limitTime.value },
                     onTerminate = {
-                        viewModel.saveResultEntry()
-                        onTerminate()
+                        viewModel.saveResultEntry { onTerminate() }
                     }
                 )
                 Content(
                     qnaList = state.qnaList,
                     pathsList = state.pathsList,
                     onTerminate = {
-                        viewModel.saveResultEntry()
-                        onTerminate()
+                        viewModel.saveResultEntry { onTerminate() }
                     },
                     onPathsUpdate = { paths, idx ->
                         viewModel.onPathsUpdate(paths, idx)

@@ -72,8 +72,6 @@ class PlayGamesManager {
     }
 
     fun submitScore(leaderBoardKey: String, score: Long) {
-        checkAuth()
-
         if (!_isAuthenticated.value) {
             Timber.d("submitScore - not Authenticated")
             return
