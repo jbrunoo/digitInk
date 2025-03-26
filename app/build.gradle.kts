@@ -24,8 +24,8 @@ android {
         applicationId = "com.jbrunoo.digitink"
         minSdk = 24
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.0.3-alpha02"
+        versionCode = 6
+        versionName = "1.0.1-alpha02"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
