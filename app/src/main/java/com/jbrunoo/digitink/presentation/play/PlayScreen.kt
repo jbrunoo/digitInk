@@ -73,9 +73,9 @@ fun PlayScreen(
     val limitTime = viewModel.limitTime.collectAsStateWithLifecycle()
 
     when (val state = uiState.value) {
-        is PlayUiState.LOADING -> CircularProgressIndicator()
+        is PlayUIState.LOADING -> CircularProgressIndicator()
 
-        is PlayUiState.SUCCESS -> {
+        is PlayUIState.SUCCESS -> {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center

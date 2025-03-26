@@ -5,12 +5,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-sealed interface PlayUiState {
-    data object LOADING: PlayUiState
+sealed interface PlayUIState {
+    data object LOADING: PlayUIState
     data class SUCCESS(
         val qnaList: List<QnaState>,
         val pathsList: List<List<PathState>>
-    ): PlayUiState
+    ): PlayUIState
 }
 
 data class QnaState(

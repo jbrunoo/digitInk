@@ -44,16 +44,16 @@ class PlayViewModel @Inject constructor(
     private val _pathsList =
         MutableStateFlow<List<List<PathState>>>(List(questionCount) { emptyList() })
 
-    val uiState: StateFlow<PlayUiState> =
+    val uiState: StateFlow<PlayUIState> =
         combine(_qnaList, _pathsList) { qnaList, pathsList ->
-            PlayUiState.SUCCESS(
+            PlayUIState.SUCCESS(
                 qnaList = qnaList,
                 pathsList = pathsList
             )
         }.stateIn(
             viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = PlayUiState.LOADING
+            initialValue = PlayUIState.LOADING
         )
 
     init {

@@ -1,7 +1,7 @@
 package com.jbrunoo.digitink.playgames
 
 import android.app.Activity
-import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.startActivityForResult
 import com.google.android.gms.games.AuthenticationResult
 import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.LeaderboardsClient
@@ -18,7 +18,7 @@ class PlayGamesManager {
     private lateinit var gamesSignInClient: GamesSignInClient
     private lateinit var leaderboardsClient: LeaderboardsClient
     private val _isAuthenticated = MutableStateFlow(false)
-    private val isAuthenticated: StateFlow<Boolean> = _isAuthenticated.asStateFlow()
+    val isAuthenticated: StateFlow<Boolean> = _isAuthenticated.asStateFlow()
 
     fun initialize(activity: Activity) {
         gamesSignInClient = PlayGames.getGamesSignInClient(activity)
@@ -43,7 +43,7 @@ class PlayGamesManager {
         }
     }
 
-    fun showLeaderBoard(activity: Activity, leaderBoardId: String) {
+    fun showLeaderBoard(activity: Activity) {
         checkAuth()
 
         if (!_isAuthenticated.value) {
@@ -51,15 +51,24 @@ class PlayGamesManager {
             return
         }
 
-        leaderboardsClient.getLeaderboardIntent(leaderBoardId)
-            .addOnSuccessListener { intent ->
-                ActivityCompat.startActivityForResult(
-                    activity,
-                    intent,
-                    RC_LEADERBOARD_UI,
-                    null
-                )
-            }
+        leaderboardsClient.allLeaderboardsIntent.addOnSuccessListener { intent ->
+            startActivityForResult(
+                activity,
+                intent,
+                RC_LEADERBOARD_UI,
+                null
+            )
+        }
+
+//        leaderboardsClient.getLeaderboardIntent(leaderBoardKey)
+//            .addOnSuccessListener { intent ->
+//                startActivityForResult(
+//                    activity,
+//                    intent,
+//                    RC_LEADERBOARD_UI,
+//                    null
+//                )
+//            }
     }
 
     fun submitScore(leaderBoardKey: String, score: Long) {

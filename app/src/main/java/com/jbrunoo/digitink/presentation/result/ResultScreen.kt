@@ -1,11 +1,14 @@
 package com.jbrunoo.digitink.presentation.result
 
+import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,7 +30,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jbrunoo.digitink.R
 import com.jbrunoo.digitink.domain.model.Result
 import com.jbrunoo.digitink.presentation.component.BigText
-import kotlinx.coroutines.launch
 
 private const val DELIMITER = ": "
 
@@ -38,8 +39,8 @@ fun ResultScreen(
     navigateToHome: () -> Unit = {},
     viewModel: ResultViewModel = hiltViewModel(),
 ) {
-    val result by viewModel.result.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val activity = LocalActivity.current as Activity
 
     Scaffold(
         modifier = Modifier.padding(12.dp),
@@ -69,11 +70,25 @@ fun ResultScreen(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ResultSet(result = result)
-            IconButton(onClick = {
-                scope.launch { viewModel.clearResult() }
-            }) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "clear score history")
+            ResultSet(result = uiState.result)
+            IconButton(
+                onClick = { viewModel.clearResult() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "clear score history"
+                )
+            }
+            IconButton(
+                onClick = { viewModel.showLeaderBoard(activity) }
+            ) {
+                Column {
+                    Icon(
+                        imageVector = Icons.Default.AccountBox,
+                        contentDescription = "show leaderBoard"
+                    )
+                    if (!uiState.isAuth) Text("연동하기")
+                }
             }
         }
     }
