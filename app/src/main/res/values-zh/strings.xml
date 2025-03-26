@@ -4,4 +4,7 @@
     <string name="game_result_text">结果</string>
     <string name="game_timer_text">计时器: %d.%02d</string>
     <string name="question_count_prefix">%1$s 个问题</string>
+    <string name="result_screen_delete_button_txt">记录要删除吗？</string>
+    <string name="delete_button_cofirm_txt">确认</string>
+    <string name="delete_button_dismiss_txt">取消</string>
 </resources>

@@ -4,4 +4,7 @@
     <string name="game_result_text">Result</string>
     <string name="game_timer_text">Timer: %d.%02d</string>
     <string name="question_count_prefix">"%1$s questions"</string>
+    <string name="result_screen_delete_button_txt">Do you want to delete the record?</string>
+    <string name="delete_button_cofirm_txt">Confirm</string>
+    <string name="delete_button_dismiss_txt">Dismiss</string>
 </resources>

@@ -4,4 +4,7 @@
     <string name="game_result_text">Пезультат</string>
     <string name="game_timer_text">Таймер</string>
     <string name="question_count_prefix">"%1$s вопросов "</string>
+    <string name="result_screen_delete_button_txt">Удалить запись?</string>
+    <string name="delete_button_cofirm_txt">Подтвердить</string>
+    <string name="delete_button_dismiss_txt">Отмена</string>
 </resources>

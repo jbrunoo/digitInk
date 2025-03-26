@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.roundToLong
 
 @HiltViewModel
 class PlayViewModel @Inject constructor(
@@ -138,5 +139,8 @@ class PlayViewModel @Inject constructor(
         }
     }
 
-    private fun calcScore() = (correctCount / questionCount) * 100 + _limitTime.value
+    private fun calcScore(): Long {
+        val score = (correctCount.toDouble() / questionCount) * 100 + (_limitTime.value / 1000.0)
+        return (score * 100).roundToLong()
+    }
 }
