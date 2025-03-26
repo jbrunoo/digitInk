@@ -1,47 +1,43 @@
 package com.jbrunoo.digitink.data
 
-import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.core.longPreferencesKey
 import com.jbrunoo.digitink.domain.ResultRepository
 import com.jbrunoo.digitink.domain.model.Result
-import com.jbrunoo.digitink.utils.Constants.GAME_RESULT
-import com.jbrunoo.digitink.utils.GameResultKey
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.jbrunoo.digitink.utils.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class ResultRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
+class ResultRepositoryImpl
+@Inject
+constructor(
+    private val dataStore: DataStore<Preferences>,
 ) : ResultRepository {
-    override suspend fun saveValue(gameResultKey: GameResultKey, value: Int) {
-        context.dataStore.edit { settings ->
-            val key = intPreferencesKey(gameResultKey.key)
+    override suspend fun saveValue(dataStoreKey: String, score: Long) {
+        dataStore.edit { settings ->
+            val key = longPreferencesKey(dataStoreKey)
             val currentValue = settings[key] ?: 0
-            if (value > currentValue) settings[key] = value
+            if (score > currentValue) settings[key] = score
         }
     }
 
     override fun readResult(): Flow<Result> {
-        return context.dataStore.data.map { preferences ->
+        return dataStore.data.map { preferences ->
             Result(
-                speedGame5 = preferences[intPreferencesKey(GameResultKey.SPEED_GAME_5.key)] ?: 0,
-                speedGame10 = preferences[intPreferencesKey(GameResultKey.SPEED_GAME_10.key)] ?: 0,
-                speedGame15 = preferences[intPreferencesKey(GameResultKey.SPEED_GAME_15.key)] ?: 0,
-                speedGame20 = preferences[intPreferencesKey(GameResultKey.SPEED_GAME_20.key)] ?: 0
+                speedGame5 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_5)] ?: 0,
+                speedGame10 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_10)] ?: 0,
+                speedGame15 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_15)] ?: 0,
+                speedGame20 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_20)] ?: 0
             )
         }
     }
 
     override suspend fun clearResult() {
-        context.dataStore.edit {
+        dataStore.edit {
             it.clear()
         }
     }
 }
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = GAME_RESULT)

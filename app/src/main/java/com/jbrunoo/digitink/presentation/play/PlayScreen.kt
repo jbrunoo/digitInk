@@ -1,6 +1,5 @@
 package com.jbrunoo.digitink.presentation.play
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -61,6 +60,7 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
@@ -73,9 +73,9 @@ fun PlayScreen(
     val limitTime = viewModel.limitTime.collectAsStateWithLifecycle()
 
     when (val state = uiState.value) {
-        is PlayUiState.LOADING -> CircularProgressIndicator()
+        is PlayUIState.LOADING -> CircularProgressIndicator()
 
-        is PlayUiState.SUCCESS -> {
+        is PlayUIState.SUCCESS -> {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -126,7 +126,7 @@ private fun Content(
     var isDraw by remember { mutableStateOf(false) }
     var delayJob: Job? by remember { mutableStateOf(null) }
     val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-        Log.e("CoroutineError", "Exception in coroutine: $exception")
+        Timber.e("Exception in coroutine: $exception")
     }
 
     LaunchedEffect(

@@ -4,4 +4,7 @@
     <string name="game_result_text">결과</string>
     <string name="game_timer_text">타이머: %d.%02d</string>
     <string name="question_count_prefix">%1$s 문제</string>
+    <string name="result_screen_delete_button_txt">기록을 삭제하시겠습니까?</string>
+    <string name="delete_button_cofirm_txt">확인</string>
+    <string name="delete_button_dismiss_txt">취소</string>
 </resources>

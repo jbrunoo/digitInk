@@ -10,4 +10,4 @@ deploymentTargetDropDown.xml
 .cxx
 local.properties
 /keystore.properties
-app/google-services.json
+/app/google-services.json

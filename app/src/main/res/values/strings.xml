@@ -1,7 +1,15 @@
 <resources>
-    <string name="app_name" translatable="false">QuizAI</string>
+    <string name="app_name" translatable="false">GradeAI</string>
     <string name="game_mode_nomal">Normal</string>
     <string name="game_result_text">Result</string>
     <string name="question_count_prefix">%1$s Questions</string>
     <string name="game_timer_text">Timer: %d.%02d</string>
+
+    <!--app_id-->
+    <string name="app_id" translatable="false">976317385254</string>
+    <!--package_name-->
+    <string name="package_name" translatable="false">com.jbrunoo.digitink</string>
+    <string name="result_screen_delete_button_txt">Do you want to delete the record?</string>
+    <string name="delete_button_cofirm_txt">Confirm</string>
+    <string name="delete_button_dismiss_txt">Dismiss</string>
 </resources>

@@ -24,6 +24,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.jbrunoo.digitink.initializer.PlayGamesInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="com.jbrunoo.digitink.initializer.TimberInitializer"
+                android:value="androidx.startup" />
+        </provider>
+        <meta-data
+            android:name="com.google.android.gms.games.APP_ID"
+            android:value="@string/app_id" />
     </application>
 
 </manifest>
