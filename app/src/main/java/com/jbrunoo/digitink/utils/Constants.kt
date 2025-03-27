@@ -1,10 +1,10 @@
 package com.jbrunoo.digitink.utils
 
 object Constants {
-    const val DATASTORE_KEY_5 = "speed_game_5"
-    const val DATASTORE_KEY_10 = "speed_game_10"
-    const val DATASTORE_KEY_15 = "speed_game_15"
-    const val DATASTORE_KEY_20 = "speed_game_20"
+    const val DATASTORE_KEY_5 = "score_5"
+    const val DATASTORE_KEY_10 = "score_10"
+    const val DATASTORE_KEY_15 = "score_15"
+    const val DATASTORE_KEY_20 = "score_20"
 
     const val LEADERBOARD_KEY_5 = "CgkIppS0iLUcEAIQBg"
     const val LEADERBOARD_KEY_10 = "CgkIppS0iLUcEAIQBw"
