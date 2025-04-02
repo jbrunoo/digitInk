@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.presentation.play
+package com.jbrunoo.digitink.presentation.play.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
@@ -6,7 +6,6 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,8 +17,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,18 +37,16 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jbrunoo.digitink.R
-import com.jbrunoo.digitink.presentation.play.component.drawCorrectIndicator
-import com.jbrunoo.digitink.presentation.play.component.drawIncorrectIndicator
-import com.jbrunoo.digitink.presentation.play.component.drawUserPaths
+import com.jbrunoo.digitink.presentation.play.normal.PathState
+import com.jbrunoo.digitink.presentation.play.normal.QnaState
+import com.jbrunoo.digitink.utils.drawCorrectIndicator
+import com.jbrunoo.digitink.utils.drawIncorrectIndicator
+import com.jbrunoo.digitink.utils.drawUserPaths
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -61,56 +56,16 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun PlayScreen(
-    onTerminate: () -> Unit = {},
-    viewModel: PlayViewModel = hiltViewModel(),
-) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    val limitTime = viewModel.limitTime.collectAsStateWithLifecycle()
-
-    when (val state = uiState.value) {
-        is PlayUIState.LOADING -> CircularProgressIndicator()
-
-        is PlayUIState.SUCCESS -> {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                TimerLayout(
-                    limitTime = { limitTime.value },
-                    onTerminate = {
-                        viewModel.saveResultEntry { onTerminate() }
-                    }
-                )
-                Content(
-                    qnaList = state.qnaList,
-                    pathsList = state.pathsList,
-                    onTerminate = {
-                        viewModel.saveResultEntry { onTerminate() }
-                    },
-                    onPathsUpdate = { paths, idx ->
-                        viewModel.onPathsUpdate(paths, idx)
-                    },
-                    onCheckDrawResult = { bmp, idx ->
-                        viewModel.onCheckCorrect(bmp, idx)
-                    }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun Content(
+internal fun PlayBoard(
     qnaList: List<QnaState>,
     pathsList: List<List<PathState>>,
-    onTerminate: () -> Unit,
+    isGameOver: Boolean = false,
     onPathsUpdate: (List<PathState>, Int) -> Unit,
     onCheckDrawResult: (ImageBitmap?, Int) -> Unit,
+    onTerminate: () -> Unit = {},
 ) {
     /* 스크롤 처리 */
     // 0. 다음 문제가 없으면 스크롤 종료
@@ -131,14 +86,14 @@ private fun Content(
         key1 = autoScroll,
         key2 = isDraw
     ) {
-        when(isDraw) {
+        when (isDraw) {
             false -> {
                 delayJob = launch(Dispatchers.Default + coroutineExceptionHandler) {
                     try {
                         delay(5.seconds)
                         onCheckDrawResult(null, nextIdx - 1) // checkDrawResult == false
                         delay(0.5.seconds)
-                        withContext(Dispatchers.Main) { listState.animateScrollToItem(nextIdx) }
+                        withContext(Dispatchers.Main) { if(!isGameOver) listState.animateScrollToItem(nextIdx) }
                     } finally {
                         if (!isDraw) autoScroll = !autoScroll
                     }
@@ -159,7 +114,7 @@ private fun Content(
 
         if (nextIdx == qnaList.size) onTerminate()
 
-        listState.animateScrollToItem(nextIdx)
+        if(!isGameOver) listState.animateScrollToItem(nextIdx)
         nextIdx++
     }
 
@@ -213,34 +168,6 @@ private fun Content(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun TimerLayout(limitTime: () -> Long, onTerminate: () -> Unit) {
-    val time = limitTime()
-    val seconds = time / 1000
-    val milliSeconds = (time % 1000) / 10
-    if (time == 0L) onTerminate()
-    Text(
-        text = String.format(Locale.ROOT,
-            stringResource(R.string.game_timer_text), seconds, milliSeconds),
-        modifier = Modifier.padding(top = 16.dp),
-        style = MaterialTheme.typography.titleLarge
-    )
-}
-
-@Composable
-fun QuestionLayout(question: String, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.padding(4.dp)
-    ) {
-        Text(
-            question, style = TextStyle(
-                fontSize = 30.sp,
-                fontWeight = FontWeight.ExtraBold
-            )
-        )
     }
 }
 
@@ -306,8 +233,27 @@ private fun DrawDigitLayout(
     }
 }
 
+@Composable
+private fun QuestionLayout(question: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.padding(4.dp)
+    ) {
+        Text(
+            question, style = TextStyle(
+                fontSize = 30.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
+        )
+    }
+}
+
 @Preview
 @Composable
-private fun PlayScreenPreview() {
-    PlayScreen()
+private fun PlayBoardScreenPreview() {
+    PlayBoard(
+        qnaList = emptyList(),
+        pathsList = emptyList(),
+        onPathsUpdate = { _, _ -> },
+        onCheckDrawResult = { _, _ -> },
+    )
 }

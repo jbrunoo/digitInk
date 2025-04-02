@@ -1,16 +1,16 @@
-package com.jbrunoo.digitink.presentation.play
+package com.jbrunoo.digitink.presentation.play.normal
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-sealed interface PlayUIState {
-    data object LOADING: PlayUIState
+sealed interface NormalPlayUIState {
+    data object LOADING: NormalPlayUIState
     data class SUCCESS(
         val qnaList: List<QnaState>,
-        val pathsList: List<List<PathState>>
-    ): PlayUIState
+        val pathsList: List<List<PathState>>,
+    ): NormalPlayUIState
 }
 
 data class QnaState(

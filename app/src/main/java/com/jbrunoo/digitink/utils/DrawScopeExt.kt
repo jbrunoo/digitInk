@@ -1,11 +1,11 @@
-package com.jbrunoo.digitink.presentation.play.component
+package com.jbrunoo.digitink.utils
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import com.jbrunoo.digitink.presentation.play.PathState
+import com.jbrunoo.digitink.presentation.play.normal.PathState
 
 fun DrawScope.drawUserPaths(pathStates: List<PathState>) {
     pathStates.forEach { customPath ->

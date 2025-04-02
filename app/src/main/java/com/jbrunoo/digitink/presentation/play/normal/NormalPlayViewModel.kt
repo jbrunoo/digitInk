@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.presentation.play
+package com.jbrunoo.digitink.presentation.play.normal
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -28,12 +28,13 @@ import javax.inject.Inject
 import kotlin.math.roundToLong
 
 @HiltViewModel
-class PlayViewModel @Inject constructor(
+class NormalPlayViewModel @Inject constructor(
     private val classifier: Classifier,
     private val resultRepository: ResultRepository,
     private val playGamesManager: PlayGamesManager,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
     private val questionCount: Int =
         checkNotNull(savedStateHandle["questionCount"]) // 기본적으로 nullable type
 
@@ -46,16 +47,16 @@ class PlayViewModel @Inject constructor(
     private val _pathsList =
         MutableStateFlow<List<List<PathState>>>(List(questionCount) { emptyList() })
 
-    val uiState: StateFlow<PlayUIState> =
+    val uiState: StateFlow<NormalPlayUIState> =
         combine(_qnaList, _pathsList) { qnaList, pathsList ->
-            PlayUIState.SUCCESS(
+            NormalPlayUIState.SUCCESS(
                 qnaList = qnaList,
                 pathsList = pathsList
             )
         }.stateIn(
             viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = PlayUIState.LOADING
+            initialValue = NormalPlayUIState.LOADING
         )
 
     init {
