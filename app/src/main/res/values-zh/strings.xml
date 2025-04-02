@@ -7,4 +7,5 @@
     <string name="result_screen_delete_button_txt">记录要删除吗？</string>
     <string name="delete_button_cofirm_txt">确认</string>
     <string name="delete_button_dismiss_txt">取消</string>
+    <string name="game_mode_infinite">无限模式</string>
 </resources>

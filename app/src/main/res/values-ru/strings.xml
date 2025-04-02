@@ -7,4 +7,5 @@
     <string name="result_screen_delete_button_txt">Удалить запись?</string>
     <string name="delete_button_cofirm_txt">Подтвердить</string>
     <string name="delete_button_dismiss_txt">Отмена</string>
+    <string name="game_mode_infinite">Бесконечный режим</string>
 </resources>

@@ -7,4 +7,5 @@
     <string name="result_screen_delete_button_txt">¿Desea eliminar el registro?</string>
     <string name="delete_button_cofirm_txt">Confirmar</string>
     <string name="delete_button_dismiss_txt">Cancelar</string>
+    <string name="game_mode_infinite">Modo Infinito</string>
 </resources>
