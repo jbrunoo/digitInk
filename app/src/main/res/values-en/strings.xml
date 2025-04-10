@@ -5,6 +5,19 @@
     <string name="game_timer_text">Timer: %d.%02d</string>
     <string name="question_count_prefix">"%1$s questions"</string>
     <string name="result_screen_delete_button_txt">Do you want to delete the record?</string>
+
     <string name="delete_button_cofirm_txt">Confirm</string>
     <string name="delete_button_dismiss_txt">Dismiss</string>
+
+    <string name="game_rules_text">🧠 Game Rules\n\n</string>
+    <string name="rule_caution_detail_text">\n- Be sure to write the numbers within the designated square.\n\n</string>
+    <string name="rule_link_detail_text">\n    MNIST Introduction: http://yann.lecun.com/exdb/mnist  \n    TensorFlow Sample: https://www.tensorflow.org/datasets/catalog/mnist\n</string>
+    <string name="rule_model_text">🤖 AI Grading Model</string>
+    <string name="rule_model_detail_text">\n- This game is graded by an AI that recognizes handwritten numbers.\n- The AI has been trained on the MNIST handwritten digit dataset.\n- Understanding the AI\'s criteria is important!\n</string>
+    <string name="rule_limit_time_text">⏱ Time Limit</string>
+    <string name="rule_limit_time_detail_text">\n- Each question must be answered within 5 seconds!\n- If time runs out, it automatically moves to the next question.\n</string>
+    <string name="rule_score_text">🎯 Scoring Method</string>
+    <string name="rule_score_detail_text">\n- The total score is always 100 points.\n- The points per question vary depending on the number of questions:\n\n  5 questions: 20 points\n  10 questions: 10 points\n  15 questions: approximately 6.7 points\n  20 questions: 5 points\n\n- Each question\'s score is calculated as \'base score + remaining time (seconds)\'.\n\nExample: In 5-question mode, answering 2 questions correctly with 2 seconds left = 42 points (40+2)\n</string>
+    <string name="rule_caution_text">🖊️ Writing Caution</string>
+    <string name="rule_link_text">📎 Reference Links</string>
 </resources>
