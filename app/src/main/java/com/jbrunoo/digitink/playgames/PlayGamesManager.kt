@@ -23,6 +23,8 @@ class PlayGamesManager {
     fun initialize(activity: Activity) {
         gamesSignInClient = PlayGames.getGamesSignInClient(activity)
         leaderboardsClient = PlayGames.getLeaderboardsClient(activity)
+
+        checkAuth()
     }
 
     fun checkAuth() {
@@ -72,8 +74,6 @@ class PlayGamesManager {
     }
 
     fun submitScore(leaderBoardKey: String, score: Long) {
-        checkAuth()
-
         if (!_isAuthenticated.value) {
             Timber.d("submitScore - not Authenticated")
             return
