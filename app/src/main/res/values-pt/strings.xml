@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="game_mode_nomal">Modo Normal</string>
+    <string name="game_mode_infinite">Modo Infinito</string>
     <string name="game_result_text">Resultado</string>
     <string name="game_timer_text">Cronômetro: : %d.%02d</string>
     <string name="question_count_prefix">%1$s perguntas</string>
     <string name="result_screen_delete_button_txt">Deseja excluir o registro?</string>
+
     <string name="delete_button_cofirm_txt">Confirmar</string>
     <string name="delete_button_dismiss_txt">Cancelar</string>
-    <string name="game_mode_infinite">Modo Infinito</string>
+
+    <string name="game_rules_text">🧠 Regras do Jogo\n\n</string>
+    <string name="rule_caution_detail_text">\n- Certifique-se de escrever os números dentro do quadrado designado.\n\n</string>
+    <string name="rule_link_detail_text">\n    Introdução ao MNIST: http://yann.lecun.com/exdb/mnist  \n    Exemplo do TensorFlow: https://www.tensorflow.org/datasets/catalog/mnist\n</string>
+    <string name="rule_model_text">🤖 Modelo de Avaliação AI</string>
+    <string name="rule_model_detail_text">\n- Este jogo é avaliado por uma IA que reconhece números manuscritos.\n- A IA foi treinada com o conjunto de dados de dígitos manuscritos MNIST.\n- Compreender os critérios da IA é importante!\n</string>
+    <string name="rule_limit_time_text">⏱ Limite de Tempo</string>
+    <string name="rule_limit_time_detail_text">\n- Cada pergunta deve ser respondida em 5 segundos!\n- Se o tempo acabar, passa automaticamente para a próxima pergunta.\n</string>
+    <string name="rule_score_text">🎯 Método de Pontuação</string>
+    <string name="rule_score_detail_text">\n- A pontuação total é sempre 100 pontos.\n- Os pontos por pergunta variam dependendo do número de perguntas:\n\n  5 perguntas: 20 pontos\n  10 perguntas: 10 pontos\n  15 perguntas: aproximadamente 6.7 pontos\n  20 perguntas: 5 pontos\n\n- A pontuação de cada pergunta é calculada como \'pontuação base + tempo restante (segundos)\'.\n\nExemplo: No modo de 5 perguntas, responder corretamente 2 perguntas com 2 segundos restantes = 42 pontos (40+2)\n</string>
+    <string name="rule_caution_text">🖊️ Atenção ao Escrever</string>
+    <string name="rule_link_text">📎 Links de Referência</string>
 </resources>
+

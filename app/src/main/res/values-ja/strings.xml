@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="game_mode_nomal">"通常モード "</string>
+    <string name="game_mode_infinite">インフィニットモード</string>
     <string name="game_result_text">結果</string>
     <string name="game_timer_text">タイマー: %d.%02d</string>
     <string name="question_count_prefix">%1$s 問</string>
     <string name="result_screen_delete_button_txt">記録を削除しますか？</string>
+
     <string name="delete_button_cofirm_txt">確認</string>
     <string name="delete_button_dismiss_txt">取消</string>
-    <string name="game_mode_infinite">インフィニットモード</string>
+
+    <string name="game_rules_text">🧠 ゲームルール\n\n</string>
+    <string name="rule_caution_detail_text">\n- 必ず指定された四角い枠内に数字を書いてください。\n\n</string>
+    <string name="rule_link_detail_text">\n    MNIST紹介: http://yann.lecun.com/exdb/mnist  \n    TensorFlowサンプル: https://www.tensorflow.org/datasets/catalog/mnist\n</string>
+    <string name="rule_model_text">🤖 AI採点モデル</string>
+    <string name="rule_model_detail_text">\n- このゲームでは、手書き数字を認識するAIが採点を行います。\n- AIはMNISTという手書き数字のデータセットで学習しています。\n- AIの正解基準を理解することが重要です！\n</string>
+    <string name="rule_limit_time_text">⏱ 制限時間</string>
+    <string name="rule_limit_time_detail_text">\n- 各問題は5秒以内に解答してください！\n- 時間が経過すると自動的に次の問題に移ります。\n</string>
+    <string name="rule_score_text">🎯 スコア計算方法</string>
+    <string name="rule_score_detail_text">\n- 総得点は常に100点です。\n- 問題数に応じて1問あたりの点数が異なります：\n\n  5問：20点\n  10問：10点\n  15問：約6.7点\n  20問：5点\n\n- 各問題の得点は「基本点数 + 残り時間（秒）」で計算されます！\n\n例：5問モードで2秒残して2問正解の場合 = 42点（40+2）。\n</string>
+    <string name="rule_caution_text">🖊️ 数字を書く際の注意事項</string>
+    <string name="rule_link_text">📎 参考リンク</string>
 </resources>
+

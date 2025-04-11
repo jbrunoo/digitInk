@@ -1,6 +1,8 @@
 package com.jbrunoo.digitink.presentation
 
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,6 +16,7 @@ import com.jbrunoo.digitink.presentation.result.ResultScreen
 @Composable
 fun RootNavHost(navController: NavHostController) {
     NavHost(
+        modifier = Modifier.systemBarsPadding(),
         navController = navController,
         startDestination = Screen.HOME.route
     ) {
