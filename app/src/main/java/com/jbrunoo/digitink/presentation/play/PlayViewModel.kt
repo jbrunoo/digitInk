@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.roundToLong
 
@@ -128,7 +129,7 @@ class PlayViewModel @Inject constructor(
         }
     }
 
-    fun saveResultEntry() {
+    fun saveResultEntry(onComplete: () -> Unit) {
         val score = calcScore()
         val dataStoreKey = questionCount.datastoreKey() ?: return
         val leaderBoardKey = questionCount.leaderBoardKey() ?: return
@@ -136,6 +137,10 @@ class PlayViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             playGamesManager.submitScore(leaderBoardKey, score)
             resultRepository.saveValue(dataStoreKey, score)
+
+            withContext(Dispatchers.Main) {
+                onComplete()
+            }
         }
     }
 
