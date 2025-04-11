@@ -23,6 +23,8 @@ class PlayGamesManager {
     fun initialize(activity: Activity) {
         gamesSignInClient = PlayGames.getGamesSignInClient(activity)
         leaderboardsClient = PlayGames.getLeaderboardsClient(activity)
+
+        checkAuth()
     }
 
     fun checkAuth() {
