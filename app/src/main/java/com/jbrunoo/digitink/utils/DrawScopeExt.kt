@@ -5,9 +5,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import com.jbrunoo.digitink.presentation.play.normal.PathState
+import com.jbrunoo.digitink.domain.model.DrawPath
 
-fun DrawScope.drawUserPaths(pathStates: List<PathState>) {
+fun DrawScope.drawUserPaths(pathStates: List<DrawPath>) {
     pathStates.forEach { customPath ->
         val path = Path().apply {
             moveTo(customPath.start.x, customPath.start.y)
