@@ -9,6 +9,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jbrunoo.digitink.domain.Classifier
 import com.jbrunoo.digitink.domain.ResultRepository
+import com.jbrunoo.digitink.domain.model.DrawPath
+import com.jbrunoo.digitink.domain.model.Qna
+import com.jbrunoo.digitink.domain.model.QnaWithPath
 import com.jbrunoo.digitink.playgames.PlayGamesManager
 import com.jbrunoo.digitink.utils.datastoreKey
 import com.jbrunoo.digitink.utils.leaderBoardKey
@@ -18,7 +21,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -38,20 +40,16 @@ class NormalPlayViewModel @Inject constructor(
     private val questionCount: Int =
         checkNotNull(savedStateHandle["questionCount"]) // 기본적으로 nullable type
 
-    private val _limitTime = MutableStateFlow(questionCount * 5000L) // milliseconds
-    val limitTime = _limitTime.asStateFlow()
-
     private var correctCount by mutableIntStateOf(0)
 
-    private val _qnaList = MutableStateFlow<List<QnaState>>(emptyList())
-    private val _pathsList =
-        MutableStateFlow<List<List<PathState>>>(List(questionCount) { emptyList() })
+    private val _limitTime = MutableStateFlow(questionCount * 5000L) // milliseconds
+    private val _qnaWithPathBuffer = MutableStateFlow<List<QnaWithPath>>(emptyList())
 
     val uiState: StateFlow<NormalPlayUIState> =
-        combine(_qnaList, _pathsList) { qnaList, pathsList ->
+        combine(_limitTime, _qnaWithPathBuffer) { time, buf ->
             NormalPlayUIState.SUCCESS(
-                qnaList = qnaList,
-                pathsList = pathsList
+                limitTime = time,
+                qnaWithPathList = buf,
             )
         }.stateIn(
             viewModelScope,
@@ -65,7 +63,6 @@ class NormalPlayViewModel @Inject constructor(
 
     private fun resetGame() {
         generateQnaPairs(questionCount)
-        _pathsList.value = List(questionCount) { emptyList() }
         _limitTime.value = questionCount * 5000L
         correctCount = 0
         countDownTime()
@@ -82,21 +79,31 @@ class NormalPlayViewModel @Inject constructor(
 
     private fun generateQnaPairs(questionCount: Int) {
         viewModelScope.launch {
-            val qnaMutableList = mutableListOf<QnaState>()
+            var id = 1
+            val tempQnaWithPathList = mutableListOf<QnaWithPath>()
+
             repeat(questionCount) {
                 while (true) {
                     val num1 = (1..9).random()
                     val num2 = (1..9).random()
                     val operator = listOf("+", "-").random()
                     val result = if (operator == "+") num1 + num2 else num1 - num2
+
                     if (result in 1..9) { // mnist가 단일 값만 비교되서 단일 결과 값을 가지는 경우만
-                        val qnaState = QnaState("$num1 $operator $num2 =", result, null)
-                        qnaMutableList.add(qnaState)
-                        break // break 빼먹어서 처음으로 OutOfMemoryError 겪음. 모델이랑 그래픽 그리는 부분 문제인 줄..
+                        val qna = Qna("$num1 $operator $num2 =", result)
+                        tempQnaWithPathList.add(
+                            QnaWithPath(
+                                id = ++id,
+                                qna = qna,
+                                paths = emptyList(),
+                            )
+                        )
+                        break
                     }
                 }
             }
-            _qnaList.value = qnaMutableList
+
+            _qnaWithPathBuffer.update { tempQnaWithPathList }
         }
     }
 
@@ -107,26 +114,28 @@ class NormalPlayViewModel @Inject constructor(
     }
 
     fun onCheckCorrect(bmp: ImageBitmap?, index: Int) {
-        _qnaList.update { qnaList ->
-            val qnaMuList = qnaList.toMutableList()
-            val qnaState = qnaMuList[index]
-            val userGuess = classifyBmp(bmp)
-            val checkDrawResult = userGuess?.let { it == qnaState.answer } ?: false
+        val userGuess = classifyBmp(bmp)
 
-            if (checkDrawResult) correctCount++
+        _qnaWithPathBuffer.update { buf ->
+            val tempBuf = buf.toMutableList()
+            val tempQnaWithPath = tempBuf[index]
+            val isCorrect = userGuess?.let { it == tempQnaWithPath.qna.answer } ?: false
 
-            qnaMuList[index] = qnaState.copy(checkDrawResult = checkDrawResult)
+            if (isCorrect) correctCount++
 
-            qnaMuList
+            tempBuf[index] = tempQnaWithPath.copy(isCorrect = isCorrect)
+
+            tempBuf.toList()
         }
     }
 
-    fun onPathsUpdate(paths: List<PathState>, index: Int) {
-        _pathsList.update { currentPathsList ->
-            val updatedPathsList = currentPathsList.toMutableList()
+    fun onPathsUpdate(paths: List<DrawPath>, index: Int) {
+        _qnaWithPathBuffer.update { buf ->
+            val tempBuf = buf.toMutableList()
+            val tempQnaWithPath = tempBuf[index]
 
-            updatedPathsList[index] = paths
-            updatedPathsList
+            tempBuf[index] = tempQnaWithPath.copy(paths = paths)
+            tempBuf
         }
     }
 

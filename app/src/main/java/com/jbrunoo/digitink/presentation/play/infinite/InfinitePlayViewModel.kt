@@ -5,9 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jbrunoo.digitink.domain.Classifier
 import com.jbrunoo.digitink.domain.ResultRepository
+import com.jbrunoo.digitink.domain.model.DrawPath
+import com.jbrunoo.digitink.domain.model.Qna
+import com.jbrunoo.digitink.domain.model.QnaWithPath
 import com.jbrunoo.digitink.playgames.PlayGamesManager
-import com.jbrunoo.digitink.presentation.play.normal.PathState
-import com.jbrunoo.digitink.presentation.play.normal.QnaState
 import com.jbrunoo.digitink.utils.Constants.DATASTORE_KEY_INFINITE
 import com.jbrunoo.digitink.utils.Constants.LEADERBOARD_KEY_INFINITE
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,17 +31,17 @@ class InfinitePlayViewModel @Inject constructor(
     private val playGamesManager: PlayGamesManager,
 ) : ViewModel() {
 
+    private var _qnaIdCounter = 1
     private val _correctCount = MutableStateFlow(0)
+
     private val _lifeCount = MutableStateFlow(5)
-    private val _qnaList = MutableStateFlow<List<QnaState>>(emptyList())
-    private val _pathsList = MutableStateFlow<List<List<PathState>>>(emptyList())
+    private val _qnaWithPathList = MutableStateFlow(emptyList<QnaWithPath>())
 
     val uiState: StateFlow<InfinitePlayUIState> =
-        combine(_lifeCount, _qnaList, _pathsList) { lifeCount, qnaList, pathsList ->
+        combine(_lifeCount, _qnaWithPathList) { lifeCount, qnaWithPathList ->
             InfinitePlayUIState.SUCCESS(
                 lifeCount = lifeCount,
-                qnaList = qnaList,
-                pathsList = pathsList
+                qnaWithPathList = qnaWithPathList,
             )
         }.stateIn(
             viewModelScope,
@@ -49,69 +50,77 @@ class InfinitePlayViewModel @Inject constructor(
         )
 
     init {
-        generateQnaPairs(5)
-        _pathsList.value = List(5) { emptyList() }
+        generateQna()
 
         viewModelScope.launch(Dispatchers.Main) {
             _correctCount.collect {
                 Timber.d("infinite mode - 1 qna generating")
-                generateQnaPairs(1)
+                generateQna()
             }
         }
     }
 
-    private fun generateQnaPairs(count: Int) {
+    private fun generateQna() {
         viewModelScope.launch {
-            val qnaMutableList = mutableListOf<QnaState>()
-            val pathsMutableList = mutableListOf<List<PathState>>()
+            // 1~9가 답이 되는 문제만 선택
+            while (true) {
+                val num1 = (1..9).random()
+                val num2 = (1..9).random()
+                val operator = listOf("+", "-").random()
+                val result = if (operator == "+") num1 + num2 else num1 - num2
+                if (result in 1..9) { // mnist가 단일 값만 비교되서 단일 결과 값을 가지는 경우만
+                    val qna = Qna("$num1 $operator $num2 =", result)
 
-            repeat(count) {
-                // 1~9가 답이 되는 문제만 선택
-                while (true) {
-                    val num1 = (1..9).random()
-                    val num2 = (1..9).random()
-                    val operator = listOf("+", "-").random()
-                    val result = if (operator == "+") num1 + num2 else num1 - num2
-                    if (result in 1..9) { // mnist가 단일 값만 비교되서 단일 결과 값을 가지는 경우만
-                        val qnaState = QnaState("$num1 $operator $num2 =", result, null)
-                        qnaMutableList.add(qnaState)
-                        pathsMutableList.add(emptyList())
-                        break
-                    }
+                    addQnaWithPath(qna)
+                    break
                 }
             }
-            _qnaList.update { it + qnaMutableList }
-            _pathsList.update { it + pathsMutableList }
         }
     }
 
-    private fun classifyBmp(bmp: ImageBitmap?): Int? {
-        return bmp?.let {
-            classifier.classify(bmp)
+    private fun addQnaWithPath(qna: Qna) {
+        Timber.d("addQnaWithPath - qna: $qna")
+
+        _qnaWithPathList.update { old ->
+            val new = QnaWithPath(
+                id = ++_qnaIdCounter,
+                qna = qna,
+                paths = emptyList(),
+                isCorrect = null
+            )
+
+            old + new
         }
     }
 
-    fun onCheckCorrect(bmp: ImageBitmap?, index: Int) {
-        _qnaList.update { qnaList ->
-            val qnaMuList = qnaList.toMutableList()
-            val qnaState = qnaMuList[index]
-            val userGuess = classifyBmp(bmp)
-            val checkDrawResult = userGuess?.let { it == qnaState.answer } ?: false
+    fun onUpdateDrawResult(bmp: ImageBitmap?) {
+        val userGuess = classifyBmp(bmp)
 
-            if (checkDrawResult) _correctCount.value++ else _lifeCount.value--
+        _qnaWithPathList.update { old ->
+            val new = old.toMutableList()
+            val lastIdx = old.lastIndex
+            val oldQnaWithPath = new[lastIdx]
 
-            qnaMuList[index] = qnaState.copy(checkDrawResult = checkDrawResult)
+            val isCorrect = userGuess?.let { it == oldQnaWithPath.qna.answer } ?: false
+            if (isCorrect) _correctCount.value++ else _lifeCount.value--
 
-            qnaMuList
+            new[lastIdx] = oldQnaWithPath.copy(isCorrect = isCorrect)
+            new
         }
     }
 
-    fun onPathsUpdate(paths: List<PathState>, index: Int) {
-        _pathsList.update { currentPathsList ->
-            val updatedPathsList = currentPathsList.toMutableList()
+    fun onUpdatePaths(paths: List<DrawPath>) {
+        Timber.d("onPathsUpdate - paths: $paths")
 
-            updatedPathsList[index] = paths
-            updatedPathsList
+        _qnaWithPathList.update { old ->
+            val new = old.toMutableList()
+            val lastIndex = new.lastIndex
+            val oldQnaWithPath = new[lastIndex]
+
+            val updatedQnaWithPath = oldQnaWithPath.copy(paths = paths)
+            new[lastIndex] = updatedQnaWithPath
+
+            new
         }
     }
 
@@ -127,6 +136,8 @@ class InfinitePlayViewModel @Inject constructor(
             }
         }
     }
+
+    private fun classifyBmp(bmp: ImageBitmap?): Int? = bmp?.let { classifier.classify(it) }
 
     private fun calcScore(): Long = _correctCount.value * 5L
 }
