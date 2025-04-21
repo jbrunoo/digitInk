@@ -19,7 +19,7 @@
     <string name="rule_limit_time_text">⏱ 제한 시간</string>
     <string name="rule_limit_time_detail_text">"\n- 각 문제는 5초 안에 풀어야 해요!\n- 시간이 지나면 자동으로 다음 문제로 넘어갑니다.\n"</string>
     <string name="rule_score_text">🎯 점수 계산 방식</string>
-    <string name="rule_score_detail_text">"\n- 전체 점수는 항상 100점이에요.\n- 문제 수에 따라 한 문제당 점수가 달라요:\n\n5문제: 20점\n10문제: 10점\n15문제: 약 6.7점\n20문제: 5점\n\n- 각 문제의 점수는 ‘기본 점수 + 남은 시간(초)’로 계산됩니다!\n\n예: 5문제 모드에서 2초 남기고 2문제 정답 = 42점 (40+2)\n"</string>
+    <string name="rule_score_detail_text">"\n- 전체 점수는 항상 100점이에요.\n- 문제 수에 따라 한 문제당 점수가 달라요:\n\n5문제: 20점\n10문제: 10점\n15문제: 약 6.7점\n20문제 &amp; 무한모드: 5점\n\n- 각 문제의 점수는 ‘기본 점수 + 남은 시간(초)’로 계산됩니다!\n\n예: 5문제 모드에서 2초 남기고 2문제 정답 = 42점 (40+2)\n"</string>
     <string name="rule_caution_text">🖊️ 숫자 쓰기 주의사항</string>
     <string name="rule_link_text">📎 참고 링크</string>
 </resources>

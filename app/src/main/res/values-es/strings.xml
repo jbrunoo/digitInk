@@ -18,7 +18,7 @@
     <string name="rule_limit_time_text">⏱ Límite de Tiempo</string>
     <string name="rule_limit_time_detail_text">\n- ¡Cada pregunta debe responderse en 5 segundos!\n- Si se acaba el tiempo, se pasa automáticamente a la siguiente pregunta.\n</string>
     <string name="rule_score_text">🎯 Método de Puntuación</string>
-    <string name="rule_score_detail_text">\n- La puntuación total es siempre de 100 puntos.\n- Los puntos por pregunta varían según el número de preguntas:\n\n  5 preguntas: 20 puntos\n  10 preguntas: 10 puntos\n  15 preguntas: aproximadamente 6.7 puntos\n  20 preguntas: 5 puntos\n\n- La puntuación de cada pregunta se calcula como \'puntuación base + tiempo restante (segundos)\'.\n\nEjemplo: En el modo de 5 preguntas, responder correctamente 2 preguntas con 2 segundos restantes = 42 puntos (40+2)\n</string>
+    <string name="rule_score_detail_text">\n- La puntuación total es siempre de 100 puntos.\n- Los puntos por pregunta varían según el número de preguntas:\n\n  5 preguntas: 20 puntos\n  10 preguntas: 10 puntos\n  15 preguntas: aproximadamente 6.7 puntos\n  20 preguntas &amp; Modo Infinito: 5 puntos\n\n- La puntuación de cada pregunta se calcula como \'puntuación base + tiempo restante (segundos)\'.\n\nEjemplo: En el modo de 5 preguntas, responder correctamente 2 preguntas con 2 segundos restantes = 42 puntos (40+2)\n</string>
     <string name="rule_caution_text">🖊️ Precaución al Escribir</string>
     <string name="rule_link_text">📎 Enlaces de Referencia</string>
 </resources>

@@ -11,5 +11,5 @@ object Constants {
     const val LEADERBOARD_KEY_10 = "CgkIppS0iLUcEAIQBw"
     const val LEADERBOARD_KEY_15 = "CgkIppS0iLUcEAIQCA"
     const val LEADERBOARD_KEY_20 = "CgkIppS0iLUcEAIQCQ"
-    const val LEADERBOARD_KEY_INFINITE = ""
+    const val LEADERBOARD_KEY_INFINITE = "CgkIppS0iLUcEAIQCw"
 }

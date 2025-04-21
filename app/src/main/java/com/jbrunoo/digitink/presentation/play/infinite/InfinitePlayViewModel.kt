@@ -9,8 +9,7 @@ import com.jbrunoo.digitink.domain.model.DrawPath
 import com.jbrunoo.digitink.domain.model.Qna
 import com.jbrunoo.digitink.domain.model.QnaWithPath
 import com.jbrunoo.digitink.playgames.PlayGamesManager
-import com.jbrunoo.digitink.utils.Constants.DATASTORE_KEY_INFINITE
-import com.jbrunoo.digitink.utils.Constants.LEADERBOARD_KEY_INFINITE
+import com.jbrunoo.digitink.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -126,10 +125,12 @@ class InfinitePlayViewModel @Inject constructor(
 
     fun saveResultEntry(onComplete: () -> Unit) {
         val score = calcScore()
+        val dataStoreKey = Constants.DATASTORE_KEY_INFINITE
+        val leaderBoardKey = Constants.LEADERBOARD_KEY_INFINITE
 
         viewModelScope.launch(Dispatchers.IO) {
-            playGamesManager.submitScore(LEADERBOARD_KEY_INFINITE, score)
-            resultRepository.saveValue(DATASTORE_KEY_INFINITE, score)
+            playGamesManager.submitScore(leaderBoardKey, score)
+            resultRepository.saveValue(dataStoreKey, score)
 
             withContext(Dispatchers.Main) {
                 onComplete()

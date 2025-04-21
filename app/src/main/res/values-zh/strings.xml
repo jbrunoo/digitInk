@@ -18,7 +18,7 @@
     <string name="rule_limit_time_text">⏱ 时间限制</string>
     <string name="rule_limit_time_detail_text">\n- 每道题需要在5秒内完成！\n- 时间结束后会自动进入下一题。\n</string>
     <string name="rule_score_text">🎯 评分方式</string>
-    <string name="rule_score_detail_text">\n- 总分始终为100分。\n- 根据题目数量，每题分值不同：\n\n  5题：每题20分\n  10题：每题10分\n  15题：每题约6.7分\n  20题：每题5分\n\n- 每题得分计算方式为“基础分数 + 剩余时间（秒）”！\n\n例如：在5题模式下，若剩余2秒且答对2题 = 42分（40+2）。\n</string>
+    <string name="rule_score_detail_text">\n- 总分始终为100分。\n- 根据题目数量，每题分值不同：\n\n  5题：每题20分\n  10题：每题10分\n  15题：每题约6.7分\n  20题 &amp; 无限模式：每题5分\n\n- 每题得分计算方式为“基础分数 + 剩余时间（秒）”！\n\n例如：在5题模式下，若剩余2秒且答对2题 = 42分（40+2）。\n</string>
     <string name="rule_caution_text">🖊️ 数字书写注意事项</string>
     <string name="rule_link_text">📎 参考链接</string>
 </resources>
