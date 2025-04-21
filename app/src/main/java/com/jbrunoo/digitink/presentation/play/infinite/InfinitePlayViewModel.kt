@@ -50,7 +50,7 @@ class InfinitePlayViewModel @Inject constructor(
         )
 
     init {
-        generateQna()
+        generateQna(repeatCount = 5)
 
         viewModelScope.launch(Dispatchers.Main) {
             _correctCount.collect {
@@ -60,19 +60,21 @@ class InfinitePlayViewModel @Inject constructor(
         }
     }
 
-    private fun generateQna() {
+    private fun generateQna(repeatCount: Int = 1) {
         viewModelScope.launch {
             // 1~9가 답이 되는 문제만 선택
-            while (true) {
-                val num1 = (1..9).random()
-                val num2 = (1..9).random()
-                val operator = listOf("+", "-").random()
-                val result = if (operator == "+") num1 + num2 else num1 - num2
-                if (result in 1..9) { // mnist가 단일 값만 비교되서 단일 결과 값을 가지는 경우만
-                    val qna = Qna("$num1 $operator $num2 =", result)
+            repeat(repeatCount) {
+                while (true) {
+                    val num1 = (1..9).random()
+                    val num2 = (1..9).random()
+                    val operator = listOf("+", "-").random()
+                    val result = if (operator == "+") num1 + num2 else num1 - num2
+                    if (result in 1..9) { // mnist가 단일 값만 비교되서 단일 결과 값을 가지는 경우만
+                        val qna = Qna("$num1 $operator $num2 =", result)
 
-                    addQnaWithPath(qna)
-                    break
+                        addQnaWithPath(qna)
+                        break
+                    }
                 }
             }
         }
@@ -93,32 +95,30 @@ class InfinitePlayViewModel @Inject constructor(
         }
     }
 
-    fun onUpdateDrawResult(bmp: ImageBitmap?) {
+    fun onUpdateDrawResult(bmp: ImageBitmap?, index: Int) {
         val userGuess = classifyBmp(bmp)
 
         _qnaWithPathList.update { old ->
             val new = old.toMutableList()
-            val lastIdx = old.lastIndex
-            val oldQnaWithPath = new[lastIdx]
+            val oldQnaWithPath = new[index]
 
             val isCorrect = userGuess?.let { it == oldQnaWithPath.qna.answer } ?: false
             if (isCorrect) _correctCount.value++ else _lifeCount.value--
 
-            new[lastIdx] = oldQnaWithPath.copy(isCorrect = isCorrect)
+            new[index] = oldQnaWithPath.copy(isCorrect = isCorrect)
             new
         }
     }
 
-    fun onUpdatePaths(paths: List<DrawPath>) {
+    fun onUpdatePaths(paths: List<DrawPath>, index: Int) {
         Timber.d("onPathsUpdate - paths: $paths")
 
         _qnaWithPathList.update { old ->
             val new = old.toMutableList()
-            val lastIndex = new.lastIndex
-            val oldQnaWithPath = new[lastIndex]
+            val oldQnaWithPath = new[index]
 
             val updatedQnaWithPath = oldQnaWithPath.copy(paths = paths)
-            new[lastIndex] = updatedQnaWithPath
+            new[index] = updatedQnaWithPath
 
             new
         }

@@ -40,16 +40,17 @@ class NormalPlayViewModel @Inject constructor(
     private val questionCount: Int =
         checkNotNull(savedStateHandle["questionCount"]) // 기본적으로 nullable type
 
+    private var _qnaIdCounter = 1
     private var correctCount by mutableIntStateOf(0)
 
     private val _limitTime = MutableStateFlow(questionCount * 5000L) // milliseconds
-    private val _qnaWithPathBuffer = MutableStateFlow<List<QnaWithPath>>(emptyList())
+    private val _qnaWithPathList = MutableStateFlow<List<QnaWithPath>>(emptyList())
 
     val uiState: StateFlow<NormalPlayUIState> =
-        combine(_limitTime, _qnaWithPathBuffer) { time, buf ->
+        combine(_limitTime, _qnaWithPathList) { limitTime, qnaWithPathList ->
             NormalPlayUIState.SUCCESS(
-                limitTime = time,
-                qnaWithPathList = buf,
+                limitTime = limitTime,
+                qnaWithPathList = qnaWithPathList,
             )
         }.stateIn(
             viewModelScope,
@@ -79,7 +80,6 @@ class NormalPlayViewModel @Inject constructor(
 
     private fun generateQnaPairs(questionCount: Int) {
         viewModelScope.launch {
-            var id = 1
             val tempQnaWithPathList = mutableListOf<QnaWithPath>()
 
             repeat(questionCount) {
@@ -93,9 +93,10 @@ class NormalPlayViewModel @Inject constructor(
                         val qna = Qna("$num1 $operator $num2 =", result)
                         tempQnaWithPathList.add(
                             QnaWithPath(
-                                id = ++id,
+                                id = ++_qnaIdCounter,
                                 qna = qna,
                                 paths = emptyList(),
+                                isCorrect = null,
                             )
                         )
                         break
@@ -103,7 +104,7 @@ class NormalPlayViewModel @Inject constructor(
                 }
             }
 
-            _qnaWithPathBuffer.update { tempQnaWithPathList }
+            _qnaWithPathList.update { tempQnaWithPathList }
         }
     }
 
@@ -116,26 +117,26 @@ class NormalPlayViewModel @Inject constructor(
     fun onCheckCorrect(bmp: ImageBitmap?, index: Int) {
         val userGuess = classifyBmp(bmp)
 
-        _qnaWithPathBuffer.update { buf ->
-            val tempBuf = buf.toMutableList()
-            val tempQnaWithPath = tempBuf[index]
+        _qnaWithPathList.update { old ->
+            val new = old.toMutableList()
+            val tempQnaWithPath = new[index]
             val isCorrect = userGuess?.let { it == tempQnaWithPath.qna.answer } ?: false
 
             if (isCorrect) correctCount++
 
-            tempBuf[index] = tempQnaWithPath.copy(isCorrect = isCorrect)
-
-            tempBuf.toList()
+            new[index] = tempQnaWithPath.copy(isCorrect = isCorrect)
+            new
         }
+
     }
 
     fun onPathsUpdate(paths: List<DrawPath>, index: Int) {
-        _qnaWithPathBuffer.update { buf ->
-            val tempBuf = buf.toMutableList()
-            val tempQnaWithPath = tempBuf[index]
+        _qnaWithPathList.update { old ->
+            val new = old.toMutableList()
+            val tempQnaWithPath = new[index]
 
-            tempBuf[index] = tempQnaWithPath.copy(paths = paths)
-            tempBuf
+            new[index] = tempQnaWithPath.copy(paths = paths)
+            new
         }
     }
 
