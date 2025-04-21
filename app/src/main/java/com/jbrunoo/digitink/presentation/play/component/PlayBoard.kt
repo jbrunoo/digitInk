@@ -16,13 +16,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,80 +39,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.jbrunoo.digitink.presentation.play.normal.PathState
-import com.jbrunoo.digitink.presentation.play.normal.QnaState
+import com.jbrunoo.digitink.domain.model.DrawPath
+import com.jbrunoo.digitink.domain.model.QnaWithPath
+import com.jbrunoo.digitink.presentation.play.model.PlayBoardState
+import com.jbrunoo.digitink.presentation.play.model.rememberPlayBoardState
 import com.jbrunoo.digitink.utils.drawCorrectIndicator
 import com.jbrunoo.digitink.utils.drawIncorrectIndicator
 import com.jbrunoo.digitink.utils.drawUserPaths
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
-import kotlin.time.Duration.Companion.seconds
 
 @Composable
 internal fun PlayBoard(
-    qnaList: List<QnaState>,
-    pathsList: List<List<PathState>>,
-    isGameOver: Boolean = false,
-    onPathsUpdate: (List<PathState>, Int) -> Unit,
-    onCheckDrawResult: (ImageBitmap?, Int) -> Unit,
-    onTerminate: () -> Unit = {},
+    qnaWithPath: List<QnaWithPath>,
+    playBoardState: PlayBoardState = rememberPlayBoardState(),
+    onUpdateUserPaths: (List<DrawPath>, Int) -> Unit,
+    onGradeUserDraw: (ImageBitmap?, Int) -> Unit,
 ) {
-    /* 스크롤 처리 */
-    // 0. 다음 문제가 없으면 스크롤 종료
-    // 1. 5초 동안 유저 입력 받기
-    // 2-1. 유저 입력 없을 시, checkDrawResult == false
-    // 2-2. 유저 입력 시, onCheckDrawResult() 후 5초 딜레이 취소
-    // 3. 0.5초 후 다음 문제 스크롤
-    val listState = rememberLazyListState()
-    var nextIdx by remember { mutableIntStateOf(0) }
-    var autoScroll by remember { mutableStateOf(false) }
-    var isDraw by remember { mutableStateOf(false) }
-    var delayJob: Job? by remember { mutableStateOf(null) }
-    val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-        Timber.e("Exception in coroutine: $exception")
-    }
+    LaunchedEffect(key1 = playBoardState.isAutoScrollState.value) {
+        Timber.d("key1 autoscroll : ${playBoardState.isAutoScrollState.value}")
 
-    LaunchedEffect(
-        key1 = autoScroll,
-        key2 = isDraw
-    ) {
-        when (isDraw) {
-            false -> {
-                delayJob = launch(Dispatchers.Default + coroutineExceptionHandler) {
-                    try {
-                        delay(5.seconds)
-                        onCheckDrawResult(null, nextIdx - 1) // checkDrawResult == false
-                        delay(0.5.seconds)
-                        withContext(Dispatchers.Main) { if(!isGameOver) listState.animateScrollToItem(nextIdx) }
-                    } finally {
-                        if (!isDraw) autoScroll = !autoScroll
-                    }
-                }
-            }
-
-            else -> {
-                delayJob?.cancelAndJoin()
-                delayJob = null
-
-                delay(0.5.seconds)
-
-                if (nextIdx < qnaList.size) {
-                    isDraw = false
-                }
-            }
+        playBoardState.startAutoScroll {
+            onGradeUserDraw(null, playBoardState.currentIdx.intValue)
         }
-
-        if (nextIdx == qnaList.size) onTerminate()
-
-        if(!isGameOver) listState.animateScrollToItem(nextIdx)
-        nextIdx++
     }
 
     BoxWithConstraints {
@@ -124,18 +71,19 @@ internal fun PlayBoard(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth(),
-            state = listState,
+            state = playBoardState.listState,
 //            contentPadding = PaddingValues(vertical = 0.5.dp),
             userScrollEnabled = false
         ) {
             items(4) {
                 Spacer(modifier = Modifier.height(itemDp))
             }
-            itemsIndexed(qnaList) { idx, qnaState ->
-                val paths = pathsList[idx]
-                val isCurrentQuestion =
-                    remember { derivedStateOf { nextIdx - 1 == idx } }
-                val borderColor = if (isCurrentQuestion.value) Color.White else Color.Transparent
+            itemsIndexed(
+                items = qnaWithPath,
+                key = { _: Int, value: QnaWithPath -> value.id }
+            ) { idx, item ->
+                val borderColor =
+                    if (idx == playBoardState.currentIdx.intValue) Color.White else Color.Transparent
                 Row(
                     modifier = Modifier
                         .height(itemDp)
@@ -144,26 +92,27 @@ internal fun PlayBoard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     QuestionLayout(
-                        question = qnaState.question,
+                        question = item.qna.question,
                         modifier = Modifier
                             .wrapContentSize()
                             .border(1.dp, borderColor)
                     )
                     DrawDigitLayout(
-                        paths = paths,
-                        checkDrawResult = qnaState.checkDrawResult,
+                        paths = item.paths,
+                        isCorrect = item.isCorrect,
                         modifier = Modifier
                             .fillMaxHeight()
                             .width(itemDp)
                             .clipToBounds() // 외부까지 그려지는 것 방지, ui에서 그려지지 않을 뿐 드래그 로그는 찍힘
                             .border(1.dp, borderColor),
                         onCheckDrawResult = { bmp ->
-                            isDraw = true
-                            onCheckDrawResult(bmp, idx)
+                            playBoardState.cancelAutoScroll {
+                                onGradeUserDraw(bmp, playBoardState.currentIdx.intValue)
+                            }
                         },
-                        onPathsUpdate = { paths ->
-                            onPathsUpdate(paths, idx)
-                        }
+                        onPathsUpdate = { bmp ->
+                            onUpdateUserPaths(bmp, playBoardState.currentIdx.intValue)
+                        },
                     )
                 }
             }
@@ -172,14 +121,28 @@ internal fun PlayBoard(
 }
 
 @Composable
+private fun QuestionLayout(question: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.padding(4.dp)
+    ) {
+        Text(
+            question, style = TextStyle(
+                fontSize = 30.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
+        )
+    }
+}
+
+@Composable
 private fun DrawDigitLayout(
-    paths: List<PathState>,
-    checkDrawResult: Boolean?,
+    paths: List<DrawPath>,
+    isCorrect: Boolean?,
     modifier: Modifier = Modifier,
-    onPathsUpdate: (List<PathState>) -> Unit,
+    onPathsUpdate: (List<DrawPath>) -> Unit,
     onCheckDrawResult: (ImageBitmap) -> Unit,
 ) {
-    val userPaths = remember { mutableStateListOf<PathState>() }
+    val userPaths = remember { mutableStateListOf<DrawPath>() }
     var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     val coroutineScope = rememberCoroutineScope()
     val graphicsLayer = rememberGraphicsLayer()
@@ -193,7 +156,7 @@ private fun DrawDigitLayout(
 
     val drawModifier = modifier
         .pointerInput(Unit) {
-            if (checkDrawResult == null) {
+            if (isCorrect == null) {
                 detectDragGestures(
                     onDragEnd = {
                         coroutineScope.launch {
@@ -205,7 +168,7 @@ private fun DrawDigitLayout(
                 ) { change, dragAmount ->
 //                Log.d("change", "$change, $dragAmount")
                     val path =
-                        PathState(
+                        DrawPath(
                             start = change.position - dragAmount,
                             end = change.position
                         )
@@ -226,24 +189,10 @@ private fun DrawDigitLayout(
         modifier = if (paths.isNotEmpty()) modifier else drawModifier
     ) {
         drawUserPaths(paths.ifEmpty { userPaths })
-        checkDrawResult?.let {
+        isCorrect?.let {
             if (it) drawCorrectIndicator()
             else drawIncorrectIndicator()
         }
-    }
-}
-
-@Composable
-private fun QuestionLayout(question: String, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.padding(4.dp)
-    ) {
-        Text(
-            question, style = TextStyle(
-                fontSize = 30.sp,
-                fontWeight = FontWeight.ExtraBold
-            )
-        )
     }
 }
 
@@ -251,9 +200,8 @@ private fun QuestionLayout(question: String, modifier: Modifier = Modifier) {
 @Composable
 private fun PlayBoardScreenPreview() {
     PlayBoard(
-        qnaList = emptyList(),
-        pathsList = emptyList(),
-        onPathsUpdate = { _, _ -> },
-        onCheckDrawResult = { _, _ -> },
+        qnaWithPath = emptyList(),
+        onUpdateUserPaths = { _, _ -> },
+        onGradeUserDraw = { _, _ -> },
     )
 }
