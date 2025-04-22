@@ -38,10 +38,11 @@ constructor(
             }
             .map { preferences ->
                 Result(
-                    speedGame5 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_5)] ?: 0,
-                    speedGame10 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_10)] ?: 0,
-                    speedGame15 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_15)] ?: 0,
-                    speedGame20 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_20)] ?: 0
+                    normalMode5 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_5)] ?: 0,
+                    normalMode10 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_10)] ?: 0,
+                    normalMode15 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_15)] ?: 0,
+                    normalMode20 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_20)] ?: 0,
+                    infiniteMode = preferences[longPreferencesKey(Constants.DATASTORE_KEY_INFINITE)] ?: 0,
                 )
             }
     }

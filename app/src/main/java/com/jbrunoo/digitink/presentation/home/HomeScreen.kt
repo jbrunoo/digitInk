@@ -2,16 +2,17 @@ package com.jbrunoo.digitink.presentation.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,7 +39,8 @@ import com.jbrunoo.digitink.ui.theme.DigitInkTheme
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onClickPlay: (Int) -> Unit = {},
+    onPlayNormal: (Int) -> Unit = {},
+    onPlayInfinite: () -> Unit = {},
     onClickResult: () -> Unit = {},
     onClickMenu: () -> Unit = {},
 ) {
@@ -56,14 +58,26 @@ fun HomeScreen(
             modifier = Modifier.align(Alignment.TopCenter)
         )
 
-        DiButton(
-            onClick = { expandedCount = true },
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center)
-                .padding(4.dp),
+        Column(
+            modifier = Modifier.align(Alignment.Center)
         ) {
-            BigText(text = stringResource(R.string.game_mode_nomal))
+            DiButton(
+                onClick = { expandedCount = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+            ) {
+                BigText(text = stringResource(R.string.game_mode_nomal))
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            DiButton(
+                onClick = onPlayInfinite,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+            ) {
+                BigText(text = stringResource(R.string.game_mode_infinite))
+            }
         }
 
         DiButton(
@@ -81,7 +95,7 @@ fun HomeScreen(
     if (expandedCount) {
         QuestionCountBtmSht(
             onSelectCount = {
-                onClickPlay(it)
+                onPlayNormal(it)
                 expandedCount = false
             },
             onDismissRequest = { expandedCount = false }

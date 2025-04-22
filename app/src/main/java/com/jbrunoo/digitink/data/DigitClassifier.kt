@@ -1,7 +1,6 @@
 package com.jbrunoo.digitink.data
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import com.jbrunoo.digitink.domain.Classifier
@@ -10,16 +9,15 @@ import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import timber.log.Timber
 import javax.inject.Inject
 
 /* 모델은 singleton 생성, application terminate 시 model.close */
 class DigitClassifier @Inject constructor(
     private val model: MnistModel,
-    private val imgProcessor: ImageProcessor
+    private val imgProcessor: ImageProcessor,
 ) : Classifier {
-    companion object {
-        private const val TAG = "DigitClassifier"
-    }
+
     override fun classify(imageBitmap: ImageBitmap): Int {
 
         var tensorImage = TensorImage(DataType.UINT8)
@@ -29,7 +27,7 @@ class DigitClassifier @Inject constructor(
         val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 28, 28, 1), DataType.FLOAT32)
         inputFeature0.loadBuffer(tensorImage.buffer)
 
-        Log.d(TAG, "tImgBuf : ${tensorImage.buffer} | inputFeat0Buf ${inputFeature0.buffer}")
+//        Timber.tag(TAG).d("tImgBuf : $tensorImage.buffer | inputFeat0Buf : $inputFeature0.buffer")
 
         // Runs model inference and gets result.
         val outputs = model.process(inputFeature0)
@@ -39,7 +37,7 @@ class DigitClassifier @Inject constructor(
         var maxConfidence = 0f
 
         outputFeature0.floatArray.forEachIndexed { index, confidence ->
-            Log.d("confidence", "$confidence")
+//            Timber.tag(TAG).d("confidence : $confidence")
             if (confidence > maxConfidence) {
                 maxConfidence = confidence
                 maxPos = index
@@ -47,6 +45,10 @@ class DigitClassifier @Inject constructor(
         }
 
         return maxPos
+    }
+
+    companion object {
+        private const val TAG = "DigitClassifier"
     }
 }
 

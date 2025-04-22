@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="game_mode_nomal">Modo Normal</string>
+    <string name="game_mode_infinite">Modo Infinito</string>
     <string name="game_result_text">Resultado</string>
     <string name="game_timer_text">Cronômetro: : %d.%02d</string>
     <string name="question_count_prefix">%1$s perguntas</string>
@@ -17,7 +18,8 @@
     <string name="rule_limit_time_text">⏱ Limite de Tempo</string>
     <string name="rule_limit_time_detail_text">\n- Cada pergunta deve ser respondida em 5 segundos!\n- Se o tempo acabar, passa automaticamente para a próxima pergunta.\n</string>
     <string name="rule_score_text">🎯 Método de Pontuação</string>
-    <string name="rule_score_detail_text">\n- A pontuação total é sempre 100 pontos.\n- Os pontos por pergunta variam dependendo do número de perguntas:\n\n  5 perguntas: 20 pontos\n  10 perguntas: 10 pontos\n  15 perguntas: aproximadamente 6.7 pontos\n  20 perguntas: 5 pontos\n\n- A pontuação de cada pergunta é calculada como \'pontuação base + tempo restante (segundos)\'.\n\nExemplo: No modo de 5 perguntas, responder corretamente 2 perguntas com 2 segundos restantes = 42 pontos (40+2)\n</string>
+    <string name="rule_score_detail_text">\n- A pontuação total é sempre 100 pontos.\n- Os pontos por pergunta variam dependendo do número de perguntas:\n\n  5 perguntas: 20 pontos\n  10 perguntas: 10 pontos\n  15 perguntas: aproximadamente 6.7 pontos\n  20 perguntas &amp; Modo Infinito: 5 pontos\n\n- A pontuação de cada pergunta é calculada como \'pontuação base + tempo restante (segundos)\'.\n\nExemplo: No modo de 5 perguntas, responder corretamente 2 perguntas com 2 segundos restantes = 42 pontos (40+2)\n</string>
     <string name="rule_caution_text">🖊️ Atenção ao Escrever</string>
     <string name="rule_link_text">📎 Links de Referência</string>
 </resources>
+

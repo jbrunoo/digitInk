@@ -9,7 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.jbrunoo.digitink.presentation.home.HomeScreen
-import com.jbrunoo.digitink.presentation.play.PlayScreen
+import com.jbrunoo.digitink.presentation.play.infinite.InfinitePlayScreen
+import com.jbrunoo.digitink.presentation.play.normal.NormalPlayScreen
 import com.jbrunoo.digitink.presentation.result.ResultScreen
 
 @Composable
@@ -21,16 +22,24 @@ fun RootNavHost(navController: NavHostController) {
     ) {
         composable(Screen.HOME.route) {
             HomeScreen(
-                onClickPlay = { navController.navigate(Screen.PLAY.route + "/$it") },
+                onPlayNormal = { navController.navigate(Screen.PLAY.NORMAL.route + "/$it") },
+                onPlayInfinite = { navController.navigate(Screen.PLAY.INFINITE.route) },
                 onClickResult = { navController.navigate(Screen.RESULT.route) }
             )
         }
 
         composable(
-            Screen.PLAY.route + "/{questionCount}",
+            Screen.PLAY.NORMAL.route + "/{questionCount}",
             arguments = listOf(navArgument("questionCount") { type = NavType.IntType })
         ) {
-            PlayScreen(
+            NormalPlayScreen(
+                onTerminate = { navController.navigateWithPopUp(Screen.RESULT.route) })
+        }
+
+        composable(
+            Screen.PLAY.INFINITE.route,
+        ) {
+            InfinitePlayScreen(
                 onTerminate = { navController.navigateWithPopUp(Screen.RESULT.route) })
         }
 
