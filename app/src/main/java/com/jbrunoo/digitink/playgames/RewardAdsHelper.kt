@@ -13,8 +13,11 @@ import com.jbrunoo.digitink.BuildConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import timber.log.Timber
+import javax.inject.Inject
 
-class RewardAdHelper {
+class RewardAdHelper
+@Inject
+constructor() {
     private var rewardedAd: RewardedAd? = null
 
     private val _isAdLoaded = MutableStateFlow(false)
@@ -41,12 +44,12 @@ class RewardAdHelper {
     }
 
     fun showRewardAd(activity: Activity, onRequireRewardItem: (Int) -> Unit) {
-        if(rewardedAd == null) {
+        if (rewardedAd == null) {
             Toast.makeText(activity, "Fail to load Ad", Toast.LENGTH_SHORT).show()
             return
         }
 
-        rewardedAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+        rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdClicked() {
                 // Called when a click is recorded for an ad.
                 Timber.d("Ad was clicked.")
