@@ -49,7 +49,11 @@ constructor(
 
     override suspend fun clearResult() {
         dataStore.edit {
-            it.clear()
+            it.remove(longPreferencesKey(Constants.DATASTORE_KEY_5))
+            it.remove(longPreferencesKey(Constants.DATASTORE_KEY_10))
+            it.remove(longPreferencesKey(Constants.DATASTORE_KEY_15))
+            it.remove(longPreferencesKey(Constants.DATASTORE_KEY_20))
+            it.remove(longPreferencesKey(Constants.DATASTORE_KEY_INFINITE))
         }
     }
 }
