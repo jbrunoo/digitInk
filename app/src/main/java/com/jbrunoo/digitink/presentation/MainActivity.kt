@@ -8,21 +8,26 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.navigation.compose.rememberNavController
 import com.jbrunoo.digitink.playgames.PlayGamesManager
 import com.jbrunoo.digitink.presentation.component.BannerAd
 import com.jbrunoo.digitink.ui.theme.DigitInkTheme
+import com.jbrunoo.digitink.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -30,6 +35,10 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var playGamesManager: PlayGamesManager
+
+    @Inject
+    lateinit var dataStore: DataStore<Preferences>
+
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +49,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         playGamesManager.initialize(this@MainActivity)
+        initializeTicket()
 
         setContent {
             DigitInkTheme {
@@ -47,9 +57,11 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Scaffold(
-                        topBar = { BannerAd(
-                            modifier = Modifier.statusBarsPadding(),
-                        ) },
+                        topBar = {
+                            BannerAd(
+                                modifier = Modifier.statusBarsPadding(),
+                            )
+                        },
                         contentWindowInsets = WindowInsets.safeDrawing,
                     ) { innerPadding ->
                         RootNavHost(
@@ -57,6 +69,20 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.padding(innerPadding)
                         )
                     }
+                }
+            }
+        }
+    }
+
+    private fun initializeTicket() {
+        val scope = CoroutineScope(Dispatchers.IO)
+        val key = intPreferencesKey(Constants.TICKET_KEY)
+
+        scope.launch {
+            dataStore.edit { preferences ->
+                if (!preferences.contains(key)) {
+                    val maxTicket = 3
+                    preferences[key] = maxTicket
                 }
             }
         }

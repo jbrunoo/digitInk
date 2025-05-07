@@ -7,7 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.jbrunoo.digitink.presentation.home.HomeScreen
+import com.jbrunoo.digitink.presentation.home.view.HomeScreen
 import com.jbrunoo.digitink.presentation.play.infinite.InfinitePlayScreen
 import com.jbrunoo.digitink.presentation.play.normal.NormalPlayScreen
 import com.jbrunoo.digitink.presentation.result.ResultScreen

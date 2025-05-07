@@ -21,5 +21,7 @@
     <string name="rule_score_detail_text">\n- 総得点は常に100点です。\n- 問題数に応じて1問あたりの点数が異なります：\n\n  5問：20点\n  10問：10点\n  15問：約6.7点\n  20問 &amp; インフィニットモード：5点\n\n- 各問題の得点は「基本点数 + 残り時間（秒）」で計算されます！\n\n例：5問モードで2秒残して2問正解の場合 = 42点（40+2）。\n</string>
     <string name="rule_caution_text">🖊️ 数字を書く際の注意事項</string>
     <string name="rule_link_text">📎 参考リンク</string>
+    <string name="home_ticket_modal_get_more_ticket_text">もっとチケットを獲得しよう</string>
+    <string name="home_ticket_modal_watch_ads_text">視聴する</string>
 </resources>
 
