@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.presentation.home
+package com.jbrunoo.digitink.presentation.home.view
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
