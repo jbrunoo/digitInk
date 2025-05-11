@@ -1,7 +1,8 @@
-package com.jbrunoo.digitink.domain
+package com.jbrunoo.digitink.domain.repository
 
 import androidx.compose.ui.graphics.ImageBitmap
 
-interface Classifier {
+interface ClassifierRepository {
+
     fun classify(imageBitmap: ImageBitmap): Int
 }

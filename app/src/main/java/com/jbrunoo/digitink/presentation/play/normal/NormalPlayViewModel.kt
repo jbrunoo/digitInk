@@ -7,11 +7,11 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jbrunoo.digitink.domain.Classifier
-import com.jbrunoo.digitink.domain.ResultRepository
 import com.jbrunoo.digitink.domain.model.DrawPath
 import com.jbrunoo.digitink.domain.model.Qna
 import com.jbrunoo.digitink.domain.model.QnaWithPath
+import com.jbrunoo.digitink.domain.repository.ClassifierRepository
+import com.jbrunoo.digitink.domain.repository.ResultRepository
 import com.jbrunoo.digitink.playgames.PlayGamesManager
 import com.jbrunoo.digitink.utils.datastoreKey
 import com.jbrunoo.digitink.utils.leaderBoardKey
@@ -31,7 +31,7 @@ import kotlin.math.roundToLong
 
 @HiltViewModel
 class NormalPlayViewModel @Inject constructor(
-    private val classifier: Classifier,
+    private val classifierRepository: ClassifierRepository,
     private val resultRepository: ResultRepository,
     private val playGamesManager: PlayGamesManager,
     savedStateHandle: SavedStateHandle,
@@ -110,7 +110,7 @@ class NormalPlayViewModel @Inject constructor(
 
     private fun classifyBmp(bmp: ImageBitmap?): Int? {
         return bmp?.let {
-            classifier.classify(bmp)
+            classifierRepository.classify(bmp)
         }
     }
 

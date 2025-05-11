@@ -3,11 +3,11 @@ package com.jbrunoo.digitink.presentation.play.infinite
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jbrunoo.digitink.domain.Classifier
-import com.jbrunoo.digitink.domain.ResultRepository
 import com.jbrunoo.digitink.domain.model.DrawPath
 import com.jbrunoo.digitink.domain.model.Qna
 import com.jbrunoo.digitink.domain.model.QnaWithPath
+import com.jbrunoo.digitink.domain.repository.ClassifierRepository
+import com.jbrunoo.digitink.domain.repository.ResultRepository
 import com.jbrunoo.digitink.playgames.PlayGamesManager
 import com.jbrunoo.digitink.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InfinitePlayViewModel @Inject constructor(
-    private val classifier: Classifier,
+    private val classifierRepository: ClassifierRepository,
     private val resultRepository: ResultRepository,
     private val playGamesManager: PlayGamesManager,
 ) : ViewModel() {
@@ -138,7 +138,8 @@ class InfinitePlayViewModel @Inject constructor(
         }
     }
 
-    private fun classifyBmp(bmp: ImageBitmap?): Int? = bmp?.let { classifier.classify(it) }
+    private fun classifyBmp(bmp: ImageBitmap?): Int? =
+        bmp?.let { classifierRepository.classify(it) }
 
     private fun calcScore(): Long = _correctCount.value * 5L
 }

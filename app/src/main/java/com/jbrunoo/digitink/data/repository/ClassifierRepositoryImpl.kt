@@ -1,28 +1,28 @@
-package com.jbrunoo.digitink.data
+package com.jbrunoo.digitink.data.repository
 
 import android.graphics.Bitmap
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
-import com.jbrunoo.digitink.domain.Classifier
-import com.jbrunoo.digitink.ml.MnistModel
+import com.jbrunoo.digitink.data.dataSource.local.ClassifierLocalDataSource
+import com.jbrunoo.digitink.domain.repository.ClassifierRepository
 import org.tensorflow.lite.DataType
-import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
-import timber.log.Timber
 import javax.inject.Inject
 
-/* 모델은 singleton 생성, application terminate 시 model.close */
-class DigitClassifier @Inject constructor(
-    private val model: MnistModel,
-    private val imgProcessor: ImageProcessor,
-) : Classifier {
+class ClassifierRepositoryImpl
+@Inject
+constructor(
+    private val classifierLocalDataSource: ClassifierLocalDataSource,
+) : ClassifierRepository {
+
+    private val model = classifierLocalDataSource.model
+    private val imageProcessor = classifierLocalDataSource.imageProcessor
 
     override fun classify(imageBitmap: ImageBitmap): Int {
-
         var tensorImage = TensorImage(DataType.UINT8)
         tensorImage.load(imageBitmap.asAndroidBitmap().copy(Bitmap.Config.ARGB_8888, false))
-        tensorImage = imgProcessor.process(tensorImage)
+        tensorImage = imageProcessor.process(tensorImage)
 
         val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 28, 28, 1), DataType.FLOAT32)
         inputFeature0.loadBuffer(tensorImage.buffer)
@@ -46,9 +46,4 @@ class DigitClassifier @Inject constructor(
 
         return maxPos
     }
-
-    companion object {
-        private const val TAG = "DigitClassifier"
-    }
 }
-
