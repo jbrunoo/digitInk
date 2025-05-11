@@ -1,11 +1,11 @@
-package com.jbrunoo.digitink.data
+package com.jbrunoo.digitink.data.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.longPreferencesKey
-import com.jbrunoo.digitink.domain.ResultRepository
+import com.jbrunoo.digitink.domain.repository.ResultRepository
 import com.jbrunoo.digitink.domain.model.Result
 import com.jbrunoo.digitink.utils.Constants
 import kotlinx.coroutines.flow.Flow

@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.domain
+package com.jbrunoo.digitink.domain.repository
 
 import com.jbrunoo.digitink.domain.model.Result
 import kotlinx.coroutines.flow.Flow

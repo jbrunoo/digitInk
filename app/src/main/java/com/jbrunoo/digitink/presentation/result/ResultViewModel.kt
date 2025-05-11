@@ -3,7 +3,7 @@ package com.jbrunoo.digitink.presentation.result
 import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jbrunoo.digitink.domain.ResultRepository
+import com.jbrunoo.digitink.domain.repository.ResultRepository
 import com.jbrunoo.digitink.domain.model.Result
 import com.jbrunoo.digitink.playgames.PlayGamesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
