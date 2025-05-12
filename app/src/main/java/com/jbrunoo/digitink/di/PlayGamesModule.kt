@@ -1,18 +1,25 @@
 package com.jbrunoo.digitink.di
 
-import com.jbrunoo.digitink.playgames.PlayGamesManager
-import dagger.Binds
+import android.app.Activity
+import android.content.Context
+import com.google.android.gms.games.GamesSignInClient
+import com.google.android.gms.games.LeaderboardsClient
+import com.google.android.gms.games.PlayGames
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ActivityContext
 
 @Module
-@InstallIn(SingletonComponent::class)
-class PlayGamesModule {
+@InstallIn(ActivityComponent::class)
+object PlayGamesModule {
 
     @Provides
-    @Singleton
-    fun providePlayGamesManager() = PlayGamesManager()
+    fun provideGameSignInClient(@ActivityContext context: Context): GamesSignInClient =
+        PlayGames.getGamesSignInClient(context as Activity)
+
+    @Provides
+    fun provideLeaderBoardsClient(@ActivityContext context: Context): LeaderboardsClient =
+        PlayGames.getLeaderboardsClient(context as Activity)
 }
