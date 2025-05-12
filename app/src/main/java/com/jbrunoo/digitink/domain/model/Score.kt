@@ -1,6 +1,6 @@
 package com.jbrunoo.digitink.domain.model
 
-data class Result(
+data class Score(
     val normalMode5: Long = 0,
     val normalMode10: Long = 0,
     val normalMode15: Long = 0,

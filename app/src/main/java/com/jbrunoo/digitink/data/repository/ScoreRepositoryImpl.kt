@@ -5,29 +5,21 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.longPreferencesKey
-import com.jbrunoo.digitink.domain.repository.ResultRepository
-import com.jbrunoo.digitink.domain.model.Result
-import com.jbrunoo.digitink.utils.Constants
+import com.jbrunoo.digitink.domain.repository.ScoreRepository
+import com.jbrunoo.digitink.domain.model.Score
+import com.jbrunoo.digitink.common.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 import javax.inject.Inject
 
-class ResultRepositoryImpl
+class ScoreRepositoryImpl
 @Inject
 constructor(
     private val dataStore: DataStore<Preferences>,
-) : ResultRepository {
-    override suspend fun saveValue(dataStoreKey: String, score: Long) {
-        dataStore.edit { settings ->
-            val key = longPreferencesKey(dataStoreKey)
-            val currentValue = settings[key] ?: 0
-            if (score > currentValue) settings[key] = score
-        }
-    }
-
-    override fun readResult(): Flow<Result> {
+) : ScoreRepository {
+    override fun readLocalScore(): Flow<Score> {
         return dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
@@ -37,7 +29,7 @@ constructor(
                 }
             }
             .map { preferences ->
-                Result(
+                Score(
                     normalMode5 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_5)] ?: 0,
                     normalMode10 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_10)] ?: 0,
                     normalMode15 = preferences[longPreferencesKey(Constants.DATASTORE_KEY_15)] ?: 0,
@@ -47,7 +39,15 @@ constructor(
             }
     }
 
-    override suspend fun clearResult() {
+    override suspend fun saveLocalScore(dataStoreKey: String, score: Long) {
+        dataStore.edit { settings ->
+            val key = longPreferencesKey(dataStoreKey)
+            val currentValue = settings[key] ?: 0
+            if (score > currentValue) settings[key] = score
+        }
+    }
+
+    override suspend fun clearLocalScore() {
         dataStore.edit {
             it.remove(longPreferencesKey(Constants.DATASTORE_KEY_5))
             it.remove(longPreferencesKey(Constants.DATASTORE_KEY_10))
@@ -55,5 +55,13 @@ constructor(
             it.remove(longPreferencesKey(Constants.DATASTORE_KEY_20))
             it.remove(longPreferencesKey(Constants.DATASTORE_KEY_INFINITE))
         }
+    }
+
+    override fun showLeaderBoard() {
+        TODO("Not yet implemented")
+    }
+
+    override fun submitRemoteScore() {
+        TODO("Not yet implemented")
     }
 }
