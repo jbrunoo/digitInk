@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.domain.model
+package com.jbrunoo.digitink.presentation.play.domain.model
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color

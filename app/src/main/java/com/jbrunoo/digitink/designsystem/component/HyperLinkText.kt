@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.presentation.component
+package com.jbrunoo.digitink.designsystem.component
 
 import android.os.Build
 import android.text.SpannableString

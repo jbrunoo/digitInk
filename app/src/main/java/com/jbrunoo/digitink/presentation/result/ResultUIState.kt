@@ -1,8 +1,8 @@
 package com.jbrunoo.digitink.presentation.result
 
-import com.jbrunoo.digitink.domain.model.Result
+import com.jbrunoo.digitink.domain.model.Score
 
 data class ResultUIState(
-    val result: Result = Result(),
+    val score: Score = Score(),
     val isAuth: Boolean = false,
 )

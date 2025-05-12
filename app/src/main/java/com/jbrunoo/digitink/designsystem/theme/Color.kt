@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.ui.theme
+package com.jbrunoo.digitink.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 

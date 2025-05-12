@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.utils
+package com.jbrunoo.digitink.common
 
 enum class PlayMode {
     NORMAL,

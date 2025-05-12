@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.jbrunoo.digitink.domain.repository.TicketRepository
 import com.jbrunoo.digitink.domain.model.Ticket
-import com.jbrunoo.digitink.utils.Constants
+import com.jbrunoo.digitink.common.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map

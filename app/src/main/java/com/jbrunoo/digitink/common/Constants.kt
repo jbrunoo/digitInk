@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.utils
+package com.jbrunoo.digitink.common
 
 object Constants {
     const val DATASTORE_KEY_5 = "score_5"

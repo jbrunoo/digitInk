@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.presentation.component
+package com.jbrunoo.digitink.designsystem.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable

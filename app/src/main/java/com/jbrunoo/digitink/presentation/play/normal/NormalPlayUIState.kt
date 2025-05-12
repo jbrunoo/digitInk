@@ -1,6 +1,6 @@
 package com.jbrunoo.digitink.presentation.play.normal
 
-import com.jbrunoo.digitink.domain.model.QnaWithPath
+import com.jbrunoo.digitink.presentation.play.domain.model.QnaWithPath
 
 sealed interface NormalPlayUIState {
     data object LOADING : NormalPlayUIState

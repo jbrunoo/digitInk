@@ -1,4 +1,6 @@
-package com.jbrunoo.digitink.utils
+package com.jbrunoo.digitink.presentation.utils.extension
+
+import com.jbrunoo.digitink.common.Constants
 
 // datastore key by question count
 fun Int.datastoreKey(): String? {

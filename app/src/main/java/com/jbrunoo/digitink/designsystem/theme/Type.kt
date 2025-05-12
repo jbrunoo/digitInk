@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.ui.theme
+package com.jbrunoo.digitink.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

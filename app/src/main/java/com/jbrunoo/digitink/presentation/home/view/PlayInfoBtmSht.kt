@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jbrunoo.digitink.R
-import com.jbrunoo.digitink.presentation.component.LinkifyText
+import com.jbrunoo.digitink.designsystem.component.LinkifyText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

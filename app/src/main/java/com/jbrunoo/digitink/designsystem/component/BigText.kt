@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.presentation.component
+package com.jbrunoo.digitink.designsystem.component
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text

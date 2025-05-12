@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.domain.model
+package com.jbrunoo.digitink.presentation.play.domain.model
 
 data class Qna(
     val question: String,

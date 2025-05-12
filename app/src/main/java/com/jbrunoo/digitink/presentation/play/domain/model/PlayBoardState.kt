@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.presentation.play.model
+package com.jbrunoo.digitink.presentation.play.domain.model
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState

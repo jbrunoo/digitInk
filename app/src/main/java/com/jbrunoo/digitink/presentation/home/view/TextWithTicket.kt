@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jbrunoo.digitink.R
-import com.jbrunoo.digitink.presentation.component.BigText
+import com.jbrunoo.digitink.designsystem.component.BigText
 
 @Composable
 fun TextWithTicket(

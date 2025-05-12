@@ -7,14 +7,13 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jbrunoo.digitink.domain.model.DrawPath
-import com.jbrunoo.digitink.domain.model.Qna
-import com.jbrunoo.digitink.domain.model.QnaWithPath
+import com.jbrunoo.digitink.presentation.play.domain.model.DrawPath
+import com.jbrunoo.digitink.presentation.play.domain.model.Qna
+import com.jbrunoo.digitink.presentation.play.domain.model.QnaWithPath
 import com.jbrunoo.digitink.domain.repository.ClassifierRepository
-import com.jbrunoo.digitink.domain.repository.ResultRepository
-import com.jbrunoo.digitink.playgames.PlayGamesManager
-import com.jbrunoo.digitink.utils.datastoreKey
-import com.jbrunoo.digitink.utils.leaderBoardKey
+import com.jbrunoo.digitink.domain.repository.ScoreRepository
+import com.jbrunoo.digitink.presentation.utils.extension.datastoreKey
+import com.jbrunoo.digitink.presentation.utils.extension.leaderBoardKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -32,8 +31,7 @@ import kotlin.math.roundToLong
 @HiltViewModel
 class NormalPlayViewModel @Inject constructor(
     private val classifierRepository: ClassifierRepository,
-    private val resultRepository: ResultRepository,
-    private val playGamesManager: PlayGamesManager,
+    private val scoreRepository: ScoreRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -146,8 +144,9 @@ class NormalPlayViewModel @Inject constructor(
         val leaderBoardKey = questionCount.leaderBoardKey() ?: return
 
         viewModelScope.launch(Dispatchers.IO) {
-            playGamesManager.submitScore(leaderBoardKey, score)
-            resultRepository.saveValue(dataStoreKey, score)
+            TODO("submit score")
+//            playGamesManager.submitScore(leaderBoardKey, score)
+            scoreRepository.saveLocalScore(dataStoreKey, score)
 
             withContext(Dispatchers.Main) {
                 onComplete()

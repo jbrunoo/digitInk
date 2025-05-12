@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.domain.model
+package com.jbrunoo.digitink.presentation.play.domain.model
 
 data class QnaWithPath(
     val id: Int = -1,
