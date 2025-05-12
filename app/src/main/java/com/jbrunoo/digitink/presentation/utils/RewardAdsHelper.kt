@@ -1,4 +1,4 @@
-package com.jbrunoo.digitink.playgames
+package com.jbrunoo.digitink.presentation.utils
 
 import android.app.Activity
 import android.content.Context
