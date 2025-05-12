@@ -1,9 +1,11 @@
 package com.jbrunoo.digitink.di
 
-import com.jbrunoo.digitink.data.ResultRepositoryImpl
-import com.jbrunoo.digitink.data.TicketRepositoryImpl
-import com.jbrunoo.digitink.domain.ResultRepository
-import com.jbrunoo.digitink.domain.TicketRepository
+import com.jbrunoo.digitink.data.repository.ClassifierRepositoryImpl
+import com.jbrunoo.digitink.data.repository.ScoreRepositoryImpl
+import com.jbrunoo.digitink.data.repository.TicketRepositoryImpl
+import com.jbrunoo.digitink.domain.repository.ClassifierRepository
+import com.jbrunoo.digitink.domain.repository.ScoreRepository
+import com.jbrunoo.digitink.domain.repository.TicketRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -16,9 +18,13 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindResultRepository(repositoryImpl: ResultRepositoryImpl): ResultRepository
+    abstract fun bindClassifierRepository(repositoryImpl: ClassifierRepositoryImpl): ClassifierRepository
 
     @Binds
     @Singleton
-    abstract fun bindTicketRepository(ticketRepositoryImpl: TicketRepositoryImpl): TicketRepository
+    abstract fun bindResultRepository(repositoryImpl: ScoreRepositoryImpl): ScoreRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTicketRepository(repositoryImpl: TicketRepositoryImpl): TicketRepository
 }

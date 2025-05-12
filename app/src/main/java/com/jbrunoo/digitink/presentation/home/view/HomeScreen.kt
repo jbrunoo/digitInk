@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jbrunoo.digitink.R
-import com.jbrunoo.digitink.presentation.component.DiButton
-import com.jbrunoo.digitink.ui.theme.DigitInkTheme
+import com.jbrunoo.digitink.designsystem.component.DiButton
+import com.jbrunoo.digitink.designsystem.theme.DigitInkTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

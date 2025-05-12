@@ -3,9 +3,8 @@ package com.jbrunoo.digitink.presentation.result
 import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jbrunoo.digitink.domain.ResultRepository
-import com.jbrunoo.digitink.domain.model.Result
-import com.jbrunoo.digitink.playgames.PlayGamesManager
+import com.jbrunoo.digitink.domain.model.Score
+import com.jbrunoo.digitink.domain.repository.ScoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,14 +17,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ResultViewModel @Inject constructor(
-    private val resultRepository: ResultRepository,
-    private val playGamesManager: PlayGamesManager,
+    private val scoreRepository: ScoreRepository,
 ) : ViewModel() {
-    private val _result = MutableStateFlow(Result())
+    private val _score = MutableStateFlow(Score())
     private val _isAuth = MutableStateFlow(false)
 
     val uiState: StateFlow<ResultUIState> =
-        combine(_result, _isAuth) { result, isAuth ->
+        combine(_score, _isAuth) { result, isAuth ->
             ResultUIState(
                 result,
                 isAuth
@@ -43,27 +41,27 @@ class ResultViewModel @Inject constructor(
 
     private fun readResult() {
         viewModelScope.launch(Dispatchers.IO) {
-            resultRepository.readResult().collect {
-                _result.value = it
+            scoreRepository.readLocalScore().collect {
+                _score.value = it
             }
         }
     }
 
     private fun isAuthenticated() {
         viewModelScope.launch(Dispatchers.IO) {
-            playGamesManager.isAuthenticated.collect {
-                _isAuth.value = it
-            }
+//            playGamesManager.isAuthenticated.collect {
+//                _isAuth.value = it
+//            }
         }
     }
 
     fun clearResult() {
         viewModelScope.launch(Dispatchers.IO) {
-            resultRepository.clearResult()
+            scoreRepository.clearLocalScore()
         }
     }
 
     fun showLeaderBoard(activity: Activity) {
-        playGamesManager.showLeaderBoard(activity)
+//        playGamesManager.showLeaderBoard(activity)
     }
 }

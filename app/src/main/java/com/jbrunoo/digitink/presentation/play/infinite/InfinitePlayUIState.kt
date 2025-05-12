@@ -1,6 +1,6 @@
 package com.jbrunoo.digitink.presentation.play.infinite
 
-import com.jbrunoo.digitink.domain.model.QnaWithPath
+import com.jbrunoo.digitink.presentation.play.domain.model.QnaWithPath
 
 sealed interface InfinitePlayUIState {
     data object LOADING: InfinitePlayUIState

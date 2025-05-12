@@ -12,7 +12,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jbrunoo.digitink.presentation.play.component.PlayBoard
 import com.jbrunoo.digitink.presentation.play.component.TimerLayout
-import com.jbrunoo.digitink.presentation.play.model.rememberPlayBoardState
+import com.jbrunoo.digitink.presentation.play.domain.model.rememberPlayBoardState
 
 @Composable
 fun NormalPlayScreen(

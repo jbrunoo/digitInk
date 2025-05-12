@@ -47,8 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jbrunoo.digitink.R
-import com.jbrunoo.digitink.presentation.component.BigText
-import com.jbrunoo.digitink.presentation.component.DiButton
+import com.jbrunoo.digitink.designsystem.component.BigText
+import com.jbrunoo.digitink.designsystem.component.DiButton
 
 private const val INFINITE_COUNT_KET = -1
 
@@ -100,14 +100,14 @@ fun ResultScreen(
                 items(normalModes) { count ->
                     ResultCard(
                         count = count,
-                        score = uiState.result.find(count),
+                        score = uiState.score.find(count),
                         modifier = Modifier.aspectRatio(1f),
                     )
                 }
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     ResultCard(
                         count = "∞",
-                        score = uiState.result.find(INFINITE_COUNT_KET),
+                        score = uiState.score.find(INFINITE_COUNT_KET),
                         modifier = Modifier.aspectRatio(2f),
                     )
                 }

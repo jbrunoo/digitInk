@@ -3,13 +3,12 @@ package com.jbrunoo.digitink.presentation.play.infinite
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jbrunoo.digitink.domain.Classifier
-import com.jbrunoo.digitink.domain.ResultRepository
-import com.jbrunoo.digitink.domain.model.DrawPath
-import com.jbrunoo.digitink.domain.model.Qna
-import com.jbrunoo.digitink.domain.model.QnaWithPath
-import com.jbrunoo.digitink.playgames.PlayGamesManager
-import com.jbrunoo.digitink.utils.Constants
+import com.jbrunoo.digitink.common.Constants
+import com.jbrunoo.digitink.domain.repository.ClassifierRepository
+import com.jbrunoo.digitink.domain.repository.ScoreRepository
+import com.jbrunoo.digitink.presentation.play.domain.model.DrawPath
+import com.jbrunoo.digitink.presentation.play.domain.model.Qna
+import com.jbrunoo.digitink.presentation.play.domain.model.QnaWithPath
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,9 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InfinitePlayViewModel @Inject constructor(
-    private val classifier: Classifier,
-    private val resultRepository: ResultRepository,
-    private val playGamesManager: PlayGamesManager,
+    private val classifierRepository: ClassifierRepository,
+    private val scoreRepository: ScoreRepository,
 ) : ViewModel() {
 
     private var _qnaIdCounter = 1
@@ -129,8 +127,8 @@ class InfinitePlayViewModel @Inject constructor(
         val leaderBoardKey = Constants.LEADERBOARD_KEY_INFINITE
 
         viewModelScope.launch(Dispatchers.IO) {
-            playGamesManager.submitScore(leaderBoardKey, score)
-            resultRepository.saveValue(dataStoreKey, score)
+//            playGamesManager.submitScore(leaderBoardKey, score)
+            scoreRepository.saveLocalScore(dataStoreKey, score)
 
             withContext(Dispatchers.Main) {
                 onComplete()
@@ -138,7 +136,8 @@ class InfinitePlayViewModel @Inject constructor(
         }
     }
 
-    private fun classifyBmp(bmp: ImageBitmap?): Int? = bmp?.let { classifier.classify(it) }
+    private fun classifyBmp(bmp: ImageBitmap?): Int? =
+        bmp?.let { classifierRepository.classify(it) }
 
     private fun calcScore(): Long = _correctCount.value * 5L
 }

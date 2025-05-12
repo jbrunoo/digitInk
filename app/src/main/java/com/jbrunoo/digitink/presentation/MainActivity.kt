@@ -20,10 +20,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.navigation.compose.rememberNavController
-import com.jbrunoo.digitink.playgames.PlayGamesManager
-import com.jbrunoo.digitink.presentation.component.BannerAd
-import com.jbrunoo.digitink.ui.theme.DigitInkTheme
-import com.jbrunoo.digitink.utils.Constants
+import com.jbrunoo.digitink.designsystem.component.BannerAd
+import com.jbrunoo.digitink.designsystem.theme.DigitInkTheme
+import com.jbrunoo.digitink.common.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,11 +33,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var playGamesManager: PlayGamesManager
-
-    @Inject
     lateinit var dataStore: DataStore<Preferences>
-
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +43,6 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
-        playGamesManager.initialize(this@MainActivity)
         initializeTicket()
 
         setContent {
