@@ -40,8 +40,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jbrunoo.digitink.presentation.play.domain.model.DrawPath
-import com.jbrunoo.digitink.presentation.play.domain.model.QnaWithPath
 import com.jbrunoo.digitink.presentation.play.domain.model.PlayBoardState
+import com.jbrunoo.digitink.presentation.play.domain.model.QnaWithPath
 import com.jbrunoo.digitink.presentation.play.domain.model.rememberPlayBoardState
 import com.jbrunoo.digitink.presentation.utils.extension.drawCorrectIndicator
 import com.jbrunoo.digitink.presentation.utils.extension.drawIncorrectIndicator
@@ -73,29 +73,33 @@ internal fun PlayBoard(
                 .fillMaxWidth(),
             state = playBoardState.listState,
 //            contentPadding = PaddingValues(vertical = 0.5.dp),
-            userScrollEnabled = false
+            userScrollEnabled = false,
         ) {
             items(4) {
                 Spacer(modifier = Modifier.height(itemDp))
             }
             itemsIndexed(
                 items = qnaWithPath,
-                key = { _: Int, value: QnaWithPath -> value.id }
+                key = { _: Int, value: QnaWithPath -> value.id },
             ) { idx, item ->
                 val borderColor =
-                    if (idx == playBoardState.currentIdx.intValue) Color.White else Color.Transparent
+                    if (idx == playBoardState.currentIdx.intValue) {
+                        Color.White
+                    } else {
+                        Color.Transparent
+                    }
                 Row(
                     modifier = Modifier
                         .height(itemDp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     QuestionLayout(
                         question = item.qna.question,
                         modifier = Modifier
                             .wrapContentSize()
-                            .border(1.dp, borderColor)
+                            .border(1.dp, borderColor),
                     )
                     DrawDigitLayout(
                         paths = item.paths,
@@ -121,15 +125,19 @@ internal fun PlayBoard(
 }
 
 @Composable
-private fun QuestionLayout(question: String, modifier: Modifier = Modifier) {
+private fun QuestionLayout(
+    question: String,
+    modifier: Modifier = Modifier,
+) {
     Box(
-        modifier = modifier.padding(4.dp)
+        modifier = modifier.padding(4.dp),
     ) {
         Text(
-            question, style = TextStyle(
+            question,
+            style = TextStyle(
                 fontSize = 30.sp,
-                fontWeight = FontWeight.ExtraBold
-            )
+                fontWeight = FontWeight.ExtraBold,
+            ),
         )
     }
 }
@@ -154,44 +162,48 @@ private fun DrawDigitLayout(
         }
     }
 
-    val drawModifier = modifier
-        .pointerInput(Unit) {
-            if (isCorrect == null) {
-                detectDragGestures(
-                    onDragEnd = {
-                        coroutineScope.launch {
-                            async {
-                                imageBitmap = graphicsLayer.toImageBitmap()
-                            }.await()
-                        }
-                    }
-                ) { change, dragAmount ->
+    val drawModifier =
+        modifier
+            .pointerInput(Unit) {
+                if (isCorrect == null) {
+                    detectDragGestures(
+                        onDragEnd = {
+                            coroutineScope.launch {
+                                async {
+                                    imageBitmap = graphicsLayer.toImageBitmap()
+                                }.await()
+                            }
+                        },
+                    ) { change, dragAmount ->
 //                Log.d("change", "$change, $dragAmount")
-                    val path =
-                        DrawPath(
-                            start = change.position - dragAmount,
-                            end = change.position
-                        )
-                    userPaths.add(path)
+                        val path =
+                            DrawPath(
+                                start = change.position - dragAmount,
+                                end = change.position,
+                            )
+                        userPaths.add(path)
+                    }
                 }
             }
-        }
-        .drawWithContent {
-            graphicsLayer.record {
-                // draw the contents of the composable into the graphics layer
-                this@drawWithContent.drawContent()
+            .drawWithContent {
+                graphicsLayer.record {
+                    // draw the contents of the composable into the graphics layer
+                    this@drawWithContent.drawContent()
+                }
+                // draw the graphics layer on the visible canvas
+                drawLayer(graphicsLayer)
             }
-            // draw the graphics layer on the visible canvas
-            drawLayer(graphicsLayer)
-        }
 
     Canvas(
-        modifier = if (paths.isNotEmpty()) modifier else drawModifier
+        modifier = if (paths.isNotEmpty()) modifier else drawModifier,
     ) {
         drawUserPaths(paths.ifEmpty { userPaths })
         isCorrect?.let {
-            if (it) drawCorrectIndicator()
-            else drawIncorrectIndicator()
+            if (it) {
+                drawCorrectIndicator()
+            } else {
+                drawIncorrectIndicator()
+            }
         }
     }
 }

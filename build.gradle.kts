@@ -7,4 +7,5 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.56.2" apply false
     id("com.google.gms.google-services") version "4.4.2" apply false
     id("com.google.firebase.crashlytics") version "3.0.4" apply false
+    id("org.jlleitschuh.gradle.ktlint") version "13.0.0-rc.1" apply false
 }

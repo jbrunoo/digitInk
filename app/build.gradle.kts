@@ -1,4 +1,5 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -11,20 +12,17 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
-val localProperties = Properties().apply {
-    val file = rootProject.file("local.properties")
-    load(FileInputStream(file))
-}
-val keystoreProperties = Properties().apply {
-    val file = rootProject.file("keystore.properties")
-    load(FileInputStream(file))
-}
+val keystoreProperties =
+    Properties().apply {
+        val file = rootProject.file("keystore.properties")
+        load(FileInputStream(file))
+    }
 
-fun getProperty(property: String): String {
-    return gradleLocalProperties(rootDir, providers).getProperty(property)
-}
+fun getLocalProperty(property: String): String =
+    gradleLocalProperties(rootDir, providers).getProperty(property)
 
 android {
     namespace = "com.jbrunoo.digitink"
@@ -44,10 +42,10 @@ android {
 
         setProperty(
             "archivesBaseName",
-            "digitInk-$versionName"
+            "digitInk-$versionName",
         )
 
-        manifestPlaceholders["ADMOB_ID"] = getProperty("ADMOB_ID")
+        manifestPlaceholders["ADMOB_ID"] = getLocalProperty("ADMOB_ID")
     }
 
     signingConfigs {
@@ -69,29 +67,30 @@ android {
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
             ndk {
                 debugSymbolLevel = "FULL"
             }
             signingConfig = signingConfigs.getByName("release")
 
-            buildConfigField("String", "BANNER_AD_ID", getProperty("BANNER_AD_ID"))
-            buildConfigField("String", "REWARD_AD_ID", getProperty("REWARD_AD_ID"))
+            buildConfigField("String", "BANNER_AD_ID", getLocalProperty("BANNER_AD_ID"))
+            buildConfigField("String", "REWARD_AD_ID", getLocalProperty("REWARD_AD_ID"))
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
         mlModelBinding = true
         buildConfig = true
     }
+    @Suppress("UnstableApiUsage")
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
@@ -135,7 +134,7 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     // preferences dataStore
     implementation("androidx.datastore:datastore-preferences:1.1.7")
-    //firebase
+    // firebase
     implementation(platform("com.google.firebase:firebase-bom:33.15.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
@@ -147,4 +146,12 @@ dependencies {
     implementation("androidx.startup:startup-runtime:1.2.0")
     // ads
     implementation("com.google.android.gms:play-services-ads:24.4.0")
+}
+
+ktlint {
+    android.set(true)
+    reporters {
+        reporter(ReporterType.PLAIN)
+        reporter(ReporterType.JSON)
+    }
 }

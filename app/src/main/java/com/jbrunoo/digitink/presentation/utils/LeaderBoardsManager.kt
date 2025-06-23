@@ -8,19 +8,16 @@ import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 
 @ActivityScoped
-class LeaderBoardsManager
-@Inject
-constructor(
+class LeaderBoardsManager @Inject constructor(
     private val leaderboardsClient: LeaderboardsClient,
 ) {
-
     fun showLeaderBoard(context: Context) {
         leaderboardsClient.allLeaderboardsIntent.addOnSuccessListener { intent ->
             startActivityForResult(
                 context as Activity,
                 intent,
                 RC_LEADERBOARD_UI,
-                null
+                null,
             )
         }
 

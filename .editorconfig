@@ -1,0 +1,18 @@
+root = true
+
+[*.{kt,kts}]
+end_of_line = lf
+insert_final_newline = true
+max_line_length = 150
+
+ktlint_code_style = android_studio
+
+ktlint_standard_import-ordering = disabled
+ktlint_function_naming_ignore_when_annotated_with = Composable
+ktlint_standard_backing-property-naming = disabled
+ktlint_standard_class-signature = disabled
+ktlint_standard_function-signature = disabled
+ktlint_standard_function-literal = disabled
+
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true

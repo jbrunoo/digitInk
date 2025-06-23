@@ -34,17 +34,18 @@ fun HomeTopBar(
             .heightIn(48.dp)
             .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = stringResource(R.string.app_name),
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
         )
         Row {
             IconButton(onClick = onClickInfo) {
                 Icon(
-                    imageVector = Icons.Default.Info, null,
-                    modifier = Modifier.size(28.dp)
+                    imageVector = Icons.Default.Info,
+                    null,
+                    modifier = Modifier.size(28.dp),
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))

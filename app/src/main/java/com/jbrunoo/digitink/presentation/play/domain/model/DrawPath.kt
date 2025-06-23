@@ -10,5 +10,5 @@ data class DrawPath(
     val end: Offset,
     val color: Color = Color.White,
     val alpha: Float = 0.8f,
-    val strokeWidth: Dp = 4.dp
+    val strokeWidth: Dp = 4.dp,
 )

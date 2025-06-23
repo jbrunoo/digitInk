@@ -20,9 +20,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.navigation.compose.rememberNavController
+import com.jbrunoo.digitink.common.Constants
 import com.jbrunoo.digitink.designsystem.component.BannerAd
 import com.jbrunoo.digitink.designsystem.theme.DigitInkTheme
-import com.jbrunoo.digitink.common.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +31,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     @Inject
     lateinit var dataStore: DataStore<Preferences>
 
@@ -48,7 +47,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             DigitInkTheme {
                 Surface(
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     Scaffold(
                         topBar = {
@@ -60,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     ) { innerPadding ->
                         RootNavHost(
                             navController = rememberNavController(),
-                            modifier = Modifier.padding(innerPadding)
+                            modifier = Modifier.padding(innerPadding),
                         )
                     }
                 }

@@ -26,14 +26,18 @@ fun DiButton(
         onClick = onClick,
         modifier = modifier
             .heightIn(min = 48.dp)
-            .border(width = 1.dp, color = if (enabled) Color.White else Color.Gray, shape = shape),
+            .border(
+                width = 1.dp,
+                color = if (enabled) Color.White else Color.Gray,
+                shape = shape,
+            ),
         enabled = enabled,
         shape = shape,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             contentColor = Color.White,
             disabledContainerColor = Color.Transparent,
-            disabledContentColor = Color.Gray
+            disabledContentColor = Color.Gray,
         ),
         elevation = ButtonDefaults.elevatedButtonElevation(
             defaultElevation = 2.dp,

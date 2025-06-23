@@ -15,7 +15,6 @@ class ClassifierRepositoryImpl
 constructor(
     private val classifierLocalDataSource: ClassifierLocalDataSource,
 ) : ClassifierRepository {
-
     private val model = classifierLocalDataSource.model
     private val imageProcessor = classifierLocalDataSource.imageProcessor
 

@@ -26,12 +26,12 @@ class ResultViewModel @Inject constructor(
         combine(_score, _isAuth) { result, isAuth ->
             ResultUIState(
                 result,
-                isAuth
+                isAuth,
             )
         }.stateIn(
             viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = ResultUIState()
+            initialValue = ResultUIState(),
         )
 
     init {

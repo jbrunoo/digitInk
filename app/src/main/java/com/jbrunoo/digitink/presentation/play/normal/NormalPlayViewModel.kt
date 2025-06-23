@@ -7,11 +7,11 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jbrunoo.digitink.domain.repository.ClassifierRepository
+import com.jbrunoo.digitink.domain.repository.ScoreRepository
 import com.jbrunoo.digitink.presentation.play.domain.model.DrawPath
 import com.jbrunoo.digitink.presentation.play.domain.model.Qna
 import com.jbrunoo.digitink.presentation.play.domain.model.QnaWithPath
-import com.jbrunoo.digitink.domain.repository.ClassifierRepository
-import com.jbrunoo.digitink.domain.repository.ScoreRepository
 import com.jbrunoo.digitink.presentation.utils.extension.datastoreKey
 import com.jbrunoo.digitink.presentation.utils.extension.leaderBoardKey
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,7 +34,6 @@ class NormalPlayViewModel @Inject constructor(
     private val scoreRepository: ScoreRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-
     private val questionCount: Int =
         checkNotNull(savedStateHandle["questionCount"]) // 기본적으로 nullable type
 
@@ -53,7 +52,7 @@ class NormalPlayViewModel @Inject constructor(
         }.stateIn(
             viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = NormalPlayUIState.LOADING
+            initialValue = NormalPlayUIState.LOADING,
         )
 
     init {
@@ -95,7 +94,7 @@ class NormalPlayViewModel @Inject constructor(
                                 qna = qna,
                                 paths = emptyList(),
                                 isCorrect = null,
-                            )
+                            ),
                         )
                         break
                     }
@@ -106,13 +105,14 @@ class NormalPlayViewModel @Inject constructor(
         }
     }
 
-    private fun classifyBmp(bmp: ImageBitmap?): Int? {
-        return bmp?.let {
-            classifierRepository.classify(bmp)
-        }
+    private fun classifyBmp(bmp: ImageBitmap?): Int? = bmp?.let {
+        classifierRepository.classify(bmp)
     }
 
-    fun onCheckCorrect(bmp: ImageBitmap?, index: Int) {
+    fun onCheckCorrect(
+        bmp: ImageBitmap?,
+        index: Int,
+    ) {
         val userGuess = classifyBmp(bmp)
 
         _qnaWithPathList.update { old ->
@@ -125,10 +125,12 @@ class NormalPlayViewModel @Inject constructor(
             new[index] = tempQnaWithPath.copy(isCorrect = isCorrect)
             new
         }
-
     }
 
-    fun onPathsUpdate(paths: List<DrawPath>, index: Int) {
+    fun onPathsUpdate(
+        paths: List<DrawPath>,
+        index: Int,
+    ) {
         _qnaWithPathList.update { old ->
             val new = old.toMutableList()
             val tempQnaWithPath = new[index]

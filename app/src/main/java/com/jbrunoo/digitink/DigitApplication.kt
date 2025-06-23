@@ -6,7 +6,7 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @HiltAndroidApp
-class DigitApplication: Application() {
+class DigitApplication : Application() {
     @Inject lateinit var model: MnistModel
 
     override fun onTerminate() {

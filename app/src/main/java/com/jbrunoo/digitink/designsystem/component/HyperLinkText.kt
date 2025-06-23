@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 
-//컴포즈에서 하이퍼링크 적용 함수
+// 컴포즈에서 하이퍼링크 적용 함수
 @Composable
 fun LinkifyText(
     text: String,
@@ -50,30 +50,31 @@ fun LinkifyText(
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current,
     clickable: Boolean = true,
-    onClickLink: ((linkText: String) -> Unit)? = null
+    onClickLink: ((linkText: String) -> Unit)? = null,
 ) {
     val uriHandler = LocalUriHandler.current
     val linkInfos =
         if (linkEntire) listOf(LinkInfo(text, 0, text.length)) else SpannableStr.getLinkInfos(text)
-    val annotatedString = buildAnnotatedString {
-        append(text)
-        linkInfos.forEach {
-            addStyle(
-                style = SpanStyle(
-                    color = linkColor,
-                    textDecoration = TextDecoration.Underline
-                ),
-                start = it.start,
-                end = it.end
-            )
-            addStringAnnotation(
-                tag = "tag",
-                annotation = it.url,
-                start = it.start,
-                end = it.end
-            )
+    val annotatedString =
+        buildAnnotatedString {
+            append(text)
+            linkInfos.forEach {
+                addStyle(
+                    style = SpanStyle(
+                        color = linkColor,
+                        textDecoration = TextDecoration.Underline,
+                    ),
+                    start = it.start,
+                    end = it.end,
+                )
+                addStringAnnotation(
+                    tag = "tag",
+                    annotation = it.url,
+                    start = it.start,
+                    end = it.end,
+                )
+            }
         }
-    }
     if (clickable) {
         ClickableText(
             text = annotatedString,
@@ -104,7 +105,7 @@ fun LinkifyText(
                         onClickLink?.invoke(annotatedString.substring(result.start, result.end))
                     }
                 }
-            }
+            },
         )
     } else {
         Text(
@@ -123,7 +124,7 @@ fun LinkifyText(
             softWrap = softWrap,
             maxLines = maxLines,
             onTextLayout = onTextLayout,
-            style = style
+            style = style,
         )
     }
 }
@@ -146,16 +147,17 @@ private fun ClickableText(
     maxLines: Int = Int.MAX_VALUE,
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current,
-    onClick: (Int) -> Unit
+    onClick: (Int) -> Unit,
 ) {
     val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
-    val pressIndicator = Modifier.pointerInput(onClick) {
-        detectTapGestures { pos ->
-            layoutResult.value?.let { layoutResult ->
-                onClick(layoutResult.getOffsetForPosition(pos))
+    val pressIndicator =
+        Modifier.pointerInput(onClick) {
+            detectTapGestures { pos ->
+                layoutResult.value?.let { layoutResult ->
+                    onClick(layoutResult.getOffsetForPosition(pos))
+                }
             }
         }
-    }
     SelectionContainer {
         Text(
             text = text,
@@ -176,7 +178,7 @@ private fun ClickableText(
                 layoutResult.value = it
                 onTextLayout(it)
             },
-            style = style
+            style = style,
         )
     }
 }
@@ -184,7 +186,7 @@ private fun ClickableText(
 private data class LinkInfo(
     val url: String,
     val start: Int,
-    val end: Int
+    val end: Int,
 )
 
 private class SpannableStr(source: CharSequence) : SpannableString(source) {
@@ -203,26 +205,32 @@ private class SpannableStr(source: CharSequence) : SpannableString(source) {
     private inner class Data(
         val what: Any?,
         val start: Int,
-        val end: Int
+        val end: Int,
     )
 
     private val spanList = mutableListOf<Data>()
 
     private val linkInfos: List<LinkInfo>
-        get() = spanList.filter { it.what is URLSpan }.map {
-            LinkInfo(
-                (it.what as URLSpan).url,
-                it.start,
-                it.end
-            )
-        }
+        get() =
+            spanList.filter { it.what is URLSpan }.map {
+                LinkInfo(
+                    (it.what as URLSpan).url,
+                    it.start,
+                    it.end,
+                )
+            }
 
     override fun removeSpan(what: Any?) {
         super.removeSpan(what)
         spanList.removeAll { it.what == what }
     }
 
-    override fun setSpan(what: Any?, start: Int, end: Int, flags: Int) {
+    override fun setSpan(
+        what: Any?,
+        start: Int,
+        end: Int,
+        flags: Int,
+    ) {
         super.setSpan(what, start, end, flags)
         spanList.add(Data(what, start, end))
     }

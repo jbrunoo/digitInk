@@ -70,26 +70,26 @@ fun ResultScreen(
                 title = {
                     Text(
                         text = stringResource(R.string.game_result_text),
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = navigateToHome) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "arrow back"
+                            contentDescription = "arrow back",
                         )
                     }
-                }
+                },
             )
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
             verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -121,7 +121,7 @@ fun ResultScreen(
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "clear score history",
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
                     )
                 }
                 Spacer(modifier = Modifier.width(12.dp))
@@ -132,7 +132,7 @@ fun ResultScreen(
                     Image(
                         painterResource(R.drawable.games_leaderboards_white),
                         null,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
                     )
                 }
             }
@@ -150,7 +150,7 @@ fun ResultScreen(
                     onClick = {
                         viewModel.clearResult()
                         isDialogOpen = false
-                    }
+                    },
                 ) {
                     Text(stringResource(R.string.delete_button_cofirm_txt))
                 }
@@ -159,11 +159,11 @@ fun ResultScreen(
                 TextButton(
                     onClick = {
                         isDialogOpen = false
-                    }
+                    },
                 ) {
                     Text(stringResource(R.string.delete_button_dismiss_txt))
                 }
-            }
+            },
         )
     }
 }
@@ -175,14 +175,17 @@ private fun ResultCard(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .border(width = 1.dp, color = Color.Gray, shape = RoundedCornerShape(4.dp)),
+        modifier = modifier.border(
+            width = 1.dp,
+            color = Color.Gray,
+            shape = RoundedCornerShape(4.dp),
+        ),
         contentAlignment = Alignment.Center,
     ) {
         Box(
             modifier = Modifier
                 .padding(8.dp)
-                .align(Alignment.TopEnd)
+                .align(Alignment.TopEnd),
         ) {
             Text(text = "$count")
         }

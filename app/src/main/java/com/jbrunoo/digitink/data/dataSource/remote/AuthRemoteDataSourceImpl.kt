@@ -9,11 +9,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import timber.log.Timber
 import javax.inject.Inject
 
-class AuthRemoteDataSourceImpl
-@Inject
-constructor(
+class AuthRemoteDataSourceImpl @Inject constructor(
     private val gamesSignInClient: GamesSignInClient,
-): AuthRemoteDataSource {
+) : AuthRemoteDataSource {
 
     private val _isAuthenticated: MutableStateFlow<Boolean> = MutableStateFlow(false)
 

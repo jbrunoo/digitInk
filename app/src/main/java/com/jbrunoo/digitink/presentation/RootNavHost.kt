@@ -20,34 +20,36 @@ fun RootNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Screen.HOME.route
+        startDestination = Screen.HOME.route,
     ) {
         composable(Screen.HOME.route) {
             HomeScreen(
                 onPlayNormal = { navController.navigate(Screen.PLAY.NORMAL.route + "/$it") },
                 onPlayInfinite = { navController.navigate(Screen.PLAY.INFINITE.route) },
-                onClickResult = { navController.navigate(Screen.RESULT.route) }
+                onClickResult = { navController.navigate(Screen.RESULT.route) },
             )
         }
 
         composable(
             Screen.PLAY.NORMAL.route + "/{questionCount}",
-            arguments = listOf(navArgument("questionCount") { type = NavType.IntType })
+            arguments = listOf(navArgument("questionCount") { type = NavType.IntType }),
         ) {
             NormalPlayScreen(
-                onTerminate = { navController.navigateWithPopUp(Screen.RESULT.route) })
+                onTerminate = { navController.navigateWithPopUp(Screen.RESULT.route) },
+            )
         }
 
         composable(
             Screen.PLAY.INFINITE.route,
         ) {
             InfinitePlayScreen(
-                onTerminate = { navController.navigateWithPopUp(Screen.RESULT.route) })
+                onTerminate = { navController.navigateWithPopUp(Screen.RESULT.route) },
+            )
         }
 
         composable(Screen.RESULT.route) {
             ResultScreen(
-                navigateToHome = { navController.navigateWithPopUp(Screen.HOME.route) }
+                navigateToHome = { navController.navigateWithPopUp(Screen.HOME.route) },
             )
         }
     }

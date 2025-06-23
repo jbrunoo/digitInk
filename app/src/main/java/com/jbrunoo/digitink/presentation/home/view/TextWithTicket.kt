@@ -42,7 +42,7 @@ fun TextWithTicket(
         }
         Image(
             painter = painterResource(R.drawable.ticket_icon),
-            contentDescription = "game play ticket"
+            contentDescription = "game play ticket",
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(text = suffixText, fontSize = 16.sp)
@@ -56,7 +56,7 @@ fun TextWithTicket(
                 Icon(
                     imageVector = trailingIcon,
                     contentDescription = "add game tickets",
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(16.dp),
                 )
             }
         }

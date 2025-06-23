@@ -8,13 +8,14 @@ data class Score(
     val infiniteMode: Long = 0,
 ) {
     fun find(count: Int): Double {
-        val value = when(count) {
-            5 -> normalMode5
-            10 -> normalMode10
-            15 -> normalMode15
-            20 -> normalMode20
-            else -> return infiniteMode.toDouble()
-        }
+        val value =
+            when (count) {
+                5 -> normalMode5
+                10 -> normalMode10
+                15 -> normalMode15
+                20 -> normalMode20
+                else -> return infiniteMode.toDouble()
+            }
 
         return value / 100.0
     }
