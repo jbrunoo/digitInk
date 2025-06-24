@@ -35,6 +35,9 @@
             <meta-data
                 android:name="com.jbrunoo.digitink.initializer.TimberInitializer"
                 android:value="androidx.startup" />
+            <meta-data
+                android:name="com.jbrunoo.digitink.initializer.MobileAdsInitializer"
+                android:value="androidx.startup" />
         </provider>
         <meta-data
             android:name="com.google.android.gms.games.APP_ID"

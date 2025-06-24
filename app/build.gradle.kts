@@ -7,8 +7,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
-//    id("com.google.devtools.ksp")
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
+//    id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
@@ -65,6 +65,8 @@ android {
 
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -130,7 +132,7 @@ dependencies {
     // hilt
     implementation("com.google.dagger:hilt-android:2.56.2")
     // ksp("com.google.dagger:hilt-android-compiler:2.56.2")
-    kapt("com.google.dagger:hilt-android-compiler:2.56.2")
+    ksp("com.google.dagger:hilt-android-compiler:2.56.2")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     // preferences dataStore
     implementation("androidx.datastore:datastore-preferences:1.1.7")
@@ -146,6 +148,8 @@ dependencies {
     implementation("androidx.startup:startup-runtime:1.2.0")
     // ads
     implementation("com.google.android.gms:play-services-ads:24.4.0")
+    // tfLite gpu
+    implementation("org.tensorflow:tensorflow-lite-gpu-api:2.17.0")
 }
 
 ktlint {
