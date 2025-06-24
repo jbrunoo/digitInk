@@ -6,10 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun BigText(text: String, modifier: Modifier = Modifier) {
+fun BigText(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
     Text(
         text = text,
         modifier = modifier,
-        style = MaterialTheme.typography.bodyLarge
+        style = MaterialTheme.typography.bodyLarge,
     )
 }

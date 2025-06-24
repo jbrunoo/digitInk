@@ -13,7 +13,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class LocalDataSourceModule {
-
     @Binds
     @Singleton
     abstract fun bindClassifierLocalDataSource(dataSourceImpl: ClassifierLocalDataSourceImpl): ClassifierLocalDataSource

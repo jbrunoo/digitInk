@@ -47,11 +47,11 @@ fun HomeScreen(
     ) {
         HomeTopBar(
             onClickInfo = { expandedInfo = true },
-            modifier = Modifier.align(Alignment.TopCenter)
+            modifier = Modifier.align(Alignment.TopCenter),
         )
 
         Column(
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center),
         ) {
             DiButton(
                 onClick = { expandedTicket = true },
@@ -60,7 +60,7 @@ fun HomeScreen(
             ) {
                 TextWithTicket(
                     suffixText = "5",
-                    trailingIcon = Icons.Default.Add
+                    trailingIcon = Icons.Default.Add,
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -72,7 +72,7 @@ fun HomeScreen(
             ) {
                 TextWithTicket(
                     prefixText = stringResource(R.string.game_mode_nomal),
-                    suffixText = "x 1"
+                    suffixText = "x 1",
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))
@@ -85,7 +85,7 @@ fun HomeScreen(
             ) {
                 TextWithTicket(
                     prefixText = stringResource(R.string.game_mode_infinite),
-                    suffixText = "x 3"
+                    suffixText = "x 3",
                 )
             }
         }
@@ -108,13 +108,13 @@ fun HomeScreen(
                 onPlayNormal(it)
                 expandedCount = false
             },
-            onDismissRequest = { expandedCount = false }
+            onDismissRequest = { expandedCount = false },
         )
     }
 
     if (expandedInfo) {
         PlayInfoBtmSht(
-            onDismissRequest = { expandedInfo = false }
+            onDismissRequest = { expandedInfo = false },
         )
     }
 
@@ -122,7 +122,7 @@ fun HomeScreen(
         HomeTicketModal(
             currentTicketCount = 5,
             onClickAd = {},
-            onDismiss = { expandedTicket = false }
+            onDismiss = { expandedTicket = false },
         )
     }
 }
@@ -133,7 +133,7 @@ private fun HomeScreenPreview() {
     DigitInkTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background,
         ) {
             HomeScreen()
         }

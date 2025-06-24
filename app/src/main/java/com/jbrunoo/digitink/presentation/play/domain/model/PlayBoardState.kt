@@ -27,7 +27,7 @@ fun rememberPlayBoardState(
     PlayBoardState(
         isAutoScrollState = isAutoScrollState,
         listState = listState,
-        scope = scope
+        scope = scope,
     )
 }
 
@@ -39,32 +39,30 @@ class PlayBoardState(
     var currentIdx = mutableIntStateOf(0)
     private var isGameOver = false
     private var job: Job? = null
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-        Timber.e("Exception in coroutine: $exception")
-    }
+    private val coroutineExceptionHandler =
+        CoroutineExceptionHandler { _, exception ->
+            Timber.e("Exception in coroutine: $exception")
+        }
 
     private fun switchAutoScrollState() {
         isAutoScrollState.value = !isAutoScrollState.value
     }
 
-    fun startAutoScroll(
-        onGradeUserDraw: () -> Unit,
-    ) {
-        job = scope.launch(coroutineExceptionHandler) {
-            Timber.d("start auto scroll")
+    fun startAutoScroll(onGradeUserDraw: () -> Unit) {
+        job =
+            scope.launch(coroutineExceptionHandler) {
+                Timber.d("start auto scroll")
 
-            delay(5.seconds)
-            onGradeUserDraw()
-            delay(0.5.seconds)
+                delay(5.seconds)
+                onGradeUserDraw()
+                delay(0.5.seconds)
 
-            animateScroll()
-            switchAutoScrollState()
-        }
+                animateScroll()
+                switchAutoScrollState()
+            }
     }
 
-    fun cancelAutoScroll(
-        onGradeUserDraw: () -> Unit,
-    ) {
+    fun cancelAutoScroll(onGradeUserDraw: () -> Unit) {
         scope.launch(coroutineExceptionHandler) {
             Timber.d("cancel auto scroll")
 
@@ -78,7 +76,7 @@ class PlayBoardState(
     }
 
     private fun animateScroll() {
-        if(isGameOver) return
+        if (isGameOver) return
 
         scope.launch(Dispatchers.Main) {
             Timber.d("animate auto scroll : ${currentIdx.intValue + 1}")
@@ -88,6 +86,6 @@ class PlayBoardState(
     }
 
     fun changeGameOver() {
-            isGameOver = true
+        isGameOver = true
     }
 }

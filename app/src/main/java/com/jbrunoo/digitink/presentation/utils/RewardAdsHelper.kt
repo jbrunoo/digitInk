@@ -15,9 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import timber.log.Timber
 import javax.inject.Inject
 
-class RewardAdHelper
-@Inject
-constructor() {
+class RewardAdsHelper @Inject constructor() {
     private var rewardedAd: RewardedAd? = null
 
     private val _isAdLoaded = MutableStateFlow(false)
@@ -28,7 +26,10 @@ constructor() {
         val adId = BuildConfig.REWARD_AD_ID
 
         RewardedAd.load(
-            context, adId, adRequest, object : RewardedAdLoadCallback() {
+            context,
+            adId,
+            adRequest,
+            object : RewardedAdLoadCallback() {
                 override fun onAdLoaded(p0: RewardedAd) {
                     super.onAdLoaded(p0)
                     rewardedAd = p0
@@ -40,52 +41,56 @@ constructor() {
                     rewardedAd = null
                     _isAdLoaded.value = false
                 }
-            })
+            },
+        )
     }
 
-    fun showRewardAd(activity: Activity, onRequireRewardItem: (Int) -> Unit) {
+    fun showRewardAd(
+        activity: Activity,
+        onRequireRewardItem: (Int) -> Unit,
+    ) {
         if (rewardedAd == null) {
             Toast.makeText(activity, "Fail to load Ad", Toast.LENGTH_SHORT).show()
             return
         }
 
-        rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-            override fun onAdClicked() {
-                // Called when a click is recorded for an ad.
-                Timber.d("Ad was clicked.")
-            }
+        rewardedAd?.fullScreenContentCallback =
+            object : FullScreenContentCallback() {
+                override fun onAdClicked() {
+                    // Called when a click is recorded for an ad.
+                    Timber.d("Ad was clicked.")
+                }
 
-            override fun onAdDismissedFullScreenContent() {
-                // Called when ad is dismissed.
-                // Set the ad reference to null so you don't show the ad a second time.
-                Timber.d("Ad dismissed fullscreen content.")
-                rewardedAd = null
-                _isAdLoaded.value = false
+                override fun onAdDismissedFullScreenContent() {
+                    // Called when ad is dismissed.
+                    // Set the ad reference to null so you don't show the ad a second time.
+                    Timber.d("Ad dismissed fullscreen content.")
+                    rewardedAd = null
+                    _isAdLoaded.value = false
 
-                loadRewardAd(activity)
-            }
+                    loadRewardAd(activity)
+                }
 
-            override fun onAdFailedToShowFullScreenContent(p0: AdError) {
-                // Called when ad fails to show.
-                Timber.e("Ad failed to show fullscreen content.")
-                rewardedAd = null
-                _isAdLoaded.value = false
-            }
+                override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+                    // Called when ad fails to show.
+                    Timber.e("Ad failed to show fullscreen content.")
+                    rewardedAd = null
+                    _isAdLoaded.value = false
+                }
 
-            override fun onAdImpression() {
-                // Called when an impression is recorded for an ad.
-                Timber.d("Ad recorded an impression.")
-            }
+                override fun onAdImpression() {
+                    // Called when an impression is recorded for an ad.
+                    Timber.d("Ad recorded an impression.")
+                }
 
-            override fun onAdShowedFullScreenContent() {
-                // Called when ad is shown.
-                Timber.d("Ad showed fullscreen content.")
+                override fun onAdShowedFullScreenContent() {
+                    // Called when ad is shown.
+                    Timber.d("Ad showed fullscreen content.")
+                }
             }
-        }
 
         rewardedAd?.show(activity) { rewardItem ->
             onRequireRewardItem(rewardItem.amount)
         }
     }
-
 }

@@ -27,7 +27,6 @@ class InfinitePlayViewModel @Inject constructor(
     private val classifierRepository: ClassifierRepository,
     private val scoreRepository: ScoreRepository,
 ) : ViewModel() {
-
     private var _qnaIdCounter = 1
     private val _correctCount = MutableStateFlow(0)
 
@@ -43,7 +42,7 @@ class InfinitePlayViewModel @Inject constructor(
         }.stateIn(
             viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = InfinitePlayUIState.LOADING
+            initialValue = InfinitePlayUIState.LOADING,
         )
 
     init {
@@ -81,18 +80,22 @@ class InfinitePlayViewModel @Inject constructor(
         Timber.d("addQnaWithPath - qna: $qna")
 
         _qnaWithPathList.update { old ->
-            val new = QnaWithPath(
-                id = ++_qnaIdCounter,
-                qna = qna,
-                paths = emptyList(),
-                isCorrect = null
-            )
+            val new =
+                QnaWithPath(
+                    id = ++_qnaIdCounter,
+                    qna = qna,
+                    paths = emptyList(),
+                    isCorrect = null,
+                )
 
             old + new
         }
     }
 
-    fun onUpdateDrawResult(bmp: ImageBitmap?, index: Int) {
+    fun onUpdateDrawResult(
+        bmp: ImageBitmap?,
+        index: Int,
+    ) {
         val userGuess = classifyBmp(bmp)
 
         _qnaWithPathList.update { old ->
@@ -107,7 +110,10 @@ class InfinitePlayViewModel @Inject constructor(
         }
     }
 
-    fun onUpdatePaths(paths: List<DrawPath>, index: Int) {
+    fun onUpdatePaths(
+        paths: List<DrawPath>,
+        index: Int,
+    ) {
         Timber.d("onPathsUpdate - paths: $paths")
 
         _qnaWithPathList.update { old ->

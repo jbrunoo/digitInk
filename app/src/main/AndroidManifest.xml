@@ -12,11 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DigitInk"
-        tools:targetApi="31">
+        tools:targetApi="36">
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.DigitInk">
             <intent-filter>
@@ -35,6 +34,9 @@
                 android:value="androidx.startup" />
             <meta-data
                 android:name="com.jbrunoo.digitink.initializer.TimberInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="com.jbrunoo.digitink.initializer.MobileAdsInitializer"
                 android:value="androidx.startup" />
         </provider>
         <meta-data

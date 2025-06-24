@@ -15,7 +15,5 @@ object ModelModule {
 
     @Provides
     @Singleton
-    fun provideMnistModel(@ApplicationContext context: Context): MnistModel {
-        return MnistModel.newInstance(context)
-    }
+    fun provideMnistModel(@ApplicationContext context: Context): MnistModel = MnistModel.newInstance(context)
 }

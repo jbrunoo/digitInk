@@ -35,7 +35,7 @@ fun QuestionCountBtmSht(
     ModalBottomSheet(
         modifier = modifier,
         sheetState = sheetState,
-        onDismissRequest = onDismissRequest
+        onDismissRequest = onDismissRequest,
     ) {
         for ((idx, count) in listOf(5, 10, 15, 20).withIndex()) {
             CountItem(count = count, onClick = onSelectCount)
@@ -58,23 +58,23 @@ private fun CountItem(
             .padding(4.dp)
             .clickable { onClick(count) },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         Text(text = stringResource(R.string.question_count_prefix, count))
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 private fun QuestionCountBtmShtPreview() {
-    val sheetState = SheetState(
-        skipPartiallyExpanded = false,
-        initialValue = SheetValue.Expanded,
-        density = LocalDensity.current,
-        skipHiddenState = false
-    )
+    val sheetState =
+        SheetState(
+            skipPartiallyExpanded = false,
+            initialValue = SheetValue.Expanded,
+            density = LocalDensity.current,
+            skipHiddenState = false,
+        )
 
     QuestionCountBtmSht(sheetState = sheetState, onSelectCount = {}, onDismissRequest = {})
 }

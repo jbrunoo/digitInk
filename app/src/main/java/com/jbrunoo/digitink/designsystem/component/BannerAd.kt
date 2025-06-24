@@ -10,7 +10,7 @@ import com.google.android.gms.ads.AdView
 import com.jbrunoo.digitink.BuildConfig
 
 @Composable
-fun BannerAd(modifier: Modifier = Modifier,) {
+fun BannerAd(modifier: Modifier = Modifier) {
     AndroidView(
         modifier = modifier.fillMaxWidth(),
         factory = { context ->
@@ -22,6 +22,6 @@ fun BannerAd(modifier: Modifier = Modifier,) {
         },
         update = { adView ->
             adView.loadAd(AdRequest.Builder().build())
-        }
+        },
     )
 }

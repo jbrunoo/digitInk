@@ -29,7 +29,7 @@ fun NormalPlayScreen(
             val playBoardState = rememberPlayBoardState()
 
             LaunchedEffect(playBoardState.currentIdx.intValue) {
-                if(playBoardState.currentIdx.intValue == state.qnaWithPathList.size) {
+                if (playBoardState.currentIdx.intValue == state.qnaWithPathList.size) {
                     playBoardState.changeGameOver()
                     viewModel.saveResultEntry { onTerminate() }
                 }
@@ -38,7 +38,7 @@ fun NormalPlayScreen(
             Column(
                 modifier = modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 TimerLayout(
                     limitTime = { state.limitTime },

@@ -5,7 +5,6 @@ import androidx.startup.Initializer
 import com.google.android.gms.games.PlayGamesSdk
 
 class PlayGamesInitializer : Initializer<Unit> {
-
     override fun create(context: Context) {
         PlayGamesSdk.initialize(context)
     }

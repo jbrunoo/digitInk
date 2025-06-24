@@ -28,7 +28,7 @@ fun InfinitePlayScreen(
             val playBoardState = rememberPlayBoardState()
 
             LaunchedEffect(state.lifeCount) {
-                if(state.lifeCount == 0) {
+                if (state.lifeCount == 0) {
                     playBoardState.changeGameOver() // gameOver 시 자동 스크롤 정지
                     viewModel.saveResultEntry { onTerminate() }
                 }
@@ -43,9 +43,8 @@ fun InfinitePlayScreen(
                 PlayBoard(
                     qnaWithPath = state.qnaWithPathList,
                     playBoardState = playBoardState,
-
                     onUpdateUserPaths = viewModel::onUpdatePaths,
-                    onGradeUserDraw = viewModel::onUpdateDrawResult
+                    onGradeUserDraw = viewModel::onUpdateDrawResult,
                 )
             }
         }

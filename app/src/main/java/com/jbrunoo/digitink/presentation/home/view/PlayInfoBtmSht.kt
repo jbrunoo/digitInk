@@ -39,7 +39,7 @@ fun PlayInfoBtmSht(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 12.dp)
-                .verticalScroll(scrollState)
+                .verticalScroll(scrollState),
         ) {
             Text(stringResource(R.string.game_rules_text), fontWeight = FontWeight.ExtraBold)
             Text(stringResource(R.string.rule_model_text), fontWeight = FontWeight.ExtraBold)
@@ -60,15 +60,16 @@ fun PlayInfoBtmSht(
 @Preview
 @Composable
 private fun PlayInfoBtmShtPreview() {
-    val sheetState = SheetState(
-        skipPartiallyExpanded = false,
-        initialValue = SheetValue.Expanded,
-        density = LocalDensity.current,
-        skipHiddenState = false
-    )
+    val sheetState =
+        SheetState(
+            skipPartiallyExpanded = false,
+            initialValue = SheetValue.Expanded,
+            density = LocalDensity.current,
+            skipHiddenState = false,
+        )
 
     PlayInfoBtmSht(
         sheetState = sheetState,
-        onDismissRequest = {}
+        onDismissRequest = {},
     )
 }

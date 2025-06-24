@@ -6,7 +6,10 @@ import kotlinx.coroutines.flow.Flow
 interface ScoreRepository {
     fun readLocalScore(): Flow<Score>
 
-    suspend fun saveLocalScore(dataStoreKey: String, score: Long)
+    suspend fun saveLocalScore(
+        dataStoreKey: String,
+        score: Long,
+    )
 
     suspend fun clearLocalScore()
 

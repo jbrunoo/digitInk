@@ -26,7 +26,9 @@ internal fun TimerLayout(
     Text(
         text = String.format(
             Locale.ROOT,
-            stringResource(R.string.game_timer_text), seconds, milliSeconds
+            stringResource(R.string.game_timer_text),
+            seconds,
+            milliSeconds,
         ),
         modifier = modifier.padding(top = 16.dp),
         fontSize = 24.sp,
@@ -36,5 +38,5 @@ internal fun TimerLayout(
 @Preview
 @Composable
 private fun TimerLayoutPreview() {
-    TimerLayout(limitTime = { 3 } ) { }
+    TimerLayout(limitTime = { 3 }) { }
 }

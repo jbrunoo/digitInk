@@ -9,5 +9,6 @@ deploymentTargetDropDown.xml
 .externalNativeBuild
 .cxx
 local.properties
+/keystore
 /keystore.properties
 /app/google-services.json

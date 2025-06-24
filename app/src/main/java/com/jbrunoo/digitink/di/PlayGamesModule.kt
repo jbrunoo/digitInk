@@ -14,12 +14,13 @@ import dagger.hilt.android.qualifiers.ActivityContext
 @Module
 @InstallIn(ActivityComponent::class)
 object PlayGamesModule {
+    @Provides
+    fun provideGameSignInClient(
+        @ActivityContext context: Context,
+    ): GamesSignInClient = PlayGames.getGamesSignInClient(context as Activity)
 
     @Provides
-    fun provideGameSignInClient(@ActivityContext context: Context): GamesSignInClient =
-        PlayGames.getGamesSignInClient(context as Activity)
-
-    @Provides
-    fun provideLeaderBoardsClient(@ActivityContext context: Context): LeaderboardsClient =
-        PlayGames.getLeaderboardsClient(context as Activity)
+    fun provideLeaderBoardsClient(
+        @ActivityContext context: Context,
+    ): LeaderboardsClient = PlayGames.getLeaderboardsClient(context as Activity)
 }

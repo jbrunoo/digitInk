@@ -9,15 +9,16 @@ import com.jbrunoo.digitink.presentation.play.domain.model.DrawPath
 
 fun DrawScope.drawUserPaths(pathStates: List<DrawPath>) {
     pathStates.forEach { customPath ->
-        val path = Path().apply {
-            moveTo(customPath.start.x, customPath.start.y)
-            lineTo(customPath.end.x, customPath.end.y)
-        }
+        val path =
+            Path().apply {
+                moveTo(customPath.start.x, customPath.start.y)
+                lineTo(customPath.end.x, customPath.end.y)
+            }
         drawPath(
             path = path,
             color = customPath.color,
             alpha = customPath.alpha,
-            style = Stroke(width = customPath.strokeWidth.toPx())
+            style = Stroke(width = customPath.strokeWidth.toPx()),
         )
     }
 }
@@ -27,7 +28,7 @@ fun DrawScope.drawCorrectIndicator() {
         color = Color.Green,
         center = Offset(size.width / 2, size.height / 2),
         radius = size.minDimension / 4,
-        style = Stroke(width = 10f)
+        style = Stroke(width = 10f),
     )
 }
 
@@ -36,12 +37,12 @@ fun DrawScope.drawIncorrectIndicator() {
         color = Color.Red,
         start = Offset(size.width / 4, size.height / 4),
         end = Offset(size.width * 3 / 4, size.height * 3 / 4),
-        strokeWidth = 10f
+        strokeWidth = 10f,
     )
     drawLine(
         color = Color.Red,
         start = Offset(size.width * 3 / 4, size.height / 4),
         end = Offset(size.width / 4, size.height * 3 / 4),
-        strokeWidth = 10f
+        strokeWidth = 10f,
     )
 }

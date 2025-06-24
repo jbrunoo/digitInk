@@ -7,9 +7,7 @@ import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.image.ops.TransformToGrayscaleOp
 import javax.inject.Inject
 
-class ClassifierLocalDataSourceImpl
-@Inject
-constructor(
+class ClassifierLocalDataSourceImpl @Inject constructor(
     private val mnistModel: MnistModel,
 ) : ClassifierLocalDataSource {
 

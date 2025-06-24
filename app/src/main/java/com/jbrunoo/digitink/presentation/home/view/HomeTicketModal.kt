@@ -53,7 +53,7 @@ fun HomeTicketModal(
     var isPressed by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(
         if (isPressed) 0.9f else 1f,
-        label = "scale"
+        label = "scale",
     )
 
     BackHandler(onBack = onDismiss)
@@ -68,7 +68,7 @@ fun HomeTicketModal(
             suffixText = "$currentTicketCount",
             modifier = Modifier
                 .padding(top = 16.dp)
-                .align(Alignment.TopCenter)
+                .align(Alignment.TopCenter),
         )
 
         Column(
@@ -87,15 +87,16 @@ fun HomeTicketModal(
                         detectTapGestures(
                             onPress = {
                                 isPressed = true
-                                val released = try {
-                                    awaitRelease()
-                                    true
-                                } catch (e: Exception) {
-                                    false
-                                }
+                                val released =
+                                    try {
+                                        awaitRelease()
+                                        true
+                                    } catch (e: Exception) {
+                                        false
+                                    }
                                 isPressed = false
                                 if (released) onClickAd()
-                            }
+                            },
                         )
                     },
             ) {
@@ -121,8 +122,8 @@ fun HomeTicketModal(
                                         colors = listOf(
                                             Color(0xFFF06292),
                                             Color(0xFFF8BBD0),
-                                        )
-                                    )
+                                        ),
+                                    ),
                                 ),
                             tint = Color.Unspecified,
                         )
@@ -135,7 +136,7 @@ fun HomeTicketModal(
                         ) {
                             Text(
                                 text = stringResource(R.string.home_ticket_modal_watch_ads_text),
-                                color = Color.Blue
+                                color = Color.Blue,
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(
@@ -154,7 +155,7 @@ fun HomeTicketModal(
                         .offset(y = (-20).dp)
                         .background(
                             color = Color(0xFC9857D7),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(12.dp),
                         ),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -170,7 +171,7 @@ fun HomeTicketModal(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "close ticket modal"
+                    contentDescription = "close ticket modal",
                 )
             }
         }
@@ -183,6 +184,6 @@ private fun HomeTicketModalPreview() {
     HomeTicketModal(
         currentTicketCount = 5,
         onClickAd = {},
-        onDismiss = {}
+        onDismiss = {},
     )
 }
