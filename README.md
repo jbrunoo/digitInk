@@ -126,7 +126,7 @@ LaunchedEffect(
 ```
 
 > 화면에서 관리하는 변수가 많아서 리펙토링 진행하였다. <br/>
-> PlayBoard라는 게임하는 보드 UI와 해당 UI에서 필요한 state holder, viewModel을 구성해주었다.
+> PlayBoard라는 게임하는 보드 UI와 해당 UI에서 필요한 state holder를 구성해주었다.
 
 ```kotlin
 LaunchedEffect(key1 = playBoardState.isAutoScrollState.value) {
