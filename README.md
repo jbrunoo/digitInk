@@ -125,6 +125,21 @@ LaunchedEffect(
     }
 ```
 
+> 화면에서 관리하는 변수가 많아서 리펙토링 진행하였다. <br/>
+> PlayBoard라는 게임하는 보드 UI와 해당 UI에서 필요한 state holder, viewModel을 구성해주었다.
+
+```kotlin
+LaunchedEffect(key1 = playBoardState.isAutoScrollState.value) {
+        Timber.d("key1 autoscroll : ${playBoardState.isAutoScrollState.value}")
+
+        playBoardState.startAutoScroll {
+            onGradeUserDraw(null, playBoardState.currentIdx.intValue)
+        }
+    }
+```
+> ps. [commit](https://github.com/jbrunoo/digitInk/commit/348b4817b643e33679e56e0dc27a21b515100916)
+
+
 </div>
 </details>
 
@@ -133,7 +148,7 @@ LaunchedEffect(
 <div markdown="1">
 
 > timer 변화로 일어나는 전체 화면 recomposition을 timer component에서만 일어나도록 변경하였다. <br/>
-https://github.com/jbrunoo/digitInk/issues/1
+ps. [issue](https://github.com/jbrunoo/digitInk/issues/1)
 
 </div>
 </details>
