@@ -1,6 +1,10 @@
 ## Info
 > 매일매일 DS 두뇌 트레이닝 계산 n회 오마주 하기 <br/>
-> 개발 기간: 24.05.14 ~ 28 (2주)
+> 개발 기간: 24.05.14 ~ 28 (2주), 25.01 ~
+<br/>
+
+> Play Store: [GradeAI](https://play.google.com/store/apps/details?id=com.jbrunoo.digitink)
+
 <br/>
 
 > 참고 영상 <br/>
@@ -86,7 +90,7 @@ val drawModifier = modifier
 <summary>스크롤 처리</summary>
 <div markdown="1">
 
-> 입력 없으면 5.5초 후에 자동 스크롤과 입력 후에 0.5초 후 스크롤을 함께 수행해야 했다. <br/>
+> 유저 입력 없을 시, 5.5초 후에 자동 스크롤과 유저 입력 시, 0.5초 후 스크롤을 함께 수행해야 했다. <br/>
 > LaunchedEffect에 각 스크롤을 관리하는 key 2개를 제공하고 <br/>
 > 5.5초와 0.5초 각각을 coroutine으로 delay 처리하였다. <br/>
 > 유저 입력을 받을 시 자동 5.5 스크롤의 job을 취소하고 <br/>
@@ -124,12 +128,23 @@ LaunchedEffect(
 </div>
 </details>
 
+<details>
+<summary>timer로 인한 게임 화면이 계속 recomposition 되는 이슈</summary>
+<div markdown="1">
+
+> timer 변화로 일어나는 전체 화면 recomposition을 timer component에서만 일어나도록 변경하였다. <br/>
+https://github.com/jbrunoo/digitInk/issues/1
+
+</div>
+</details>
+
 ## 아쉬운 점
 > 모델의 성능이 아쉽지만 tfLite기도 하고, 성능과 속도는 trede-off기 때문에.. 크기가 5.5mb여서 내장해보았다. <br/>
 > mnist가 단일 숫자 데이터라 계산식의 결과가 단일 값만 나오게 처리되어 있다. <br/>
 > 숫자 4처럼 유저 드래그를 2번 이상 받아야하는 경우에 delay 시간과 스크롤 처리가 복잡해져서 일단은 한붓그리기가 되었다. <br/>
 
-
+## ScreenShots
+<img width="964" height="1228" alt="image" src="https://github.com/user-attachments/assets/982339f8-a1ae-4a1f-a7a7-b4da80b867f1" />
 
 
 ## 구현 영상
