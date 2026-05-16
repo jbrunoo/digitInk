@@ -34,14 +34,14 @@ class TicketRepositoryImpl @Inject constructor(
     override suspend fun minusTickets(count: Int) {
         dataStore.edit { preferences ->
             val currentValue = preferences[key] ?: 0
-            if (currentValue != 0) preferences[key] = currentValue - count
+            if (currentValue >= count) preferences[key] = currentValue - count
         }
     }
 
     override suspend fun plusTickets(count: Int) {
         dataStore.edit { preferences ->
             val currentValue = preferences[key] ?: 0
-            if (currentValue < 3) preferences[key] = currentValue + count
+            preferences[key] = (currentValue + count).coerceAtMost(Constants.MAX_TICKET_COUNT)
         }
     }
 

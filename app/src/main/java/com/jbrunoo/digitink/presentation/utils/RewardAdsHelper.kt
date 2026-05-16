@@ -21,7 +21,7 @@ class RewardAdsHelper @Inject constructor() {
     private val _isAdLoaded = MutableStateFlow(false)
     val isAdLoaded = _isAdLoaded.asStateFlow()
 
-    private fun loadRewardAd(context: Context) {
+    fun loadRewardAd(context: Context) {
         val adRequest = AdRequest.Builder().build()
         val adId = BuildConfig.REWARD_AD_ID
 

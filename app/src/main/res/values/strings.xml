@@ -4,7 +4,7 @@
     <string name="game_mode_infinite">Infinite Mode</string>
     <string name="game_result_text">Result</string>
     <string name="question_count_prefix">%1$s Questions</string>
-    <string name="game_timer_text">Timer: %d.%02d</string>
+    <string name="game_timer_text">Timer: %1$d.%2$02d</string>
 
     <!--app_id-->
     <string name="app_id" translatable="false">976317385254</string>

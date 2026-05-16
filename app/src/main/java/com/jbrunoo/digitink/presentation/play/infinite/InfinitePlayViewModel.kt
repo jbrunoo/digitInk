@@ -3,12 +3,18 @@ package com.jbrunoo.digitink.presentation.play.infinite
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.games.GamesSignInClient
+import com.google.android.gms.games.LeaderboardsClient
 import com.jbrunoo.digitink.common.Constants
 import com.jbrunoo.digitink.domain.repository.ClassifierRepository
 import com.jbrunoo.digitink.domain.repository.ScoreRepository
 import com.jbrunoo.digitink.presentation.play.domain.model.DrawPath
 import com.jbrunoo.digitink.presentation.play.domain.model.Qna
 import com.jbrunoo.digitink.presentation.play.domain.model.QnaWithPath
+import com.jbrunoo.digitink.presentation.utils.submitScoreToLeaderboard
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,13 +26,22 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import javax.inject.Inject
 
-@HiltViewModel
-class InfinitePlayViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = InfinitePlayViewModel.Factory::class)
+class InfinitePlayViewModel @AssistedInject constructor(
     private val classifierRepository: ClassifierRepository,
     private val scoreRepository: ScoreRepository,
+    @Assisted private val gamesSignInClient: GamesSignInClient,
+    @Assisted private val leaderboardsClient: LeaderboardsClient,
 ) : ViewModel() {
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            gamesSignInClient: GamesSignInClient,
+            leaderboardsClient: LeaderboardsClient,
+        ): InfinitePlayViewModel
+    }
+
     private var _qnaIdCounter = 1
     private val _correctCount = MutableStateFlow(0)
 
@@ -133,7 +148,12 @@ class InfinitePlayViewModel @Inject constructor(
         val leaderBoardKey = Constants.LEADERBOARD_KEY_INFINITE
 
         viewModelScope.launch(Dispatchers.IO) {
-//            playGamesManager.submitScore(leaderBoardKey, score)
+            submitScoreToLeaderboard(
+                gamesSignInClient = gamesSignInClient,
+                leaderboardsClient = leaderboardsClient,
+                leaderBoardKey = leaderBoardKey,
+                score = score,
+            )
             scoreRepository.saveLocalScore(dataStoreKey, score)
 
             withContext(Dispatchers.Main) {

@@ -113,8 +113,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    //noinspection Aligned16KB
-    implementation("org.tensorflow:tensorflow-lite-gpu:2.17.0")
+    implementation("com.google.ai.edge.litert:litert:1.4.2")
+    implementation("com.google.ai.edge.litert:litert-gpu:1.4.2")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
@@ -146,10 +146,10 @@ dependencies {
     implementation("androidx.startup:startup-runtime:1.2.0")
     // ads
     implementation("com.google.android.gms:play-services-ads:24.7.0")
-    // tfLite
-    implementation("org.tensorflow:tensorflow-lite-support:0.5.0")
-    implementation("org.tensorflow:tensorflow-lite-metadata:0.5.0")
-    implementation("org.tensorflow:tensorflow-lite-gpu-api:2.17.0")
+    // LiteRT
+    implementation("com.google.ai.edge.litert:litert-support:1.4.2")
+    implementation("com.google.ai.edge.litert:litert-metadata:1.4.2")
+    implementation("com.google.ai.edge.litert:litert-gpu-api:1.4.2")
     // icons
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
 }

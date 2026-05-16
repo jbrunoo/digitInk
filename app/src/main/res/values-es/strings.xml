@@ -3,7 +3,7 @@
     <string name="game_mode_nomal">Modo Normal</string>
     <string name="game_mode_infinite">Modo Infinito</string>
     <string name="game_result_text">Resultado</string>
-    <string name="game_timer_text">Temporizador: %d.%02d</string>
+    <string name="game_timer_text">Temporizador: %1$d.%2$02d</string>
     <string name="question_count_prefix">%1$s perguntas</string>
     <string name="result_screen_delete_button_txt">¿Desea eliminar el registro?</string>
 
@@ -24,4 +24,3 @@
     <string name="home_ticket_modal_get_more_ticket_text">Consigue más boletos</string>
     <string name="home_ticket_modal_watch_ads_text">Ver</string>
 </resources>
-
