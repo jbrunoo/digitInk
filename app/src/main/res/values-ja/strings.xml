@@ -3,7 +3,7 @@
     <string name="game_mode_nomal">"通常モード "</string>
     <string name="game_mode_infinite">インフィニットモード</string>
     <string name="game_result_text">結果</string>
-    <string name="game_timer_text">タイマー: %d.%02d</string>
+    <string name="game_timer_text">タイマー: %1$d.%2$02d</string>
     <string name="question_count_prefix">%1$s 問</string>
     <string name="result_screen_delete_button_txt">記録を削除しますか？</string>
 
@@ -24,4 +24,3 @@
     <string name="home_ticket_modal_get_more_ticket_text">もっとチケットを獲得しよう</string>
     <string name="home_ticket_modal_watch_ads_text">視聴する</string>
 </resources>
-

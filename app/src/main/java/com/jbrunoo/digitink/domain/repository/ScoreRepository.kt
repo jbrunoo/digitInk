@@ -12,8 +12,4 @@ interface ScoreRepository {
     )
 
     suspend fun clearLocalScore()
-
-    fun showLeaderBoard()
-
-    fun submitRemoteScore()
 }

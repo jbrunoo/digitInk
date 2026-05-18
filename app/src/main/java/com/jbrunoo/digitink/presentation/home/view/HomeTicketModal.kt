@@ -46,6 +46,7 @@ import com.jbrunoo.digitink.R
 @Composable
 fun HomeTicketModal(
     currentTicketCount: Int,
+    isRewardAdLoaded: Boolean = false,
     modifier: Modifier = Modifier,
     onClickAd: () -> Unit,
     onDismiss: () -> Unit,
@@ -95,7 +96,7 @@ fun HomeTicketModal(
                                         false
                                     }
                                 isPressed = false
-                                if (released) onClickAd()
+                                if (released && isRewardAdLoaded) onClickAd()
                             },
                         )
                     },
@@ -136,14 +137,14 @@ fun HomeTicketModal(
                         ) {
                             Text(
                                 text = stringResource(R.string.home_ticket_modal_watch_ads_text),
-                                color = Color.Blue,
+                                color = if (isRewardAdLoaded) Color.Blue else Color.Gray,
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(
                                 painterResource(R.drawable.arrowtriangle_right_circle),
                                 contentDescription = null,
                                 modifier = Modifier.size(24.dp),
-                                tint = Color.Blue,
+                                tint = if (isRewardAdLoaded) Color.Blue else Color.Gray,
                             )
                         }
                     }

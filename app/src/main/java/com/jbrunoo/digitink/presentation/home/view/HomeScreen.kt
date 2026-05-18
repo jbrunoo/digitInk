@@ -32,8 +32,11 @@ import com.jbrunoo.digitink.designsystem.theme.DigitInkTheme
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    currentTicketCount: Int = 0,
+    isRewardAdLoaded: Boolean = false,
     onPlayNormal: (Int) -> Unit = {},
     onPlayInfinite: () -> Unit = {},
+    onClickAd: () -> Unit = {},
     onClickResult: () -> Unit = {},
 ) {
     var expandedCount by remember { mutableStateOf(false) }
@@ -59,13 +62,14 @@ fun HomeScreen(
                 shape = RoundedCornerShape(25.dp),
             ) {
                 TextWithTicket(
-                    suffixText = "5",
+                    suffixText = "$currentTicketCount",
                     trailingIcon = Icons.Default.Add,
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
             DiButton(
                 onClick = { expandedCount = true },
+                enabled = currentTicketCount >= 1,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp),
@@ -79,6 +83,7 @@ fun HomeScreen(
 //            Text()
             DiButton(
                 onClick = onPlayInfinite,
+                enabled = currentTicketCount >= 3,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp),
@@ -120,8 +125,9 @@ fun HomeScreen(
 
     if (expandedTicket) {
         HomeTicketModal(
-            currentTicketCount = 5,
-            onClickAd = {},
+            currentTicketCount = currentTicketCount,
+            isRewardAdLoaded = isRewardAdLoaded,
+            onClickAd = onClickAd,
             onDismiss = { expandedTicket = false },
         )
     }

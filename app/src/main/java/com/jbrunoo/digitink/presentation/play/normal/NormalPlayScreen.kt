@@ -7,8 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jbrunoo.digitink.presentation.play.component.PlayBoard
 import com.jbrunoo.digitink.presentation.play.component.TimerLayout
@@ -18,7 +16,8 @@ import com.jbrunoo.digitink.presentation.play.domain.model.rememberPlayBoardStat
 fun NormalPlayScreen(
     modifier: Modifier = Modifier,
     onTerminate: () -> Unit = {},
-    viewModel: NormalPlayViewModel = hiltViewModel(),
+    onSubmitScore: (String, Long) -> Unit = { _, _ -> },
+    viewModel: NormalPlayViewModel,
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -31,7 +30,10 @@ fun NormalPlayScreen(
             LaunchedEffect(playBoardState.currentIdx.intValue) {
                 if (playBoardState.currentIdx.intValue == state.qnaWithPathList.size) {
                     playBoardState.changeGameOver()
-                    viewModel.saveResultEntry { onTerminate() }
+                    viewModel.saveResultEntry(
+                        submitRemoteScore = onSubmitScore,
+                        onComplete = onTerminate,
+                    )
                 }
             }
 
@@ -43,7 +45,10 @@ fun NormalPlayScreen(
                 TimerLayout(
                     limitTime = { state.limitTime },
                     onTerminate = {
-                        viewModel.saveResultEntry { onTerminate() }
+                        viewModel.saveResultEntry(
+                            submitRemoteScore = onSubmitScore,
+                            onComplete = onTerminate,
+                        )
                     },
                 )
                 PlayBoard(
@@ -55,10 +60,4 @@ fun NormalPlayScreen(
             }
         }
     }
-}
-
-@Preview
-@Composable
-private fun PlayScreenPreview() {
-    NormalPlayScreen()
 }

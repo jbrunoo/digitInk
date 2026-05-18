@@ -140,14 +140,16 @@ class NormalPlayViewModel @Inject constructor(
         }
     }
 
-    fun saveResultEntry(onComplete: () -> Unit) {
+    fun saveResultEntry(
+        submitRemoteScore: (String, Long) -> Unit,
+        onComplete: () -> Unit,
+    ) {
         val score = calcScore()
         val dataStoreKey = questionCount.datastoreKey() ?: return
         val leaderBoardKey = questionCount.leaderBoardKey() ?: return
 
         viewModelScope.launch(Dispatchers.IO) {
-            TODO("submit score")
-//            playGamesManager.submitScore(leaderBoardKey, score)
+            submitRemoteScore(leaderBoardKey, score)
             scoreRepository.saveLocalScore(dataStoreKey, score)
 
             withContext(Dispatchers.Main) {

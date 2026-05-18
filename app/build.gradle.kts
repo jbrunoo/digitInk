@@ -105,51 +105,53 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.16.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.1")
-    implementation("androidx.activity:activity-compose:1.10.1")
-    implementation(platform("androidx.compose:compose-bom:2025.06.01"))
-    implementation("androidx.compose.ui:ui:1.8.3")
+    implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
+    implementation("androidx.activity:activity-compose:1.11.0")
+    implementation(platform("androidx.compose:compose-bom:2025.10.01"))
+    implementation("androidx.compose.ui:ui:1.9.4")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("org.tensorflow:tensorflow-lite-support:0.5.0")
-    implementation("org.tensorflow:tensorflow-lite-metadata:0.5.0")
-    //noinspection Aligned16KB
-    implementation("org.tensorflow:tensorflow-lite-gpu:2.17.0")
+    implementation("com.google.ai.edge.litert:litert:1.4.2")
+    implementation("com.google.ai.edge.litert:litert-gpu:1.4.2")
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.06.01"))
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.10.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // viewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
     // navigation
-    implementation("androidx.navigation:navigation-compose:2.9.0")
+    implementation("androidx.navigation:navigation-compose:2.9.5")
     // hilt
-    implementation("com.google.dagger:hilt-android:2.56.2")
+    implementation("com.google.dagger:hilt-android:2.57.2")
     // ksp("com.google.dagger:hilt-android-compiler:2.56.2")
-    ksp("com.google.dagger:hilt-android-compiler:2.56.2")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    ksp("com.google.dagger:hilt-android-compiler:2.57.2")
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
     // preferences dataStore
     implementation("androidx.datastore:datastore-preferences:1.1.7")
     // firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.15.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
     // gms
-    implementation("com.google.android.gms:play-services-games-v2:20.1.2")
+    implementation("com.google.android.gms:play-services-games-v2:21.0.0")
     // logger
     implementation("com.jakewharton.timber:timber:5.0.1")
     // startUp
     implementation("androidx.startup:startup-runtime:1.2.0")
     // ads
-    implementation("com.google.android.gms:play-services-ads:24.4.0")
-    // tfLite gpu
-    implementation("org.tensorflow:tensorflow-lite-gpu-api:2.17.0")
+    implementation("com.google.android.gms:play-services-ads:24.7.0")
+    // LiteRT
+    implementation("com.google.ai.edge.litert:litert-support:1.4.2")
+    implementation("com.google.ai.edge.litert:litert-metadata:1.4.2")
+    implementation("com.google.ai.edge.litert:litert-gpu-api:1.4.2")
+    // icons
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
 }
 
 ktlint {

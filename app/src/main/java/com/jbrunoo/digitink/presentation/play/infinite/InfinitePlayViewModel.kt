@@ -127,13 +127,16 @@ class InfinitePlayViewModel @Inject constructor(
         }
     }
 
-    fun saveResultEntry(onComplete: () -> Unit) {
+    fun saveResultEntry(
+        submitRemoteScore: (String, Long) -> Unit,
+        onComplete: () -> Unit,
+    ) {
         val score = calcScore()
         val dataStoreKey = Constants.DATASTORE_KEY_INFINITE
         val leaderBoardKey = Constants.LEADERBOARD_KEY_INFINITE
 
         viewModelScope.launch(Dispatchers.IO) {
-//            playGamesManager.submitScore(leaderBoardKey, score)
+            submitRemoteScore(leaderBoardKey, score)
             scoreRepository.saveLocalScore(dataStoreKey, score)
 
             withContext(Dispatchers.Main) {

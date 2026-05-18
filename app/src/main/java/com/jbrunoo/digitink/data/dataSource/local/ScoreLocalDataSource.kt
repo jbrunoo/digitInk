@@ -1,9 +1,12 @@
 package com.jbrunoo.digitink.data.dataSource.local
 
+import com.jbrunoo.digitink.domain.model.Score
+import kotlinx.coroutines.flow.Flow
+
 interface ScoreLocalDataSource {
-    fun readLocalScore()
+    fun readLocalScore(): Flow<Score>
 
-    fun saveLocalScore()
+    suspend fun saveLocalScore(dataStoreKey: String, score: Long)
 
-    fun clearLocalScore()
+    suspend fun clearLocalScore()
 }

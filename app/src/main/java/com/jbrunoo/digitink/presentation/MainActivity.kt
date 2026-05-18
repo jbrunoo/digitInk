@@ -20,6 +20,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.games.GamesSignInClient
+import com.google.android.gms.games.LeaderboardsClient
 import com.jbrunoo.digitink.common.Constants
 import com.jbrunoo.digitink.designsystem.component.BannerAd
 import com.jbrunoo.digitink.designsystem.theme.DigitInkTheme
@@ -33,6 +35,12 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var dataStore: DataStore<Preferences>
+
+    @Inject
+    lateinit var leaderboardsClient: LeaderboardsClient
+
+    @Inject
+    lateinit var gamesSignInClient: GamesSignInClient
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +67,8 @@ class MainActivity : ComponentActivity() {
                     ) { innerPadding ->
                         RootNavHost(
                             navController = rememberNavController(),
+                            gamesSignInClient = gamesSignInClient,
+                            leaderboardsClient = leaderboardsClient,
                             modifier = Modifier.padding(innerPadding),
                         )
                     }
@@ -74,8 +84,7 @@ class MainActivity : ComponentActivity() {
         scope.launch {
             dataStore.edit { preferences ->
                 if (!preferences.contains(key)) {
-                    val maxTicket = 3
-                    preferences[key] = maxTicket
+                    preferences[key] = Constants.MAX_TICKET_COUNT
                 }
             }
         }
