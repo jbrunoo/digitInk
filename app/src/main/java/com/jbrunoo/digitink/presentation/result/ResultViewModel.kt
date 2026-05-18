@@ -1,6 +1,5 @@
 package com.jbrunoo.digitink.presentation.result
 
-import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jbrunoo.digitink.domain.model.Score
@@ -59,9 +58,5 @@ class ResultViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             scoreRepository.clearLocalScore()
         }
-    }
-
-    fun showLeaderBoard(activity: Activity) {
-//        playGamesManager.showLeaderBoard(activity)
     }
 }

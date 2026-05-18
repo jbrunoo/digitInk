@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -54,7 +55,9 @@ fun HomeScreen(
         )
 
         Column(
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = (-32).dp),
         ) {
             DiButton(
                 onClick = { expandedTicket = true },
@@ -99,7 +102,7 @@ fun HomeScreen(
             onClick = onClickResult,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(56.dp),
+                .padding(bottom = 40.dp),
         ) {
             Text(
                 text = stringResource(R.string.game_result_text),

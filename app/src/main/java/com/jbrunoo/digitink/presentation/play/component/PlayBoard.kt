@@ -53,6 +53,7 @@ import timber.log.Timber
 @Composable
 internal fun PlayBoard(
     qnaWithPath: List<QnaWithPath>,
+    modifier: Modifier = Modifier,
     playBoardState: PlayBoardState = rememberPlayBoardState(),
     onUpdateUserPaths: (List<DrawPath>, Int) -> Unit,
     onGradeUserDraw: (ImageBitmap?, Int) -> Unit,
@@ -65,9 +66,11 @@ internal fun PlayBoard(
         }
     }
 
-    BoxWithConstraints {
+    BoxWithConstraints(
+        modifier = modifier,
+    ) {
         val maxHeight = this.maxHeight
-        val itemDp = (maxHeight) / 5
+        val itemDp = maxHeight / 5
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth(),

@@ -2,11 +2,14 @@ package com.jbrunoo.digitink.presentation.play.normal
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jbrunoo.digitink.presentation.play.component.PlayBoard
 import com.jbrunoo.digitink.presentation.play.component.TimerLayout
@@ -38,9 +41,9 @@ fun NormalPlayScreen(
             }
 
             Column(
-                modifier = modifier,
+                modifier = modifier.padding(bottom = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 TimerLayout(
                     limitTime = { state.limitTime },
@@ -53,6 +56,9 @@ fun NormalPlayScreen(
                 )
                 PlayBoard(
                     qnaWithPath = state.qnaWithPathList,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                     playBoardState = playBoardState,
                     onUpdateUserPaths = viewModel::onPathsUpdate,
                     onGradeUserDraw = viewModel::onCheckCorrect,

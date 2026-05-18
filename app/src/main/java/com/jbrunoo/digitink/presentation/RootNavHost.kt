@@ -19,6 +19,7 @@ import com.jbrunoo.digitink.presentation.home.view.HomeScreen
 import com.jbrunoo.digitink.presentation.play.infinite.InfinitePlayScreen
 import com.jbrunoo.digitink.presentation.play.normal.NormalPlayScreen
 import com.jbrunoo.digitink.presentation.result.ResultScreen
+import com.jbrunoo.digitink.presentation.utils.showLeaderboards
 import com.jbrunoo.digitink.presentation.utils.submitScoreToLeaderboard
 
 @Composable
@@ -99,12 +100,25 @@ fun RootNavHost(
         }
 
         composable(Screen.RESULT.route) {
+            val context = LocalContext.current
+            val activity = context as? Activity
+
             ResultScreen(
                 navigateToHome = { navController.navigateWithPopUp(Screen.HOME.route) },
+                onShowLeaderBoard = {
+                    showLeaderboards(
+                        gamesSignInClient = gamesSignInClient,
+                        leaderboardsClient = leaderboardsClient,
+                    ) { intent ->
+                        activity?.startActivityForResult(intent, RC_LEADERBOARD_UI)
+                    }
+                },
             )
         }
     }
 }
+
+private const val RC_LEADERBOARD_UI = 9004
 
 fun NavHostController.navigateWithPopUp(route: String) {
     this.navigate(route) {
