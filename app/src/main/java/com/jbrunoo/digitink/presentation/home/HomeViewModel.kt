@@ -33,7 +33,7 @@ class HomeViewModel @Inject constructor(
     )
 
     fun loadRewardAd(context: Context) {
-        rewardAdsHelper.loadRewardAd(context)
+        rewardAdsHelper.loadRewardAd(context.applicationContext)
     }
 
     fun showRewardAd(activity: Activity) {
@@ -57,8 +57,9 @@ class HomeViewModel @Inject constructor(
         onStart: () -> Unit,
     ) {
         viewModelScope.launch {
-            ticketRepository.minusTickets(requiredTicketCount)
-            onStart()
+            if (ticketRepository.minusTickets(requiredTicketCount)) {
+                onStart()
+            }
         }
     }
 }

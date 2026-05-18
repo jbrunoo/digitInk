@@ -1,10 +1,12 @@
 package com.jbrunoo.digitink.presentation
 
+import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,12 +17,9 @@ import com.google.android.gms.games.LeaderboardsClient
 import com.jbrunoo.digitink.presentation.home.HomeViewModel
 import com.jbrunoo.digitink.presentation.home.view.HomeScreen
 import com.jbrunoo.digitink.presentation.play.infinite.InfinitePlayScreen
-import com.jbrunoo.digitink.presentation.play.infinite.InfinitePlayViewModel
 import com.jbrunoo.digitink.presentation.play.normal.NormalPlayScreen
-import com.jbrunoo.digitink.presentation.play.normal.NormalPlayViewModel
 import com.jbrunoo.digitink.presentation.result.ResultScreen
-import android.app.Activity
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jbrunoo.digitink.presentation.utils.submitScoreToLeaderboard
 
 @Composable
 fun RootNavHost(
@@ -68,36 +67,34 @@ fun RootNavHost(
             Screen.PLAY.NORMAL.route + "/{questionCount}",
             arguments = listOf(navArgument("questionCount") { type = NavType.IntType }),
         ) {
-            val viewModel = hiltViewModel<NormalPlayViewModel, NormalPlayViewModel.Factory>(
-                creationCallback = { factory ->
-                    factory.create(
-                        gamesSignInClient = gamesSignInClient,
-                        leaderboardsClient = leaderboardsClient,
-                    )
-                },
-            )
-
             NormalPlayScreen(
                 onTerminate = { navController.navigateWithPopUp(Screen.RESULT.route) },
-                viewModel = viewModel,
+                onSubmitScore = { leaderBoardKey, score ->
+                    submitScoreToLeaderboard(
+                        gamesSignInClient = gamesSignInClient,
+                        leaderboardsClient = leaderboardsClient,
+                        leaderBoardKey = leaderBoardKey,
+                        score = score,
+                    )
+                },
+                viewModel = hiltViewModel(),
             )
         }
 
         composable(
             Screen.PLAY.INFINITE.route,
         ) {
-            val viewModel = hiltViewModel<InfinitePlayViewModel, InfinitePlayViewModel.Factory>(
-                creationCallback = { factory ->
-                    factory.create(
-                        gamesSignInClient = gamesSignInClient,
-                        leaderboardsClient = leaderboardsClient,
-                    )
-                },
-            )
-
             InfinitePlayScreen(
                 onTerminate = { navController.navigateWithPopUp(Screen.RESULT.route) },
-                viewModel = viewModel,
+                onSubmitScore = { leaderBoardKey, score ->
+                    submitScoreToLeaderboard(
+                        gamesSignInClient = gamesSignInClient,
+                        leaderboardsClient = leaderboardsClient,
+                        leaderBoardKey = leaderBoardKey,
+                        score = score,
+                    )
+                },
+                viewModel = hiltViewModel(),
             )
         }
 

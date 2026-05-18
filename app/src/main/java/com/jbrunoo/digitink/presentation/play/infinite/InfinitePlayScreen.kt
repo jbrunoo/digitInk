@@ -17,6 +17,7 @@ import com.jbrunoo.digitink.presentation.play.domain.model.rememberPlayBoardStat
 fun InfinitePlayScreen(
     modifier: Modifier = Modifier,
     onTerminate: () -> Unit = {},
+    onSubmitScore: (String, Long) -> Unit = { _, _ -> },
     viewModel: InfinitePlayViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -30,7 +31,10 @@ fun InfinitePlayScreen(
             LaunchedEffect(state.lifeCount) {
                 if (state.lifeCount == 0) {
                     playBoardState.changeGameOver() // gameOver 시 자동 스크롤 정지
-                    viewModel.saveResultEntry { onTerminate() }
+                    viewModel.saveResultEntry(
+                        submitRemoteScore = onSubmitScore,
+                        onComplete = onTerminate,
+                    )
                 }
             }
 

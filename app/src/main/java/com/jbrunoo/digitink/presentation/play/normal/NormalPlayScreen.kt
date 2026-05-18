@@ -16,6 +16,7 @@ import com.jbrunoo.digitink.presentation.play.domain.model.rememberPlayBoardStat
 fun NormalPlayScreen(
     modifier: Modifier = Modifier,
     onTerminate: () -> Unit = {},
+    onSubmitScore: (String, Long) -> Unit = { _, _ -> },
     viewModel: NormalPlayViewModel,
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -29,7 +30,10 @@ fun NormalPlayScreen(
             LaunchedEffect(playBoardState.currentIdx.intValue) {
                 if (playBoardState.currentIdx.intValue == state.qnaWithPathList.size) {
                     playBoardState.changeGameOver()
-                    viewModel.saveResultEntry { onTerminate() }
+                    viewModel.saveResultEntry(
+                        submitRemoteScore = onSubmitScore,
+                        onComplete = onTerminate,
+                    )
                 }
             }
 
@@ -41,7 +45,10 @@ fun NormalPlayScreen(
                 TimerLayout(
                     limitTime = { state.limitTime },
                     onTerminate = {
-                        viewModel.saveResultEntry { onTerminate() }
+                        viewModel.saveResultEntry(
+                            submitRemoteScore = onSubmitScore,
+                            onComplete = onTerminate,
+                        )
                     },
                 )
                 PlayBoard(

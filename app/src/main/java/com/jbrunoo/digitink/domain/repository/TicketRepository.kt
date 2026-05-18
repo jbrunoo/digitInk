@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface TicketRepository {
     fun readTicket(): Flow<Ticket>
 
-    suspend fun minusTickets(count: Int)
+    suspend fun minusTickets(count: Int): Boolean
 
     suspend fun plusTickets(count: Int)
 }

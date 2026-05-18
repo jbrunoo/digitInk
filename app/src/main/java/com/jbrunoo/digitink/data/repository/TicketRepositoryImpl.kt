@@ -31,11 +31,16 @@ class TicketRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun minusTickets(count: Int) {
+    override suspend fun minusTickets(count: Int): Boolean {
+        var isDeducted = false
         dataStore.edit { preferences ->
             val currentValue = preferences[key] ?: 0
-            if (currentValue >= count) preferences[key] = currentValue - count
+            if (currentValue >= count) {
+                preferences[key] = currentValue - count
+                isDeducted = true
+            }
         }
+        return isDeducted
     }
 
     override suspend fun plusTickets(count: Int) {

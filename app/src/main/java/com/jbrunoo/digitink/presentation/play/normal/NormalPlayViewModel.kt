@@ -7,8 +7,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.games.GamesSignInClient
-import com.google.android.gms.games.LeaderboardsClient
 import com.jbrunoo.digitink.domain.repository.ClassifierRepository
 import com.jbrunoo.digitink.domain.repository.ScoreRepository
 import com.jbrunoo.digitink.presentation.play.domain.model.DrawPath
@@ -16,10 +14,6 @@ import com.jbrunoo.digitink.presentation.play.domain.model.Qna
 import com.jbrunoo.digitink.presentation.play.domain.model.QnaWithPath
 import com.jbrunoo.digitink.presentation.utils.extension.datastoreKey
 import com.jbrunoo.digitink.presentation.utils.extension.leaderBoardKey
-import com.jbrunoo.digitink.presentation.utils.submitScoreToLeaderboard
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -31,25 +25,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 import kotlin.math.roundToLong
 
-@HiltViewModel(assistedFactory = NormalPlayViewModel.Factory::class)
-class NormalPlayViewModel @AssistedInject constructor(
+@HiltViewModel
+class NormalPlayViewModel @Inject constructor(
     private val classifierRepository: ClassifierRepository,
     private val scoreRepository: ScoreRepository,
-    @Assisted private val gamesSignInClient: GamesSignInClient,
-    @Assisted private val leaderboardsClient: LeaderboardsClient, // activity scope
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(
-            gamesSignInClient: GamesSignInClient,
-            leaderboardsClient: LeaderboardsClient,
-        ): NormalPlayViewModel
-    }
-
     private val questionCount: Int =
         checkNotNull(savedStateHandle["questionCount"]) // 기본적으로 nullable type
 
@@ -156,18 +140,16 @@ class NormalPlayViewModel @AssistedInject constructor(
         }
     }
 
-    fun saveResultEntry(onComplete: () -> Unit) {
+    fun saveResultEntry(
+        submitRemoteScore: (String, Long) -> Unit,
+        onComplete: () -> Unit,
+    ) {
         val score = calcScore()
         val dataStoreKey = questionCount.datastoreKey() ?: return
         val leaderBoardKey = questionCount.leaderBoardKey() ?: return
 
         viewModelScope.launch(Dispatchers.IO) {
-            submitScoreToLeaderboard(
-                gamesSignInClient = gamesSignInClient,
-                leaderboardsClient = leaderboardsClient,
-                leaderBoardKey = leaderBoardKey,
-                score = score,
-            )
+            submitRemoteScore(leaderBoardKey, score)
             scoreRepository.saveLocalScore(dataStoreKey, score)
 
             withContext(Dispatchers.Main) {
