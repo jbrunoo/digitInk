@@ -47,6 +47,8 @@ import com.jbrunoo.digitink.R
 fun HomeTicketModal(
     currentTicketCount: Int,
     isRewardAdLoaded: Boolean = false,
+    canWatchRewardAd: Boolean = false,
+    nextTicketText: String? = null,
     modifier: Modifier = Modifier,
     onClickAd: () -> Unit,
     onDismiss: () -> Unit,
@@ -80,6 +82,10 @@ fun HomeTicketModal(
             verticalArrangement = Arrangement.Center,
         ) {
             Text(stringResource(R.string.home_ticket_modal_get_more_ticket_text), fontSize = 18.sp)
+            nextTicketText?.let {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Next free ticket $it", fontSize = 14.sp)
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Box(
                 modifier = Modifier
@@ -96,7 +102,7 @@ fun HomeTicketModal(
                                         false
                                     }
                                 isPressed = false
-                                if (released && isRewardAdLoaded) onClickAd()
+                                if (released && canWatchRewardAd) onClickAd()
                             },
                         )
                     },
@@ -137,14 +143,14 @@ fun HomeTicketModal(
                         ) {
                             Text(
                                 text = stringResource(R.string.home_ticket_modal_watch_ads_text),
-                                color = if (isRewardAdLoaded) Color.Blue else Color.Gray,
+                                color = if (canWatchRewardAd) Color.Blue else Color.Gray,
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(
                                 painterResource(R.drawable.arrowtriangle_right_circle),
                                 contentDescription = null,
                                 modifier = Modifier.size(24.dp),
-                                tint = if (isRewardAdLoaded) Color.Blue else Color.Gray,
+                                tint = if (canWatchRewardAd) Color.Blue else Color.Gray,
                             )
                         }
                     }

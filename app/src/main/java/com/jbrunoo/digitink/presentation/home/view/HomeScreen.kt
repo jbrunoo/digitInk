@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -34,6 +35,8 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     currentTicketCount: Int = 0,
     isRewardAdLoaded: Boolean = false,
+    millisUntilNextTicket: Long = 0L,
+    canWatchRewardAd: Boolean = false,
     onPlayNormal: (Int) -> Unit = {},
     onPlayInfinite: () -> Unit = {},
     onClickAd: () -> Unit = {},
@@ -54,7 +57,9 @@ fun HomeScreen(
         )
 
         Column(
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = (-24).dp),
         ) {
             DiButton(
                 onClick = { expandedTicket = true },
@@ -64,6 +69,15 @@ fun HomeScreen(
                 TextWithTicket(
                     suffixText = "$currentTicketCount",
                     trailingIcon = Icons.Default.Add,
+                )
+            }
+            if (millisUntilNextTicket > 0L) {
+                Text(
+                    text = "Next ticket ${millisUntilNextTicket.toTicketTimerText()}",
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 8.dp),
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -99,7 +113,7 @@ fun HomeScreen(
             onClick = onClickResult,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(56.dp),
+                .padding(bottom = 40.dp),
         ) {
             Text(
                 text = stringResource(R.string.game_result_text),
@@ -127,10 +141,19 @@ fun HomeScreen(
         HomeTicketModal(
             currentTicketCount = currentTicketCount,
             isRewardAdLoaded = isRewardAdLoaded,
+            canWatchRewardAd = canWatchRewardAd,
+            nextTicketText = millisUntilNextTicket.takeIf { it > 0L }?.toTicketTimerText(),
             onClickAd = onClickAd,
             onDismiss = { expandedTicket = false },
         )
     }
+}
+
+private fun Long.toTicketTimerText(): String {
+    val totalSeconds = (this / 1000).coerceAtLeast(0)
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return "%d:%02d".format(minutes, seconds)
 }
 
 @Preview

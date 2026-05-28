@@ -24,6 +24,9 @@ val keystoreProperties =
 fun getLocalProperty(property: String): String =
     gradleLocalProperties(rootDir, providers).getProperty(property)
 
+fun getLocalPropertyAsBuildConfigString(property: String): String =
+    "\"${getLocalProperty(property).trim().trim('"')}\""
+
 android {
     namespace = "com.jbrunoo.digitink"
     compileSdk = 36
@@ -32,8 +35,8 @@ android {
         applicationId = "com.jbrunoo.digitink"
         minSdk = 24
         targetSdk = 36
-        versionCode = 13
-        versionName = "1.0.1"
+        versionCode = 15
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -76,8 +79,16 @@ android {
             }
             signingConfig = signingConfigs.getByName("release")
 
-            buildConfigField("String", "BANNER_AD_ID", getLocalProperty("BANNER_AD_ID"))
-            buildConfigField("String", "REWARD_AD_ID", getLocalProperty("REWARD_AD_ID"))
+            buildConfigField(
+                "String",
+                "BANNER_AD_ID",
+                getLocalPropertyAsBuildConfigString("BANNER_AD_ID"),
+            )
+            buildConfigField(
+                "String",
+                "REWARD_AD_ID",
+                getLocalPropertyAsBuildConfigString("REWARD_AD_ID"),
+            )
         }
     }
     compileOptions {

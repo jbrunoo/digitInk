@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import com.jbrunoo.digitink.common.Constants
 import com.jbrunoo.digitink.domain.model.Ticket
 import com.jbrunoo.digitink.domain.repository.TicketRepository
@@ -26,17 +27,33 @@ class TicketRepositoryImpl @Inject constructor(
             }
         }
         .map { preferences ->
-            Ticket(
-                count = preferences[key] ?: 0,
-            )
+            preferences.toTicket(now = System.currentTimeMillis())
         }
+
+    override suspend fun refreshTickets(): Ticket {
+        val now = System.currentTimeMillis()
+        var ticket = Ticket()
+        dataStore.edit { preferences ->
+            ticket = preferences.toTicket(now)
+            preferences[countKey] = ticket.count
+            preferences[refillAtKey] = nextRefillAt(ticket, now)
+        }
+        return ticket
+    }
 
     override suspend fun minusTickets(count: Int): Boolean {
         var isDeducted = false
+        val now = System.currentTimeMillis()
         dataStore.edit { preferences ->
-            val currentValue = preferences[key] ?: 0
-            if (currentValue >= count) {
-                preferences[key] = currentValue - count
+            val currentTicket = preferences.toTicket(now)
+            if (currentTicket.count >= count) {
+                val updatedCount = currentTicket.count - count
+                preferences[countKey] = updatedCount
+                preferences[refillAtKey] = if (updatedCount >= Constants.MAX_TICKET_COUNT) {
+                    0L
+                } else {
+                    now
+                }
                 isDeducted = true
             }
         }
@@ -44,13 +61,54 @@ class TicketRepositoryImpl @Inject constructor(
     }
 
     override suspend fun plusTickets(count: Int) {
+        val now = System.currentTimeMillis()
         dataStore.edit { preferences ->
-            val currentValue = preferences[key] ?: 0
-            preferences[key] = (currentValue + count).coerceAtMost(Constants.MAX_TICKET_COUNT)
+            val currentTicket = preferences.toTicket(now)
+            val updatedCount = (currentTicket.count + count).coerceAtMost(Constants.MAX_TICKET_COUNT)
+            preferences[countKey] = updatedCount
+            preferences[refillAtKey] = if (updatedCount >= Constants.MAX_TICKET_COUNT) {
+                0L
+            } else {
+                now
+            }
         }
     }
 
+    private fun Preferences.toTicket(now: Long): Ticket {
+        val currentCount = this[countKey] ?: Constants.MAX_TICKET_COUNT
+        if (currentCount >= Constants.MAX_TICKET_COUNT) {
+            return Ticket(count = currentCount, millisUntilNextRefill = 0L)
+        }
+
+        val refillAt = this[refillAtKey] ?: now
+        val elapsed = (now - refillAt).coerceAtLeast(0L)
+        val earnedCount = (elapsed / Constants.TICKET_REFILL_INTERVAL_MILLIS).toInt()
+        val updatedCount = (currentCount + earnedCount).coerceAtMost(Constants.MAX_TICKET_COUNT)
+
+        if (updatedCount >= Constants.MAX_TICKET_COUNT) {
+            return Ticket(count = updatedCount, millisUntilNextRefill = 0L)
+        }
+
+        val nextRefill = Constants.TICKET_REFILL_INTERVAL_MILLIS -
+            (elapsed % Constants.TICKET_REFILL_INTERVAL_MILLIS)
+
+        return Ticket(
+            count = updatedCount,
+            millisUntilNextRefill = nextRefill,
+        )
+    }
+
+    private fun nextRefillAt(
+        ticket: Ticket,
+        now: Long,
+    ): Long = if (ticket.count >= Constants.MAX_TICKET_COUNT) {
+        0L
+    } else {
+        now + ticket.millisUntilNextRefill - Constants.TICKET_REFILL_INTERVAL_MILLIS
+    }
+
     companion object {
-        private val key = intPreferencesKey(Constants.TICKET_KEY)
+        private val countKey = intPreferencesKey(Constants.TICKET_KEY)
+        private val refillAtKey = longPreferencesKey(Constants.TICKET_REFILL_AT_KEY)
     }
 }

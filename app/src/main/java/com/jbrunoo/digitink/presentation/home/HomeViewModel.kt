@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.jbrunoo.digitink.domain.repository.TicketRepository
 import com.jbrunoo.digitink.presentation.utils.RewardAdsHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -25,6 +26,8 @@ class HomeViewModel @Inject constructor(
         HomeUIState(
             ticketCount = ticket.count,
             isRewardAdLoaded = isRewardAdLoaded,
+            millisUntilNextTicket = ticket.millisUntilNextRefill,
+            canWatchRewardAd = isRewardAdLoaded && ticket.millisUntilNextRefill > 0L,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -32,11 +35,22 @@ class HomeViewModel @Inject constructor(
         initialValue = HomeUIState(),
     )
 
+    init {
+        viewModelScope.launch {
+            while (true) {
+                ticketRepository.refreshTickets()
+                delay(1000L)
+            }
+        }
+    }
+
     fun loadRewardAd(context: Context) {
         rewardAdsHelper.loadRewardAd(context.applicationContext)
     }
 
     fun showRewardAd(activity: Activity) {
+        if (!uiState.value.canWatchRewardAd) return
+
         rewardAdsHelper.showRewardAd(activity) { amount ->
             viewModelScope.launch {
                 ticketRepository.plusTickets(amount)

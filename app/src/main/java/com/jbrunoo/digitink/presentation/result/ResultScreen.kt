@@ -1,7 +1,5 @@
 package com.jbrunoo.digitink.presentation.result
 
-import android.app.Activity
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -49,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jbrunoo.digitink.R
 import com.jbrunoo.digitink.designsystem.component.BigText
 import com.jbrunoo.digitink.designsystem.component.DiButton
+import com.jbrunoo.digitink.domain.model.Score
 
 private const val INFINITE_COUNT_KET = -1
 
@@ -56,10 +56,10 @@ private const val INFINITE_COUNT_KET = -1
 @Composable
 fun ResultScreen(
     navigateToHome: () -> Unit = {},
+    onShowLeaderBoard: (Score) -> Unit = { _ -> },
     viewModel: ResultViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val activity = LocalActivity.current as Activity
     var isDialogOpen by remember { mutableStateOf(false) }
     val normalModes = listOf(5, 10, 15, 20)
 
@@ -87,13 +87,20 @@ fun ResultScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
-            verticalArrangement = Arrangement.SpaceEvenly,
+                .padding(paddingValues)
+                .padding(top = 4.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             LazyVerticalGrid(
+                modifier = Modifier.weight(1f),
                 columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = PaddingValues(
+                    start = 12.dp,
+                    top = 8.dp,
+                    end = 12.dp,
+                    bottom = 4.dp,
+                ),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -113,7 +120,11 @@ fun ResultScreen(
                 }
             }
 
-            Row(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .height(64.dp),
+            ) {
                 DiButton(
                     onClick = { isDialogOpen = true },
                     modifier = Modifier.weight(1f),
@@ -126,7 +137,7 @@ fun ResultScreen(
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 DiButton(
-                    onClick = { viewModel.showLeaderBoard(activity) },
+                    onClick = { onShowLeaderBoard(uiState.score) },
                     modifier = Modifier.weight(1f),
                 ) {
                     Image(

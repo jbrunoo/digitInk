@@ -1,6 +1,6 @@
 package com.jbrunoo.digitink.domain.model
 
-@JvmInline
-value class Ticket(
+data class Ticket(
     val count: Int = 0,
+    val millisUntilNextRefill: Long = 0L,
 )
