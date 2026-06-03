@@ -31,4 +31,8 @@
     <string name="home_shop_fully_upgraded_text">Mejora completa</string>
     <string name="home_shop_upgrade_for_text">Mejorar por %1$d</string>
     <string name="home_shop_max_level_text">Nivel máximo</string>
+    <string name="in_app_update_ready_title">Actualización lista</string>
+    <string name="in_app_update_ready_message">Reinicia la app para terminar de instalar la actualización.</string>
+    <string name="in_app_update_restart_button">Reiniciar</string>
+    <string name="in_app_update_later_button">Más tarde</string>
 </resources>

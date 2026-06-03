@@ -31,4 +31,8 @@
     <string name="home_shop_fully_upgraded_text">Полностью улучшено</string>
     <string name="home_shop_upgrade_for_text">Улучшить за %1$d</string>
     <string name="home_shop_max_level_text">Максимальный уровень</string>
+    <string name="in_app_update_ready_title">Обновление готово</string>
+    <string name="in_app_update_ready_message">Перезапустите приложение, чтобы завершить установку обновления.</string>
+    <string name="in_app_update_restart_button">Перезапустить</string>
+    <string name="in_app_update_later_button">Позже</string>
 </resources>

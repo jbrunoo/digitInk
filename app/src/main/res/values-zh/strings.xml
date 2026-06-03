@@ -31,4 +31,8 @@
     <string name="home_shop_fully_upgraded_text">已升至最高级</string>
     <string name="home_shop_upgrade_for_text">花费 %1$d 升级</string>
     <string name="home_shop_max_level_text">最高等级</string>
+    <string name="in_app_update_ready_title">更新已准备好</string>
+    <string name="in_app_update_ready_message">请重新启动应用以完成更新安装。</string>
+    <string name="in_app_update_restart_button">重新启动</string>
+    <string name="in_app_update_later_button">稍后</string>
 </resources>

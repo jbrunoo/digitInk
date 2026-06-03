@@ -157,6 +157,8 @@ dependencies {
     implementation("androidx.startup:startup-runtime:1.2.0")
     // ads
     implementation("com.google.android.gms:play-services-ads:24.7.0")
+    // in-app updates
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
     // LiteRT
     implementation("com.google.ai.edge.litert:litert-support:1.4.2")
     implementation("com.google.ai.edge.litert:litert-metadata:1.4.2")

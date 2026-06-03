@@ -32,4 +32,8 @@
     <string name="home_shop_fully_upgraded_text">최대 업그레이드 완료</string>
     <string name="home_shop_upgrade_for_text">%1$d 코인으로 업그레이드</string>
     <string name="home_shop_max_level_text">최대 레벨</string>
+    <string name="in_app_update_ready_title">업데이트 준비 완료</string>
+    <string name="in_app_update_ready_message">업데이트 설치를 완료하려면 앱을 다시 시작하세요.</string>
+    <string name="in_app_update_restart_button">다시 시작</string>
+    <string name="in_app_update_later_button">나중에</string>
 </resources>

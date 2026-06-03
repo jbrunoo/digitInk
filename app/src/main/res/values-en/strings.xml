@@ -31,4 +31,8 @@
     <string name="home_shop_fully_upgraded_text">Fully upgraded</string>
     <string name="home_shop_upgrade_for_text">Upgrade for %1$d</string>
     <string name="home_shop_max_level_text">Max level</string>
+    <string name="in_app_update_ready_title">Update ready</string>
+    <string name="in_app_update_ready_message">Restart the app to finish installing the update.</string>
+    <string name="in_app_update_restart_button">Restart</string>
+    <string name="in_app_update_later_button">Later</string>
 </resources>
