@@ -4,11 +4,13 @@ import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jbrunoo.digitink.domain.model.Ticket
 import com.jbrunoo.digitink.domain.repository.TicketRepository
 import com.jbrunoo.digitink.presentation.utils.RewardAdsHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -19,15 +21,17 @@ class HomeViewModel @Inject constructor(
     private val ticketRepository: TicketRepository,
     private val rewardAdsHelper: RewardAdsHelper,
 ) : ViewModel() {
+    private val ticketState = MutableStateFlow(Ticket())
+
     val uiState = combine(
-        ticketRepository.readTicket(),
+        ticketState,
         rewardAdsHelper.isAdLoaded,
     ) { ticket, isRewardAdLoaded ->
         HomeUIState(
             ticketCount = ticket.count,
             isRewardAdLoaded = isRewardAdLoaded,
             millisUntilNextTicket = ticket.millisUntilNextRefill,
-            canWatchRewardAd = isRewardAdLoaded && ticket.millisUntilNextRefill > 0L,
+            canWatchRewardAd = isRewardAdLoaded,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -37,8 +41,13 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            ticketRepository.readTicket().collect {
+                ticketState.value = it
+            }
+        }
+        viewModelScope.launch {
             while (true) {
-                ticketRepository.refreshTickets()
+                ticketState.value = ticketRepository.refreshTickets()
                 delay(1000L)
             }
         }

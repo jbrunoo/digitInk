@@ -64,7 +64,7 @@ class TicketRepositoryImpl @Inject constructor(
         val now = System.currentTimeMillis()
         dataStore.edit { preferences ->
             val currentTicket = preferences.toTicket(now)
-            val updatedCount = (currentTicket.count + count).coerceAtMost(Constants.MAX_TICKET_COUNT)
+            val updatedCount = currentTicket.count + count
             preferences[countKey] = updatedCount
             preferences[refillAtKey] = if (updatedCount >= Constants.MAX_TICKET_COUNT) {
                 0L
