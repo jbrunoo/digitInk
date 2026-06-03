@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.roundToLong
 
@@ -122,6 +123,9 @@ class NormalPlayViewModel @Inject constructor(
             val new = old.toMutableList()
             val tempQnaWithPath = new[index]
             val isCorrect = userGuess?.let { it == tempQnaWithPath.qna.answer } ?: false
+            Timber.d(
+                "Normal digit check: answer=${tempQnaWithPath.qna.answer} predicted=$userGuess isCorrect=$isCorrect",
+            )
 
             if (isCorrect) correctCount++
 

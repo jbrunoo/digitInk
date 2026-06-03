@@ -8,6 +8,7 @@ import com.jbrunoo.digitink.domain.repository.ClassifierRepository
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import timber.log.Timber
 import javax.inject.Inject
 
 class ClassifierRepositoryImpl
@@ -42,6 +43,18 @@ constructor(
                 maxPos = index
             }
         }
+
+        val topPredictions = outputFeature0.floatArray
+            .mapIndexed { index, confidence -> index to confidence }
+            .sortedByDescending { it.second }
+            .take(3)
+            .joinToString { (index, confidence) ->
+                "$index=${"%.4f".format(confidence)}"
+            }
+
+        Timber.d(
+            "Digit inference result: predicted=$maxPos confidence=${"%.4f".format(maxConfidence)} top3=[$topPredictions]",
+        )
 
         return maxPos
     }

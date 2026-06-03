@@ -109,6 +109,9 @@ class InfinitePlayViewModel @Inject constructor(
             val oldQnaWithPath = new[index]
 
             val isCorrect = userGuess?.let { it == oldQnaWithPath.qna.answer } ?: false
+            Timber.d(
+                "Infinite digit check: answer=${oldQnaWithPath.qna.answer} predicted=$userGuess isCorrect=$isCorrect",
+            )
             if (isCorrect) _correctCount.value++ else _lifeCount.value--
 
             new[index] = oldQnaWithPath.copy(isCorrect = isCorrect)
