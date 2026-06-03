@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jbrunoo.digitink.domain.repository.ClassifierRepository
+import com.jbrunoo.digitink.domain.repository.GameProgressRepository
 import com.jbrunoo.digitink.domain.repository.ScoreRepository
 import com.jbrunoo.digitink.presentation.play.domain.model.DrawPath
 import com.jbrunoo.digitink.presentation.play.domain.model.Qna
@@ -32,6 +33,7 @@ import kotlin.math.roundToLong
 class NormalPlayViewModel @Inject constructor(
     private val classifierRepository: ClassifierRepository,
     private val scoreRepository: ScoreRepository,
+    private val gameProgressRepository: GameProgressRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val questionCount: Int =
@@ -156,6 +158,7 @@ class NormalPlayViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             submitRemoteScore(leaderBoardKey, score)
             unlockAchievement(questionCount, correctCount)
+            gameProgressRepository.addCoins(correctCount)
             scoreRepository.saveLocalScore(dataStoreKey, score)
 
             withContext(Dispatchers.Main) {

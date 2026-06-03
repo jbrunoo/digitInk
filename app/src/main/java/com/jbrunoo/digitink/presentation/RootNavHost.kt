@@ -55,6 +55,10 @@ fun RootNavHost(
                 isRewardAdLoaded = uiState.value.isRewardAdLoaded,
                 millisUntilNextTicket = uiState.value.millisUntilNextTicket,
                 canWatchRewardAd = uiState.value.canWatchRewardAd,
+                coinCount = uiState.value.coinCount,
+                infiniteMaxLifeCount = uiState.value.infiniteMaxLifeCount,
+                nextInfiniteLifeUpgradeCost = uiState.value.nextInfiniteLifeUpgradeCost,
+                canUpgradeInfiniteLife = uiState.value.canUpgradeInfiniteLife,
                 onPlayNormal = {
                     viewModel.startNormalPlay {
                         navController.navigate(Screen.PLAY.NORMAL.route + "/$it")
@@ -69,6 +73,7 @@ fun RootNavHost(
                     activity?.let(viewModel::showRewardAd)
                 },
                 onClickResult = { navController.navigate(Screen.RESULT.route) },
+                onPurchaseInfiniteLife = viewModel::purchaseInfiniteLifeUpgrade,
             )
         }
 

@@ -1,17 +1,23 @@
 package com.jbrunoo.digitink.presentation.home.view
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,14 +44,20 @@ fun HomeScreen(
     isRewardAdLoaded: Boolean = false,
     millisUntilNextTicket: Long = 0L,
     canWatchRewardAd: Boolean = false,
+    coinCount: Int = 0,
+    infiniteMaxLifeCount: Int = 5,
+    nextInfiniteLifeUpgradeCost: Int? = null,
+    canUpgradeInfiniteLife: Boolean = false,
     onPlayNormal: (Int) -> Unit = {},
     onPlayInfinite: () -> Unit = {},
     onClickAd: () -> Unit = {},
     onClickResult: () -> Unit = {},
+    onPurchaseInfiniteLife: () -> Unit = {},
 ) {
     var expandedCount by remember { mutableStateOf(false) }
     var expandedInfo by remember { mutableStateOf(false) }
     var expandedTicket by remember { mutableStateOf(false) }
+    var expandedShop by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
@@ -71,9 +84,27 @@ fun HomeScreen(
                     trailingIcon = Icons.Default.Add,
                 )
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MonetizationOn,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+                Text(
+                    text = "$coinCount",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
             if (millisUntilNextTicket > 0L) {
                 Text(
-                    text = "Next ticket ${millisUntilNextTicket.toTicketTimerText()}",
+                    text = stringResource(
+                        R.string.home_next_ticket_text,
+                        millisUntilNextTicket.toTicketTimerText(),
+                    ),
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 8.dp),
@@ -109,15 +140,31 @@ fun HomeScreen(
             }
         }
 
-        DiButton(
-            onClick = onClickResult,
+        Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
+                .padding(horizontal = 16.dp)
                 .padding(bottom = 40.dp),
         ) {
-            Text(
-                text = stringResource(R.string.game_result_text),
-            )
+            DiButton(
+                onClick = { expandedShop = true },
+                modifier = Modifier.weight(1f),
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.games_gifts_white),
+                    contentDescription = "shop",
+                    modifier = Modifier.size(24.dp),
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            DiButton(
+                onClick = onClickResult,
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(
+                    text = stringResource(R.string.game_result_text),
+                )
+            }
         }
     }
 
@@ -145,6 +192,17 @@ fun HomeScreen(
             nextTicketText = millisUntilNextTicket.takeIf { it > 0L }?.toTicketTimerText(),
             onClickAd = onClickAd,
             onDismiss = { expandedTicket = false },
+        )
+    }
+
+    if (expandedShop) {
+        HomeShopModal(
+            coinCount = coinCount,
+            infiniteMaxLifeCount = infiniteMaxLifeCount,
+            nextInfiniteLifeUpgradeCost = nextInfiniteLifeUpgradeCost,
+            canUpgradeInfiniteLife = canUpgradeInfiniteLife,
+            onPurchaseInfiniteLife = onPurchaseInfiniteLife,
+            onDismiss = { expandedShop = false },
         )
     }
 }

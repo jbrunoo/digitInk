@@ -21,6 +21,14 @@
     <string name="rule_score_detail_text">\n- A pontuação total é sempre 100 pontos.\n- Os pontos por pergunta variam dependendo do número de perguntas:\n\n  5 perguntas: 20 pontos\n  10 perguntas: 10 pontos\n  15 perguntas: aproximadamente 6.7 pontos\n  20 perguntas &amp; Modo Infinito: 5 pontos\n\n- A pontuação de cada pergunta é calculada como \'pontuação base + tempo restante (segundos)\'.\n\nExemplo: No modo de 5 perguntas, responder corretamente 2 perguntas com 2 segundos restantes = 42 pontos (40+2)\n</string>
     <string name="rule_caution_text">🖊️ Atenção ao Escrever</string>
     <string name="rule_link_text">📎 Links de Referência</string>
+    <string name="home_next_ticket_text">Próximo ingresso %1$s</string>
     <string name="home_ticket_modal_get_more_ticket_text">Obtenha mais ingressos</string>
     <string name="home_ticket_modal_watch_ads_text">Assistir</string>
+    <string name="home_ticket_modal_next_free_ticket_text">Ingresso grátis em %1$s</string>
+    <string name="home_shop_title">Loja</string>
+    <string name="home_shop_infinite_life">Vida do modo infinito</string>
+    <string name="home_shop_next_upgrade_text">Próxima melhoria: %1$d moedas</string>
+    <string name="home_shop_fully_upgraded_text">Totalmente melhorado</string>
+    <string name="home_shop_upgrade_for_text">Melhorar por %1$d</string>
+    <string name="home_shop_max_level_text">Nível máximo</string>
 </resources>

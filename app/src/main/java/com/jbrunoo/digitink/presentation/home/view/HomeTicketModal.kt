@@ -84,7 +84,10 @@ fun HomeTicketModal(
             Text(stringResource(R.string.home_ticket_modal_get_more_ticket_text), fontSize = 18.sp)
             nextTicketText?.let {
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Next free ticket $it", fontSize = 14.sp)
+                Text(
+                    text = stringResource(R.string.home_ticket_modal_next_free_ticket_text, it),
+                    fontSize = 14.sp,
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
             Box(

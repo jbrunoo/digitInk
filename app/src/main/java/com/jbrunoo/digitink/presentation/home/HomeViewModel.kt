@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jbrunoo.digitink.common.Constants
 import com.jbrunoo.digitink.domain.model.Ticket
+import com.jbrunoo.digitink.domain.repository.GameProgressRepository
 import com.jbrunoo.digitink.domain.repository.TicketRepository
 import com.jbrunoo.digitink.presentation.utils.RewardAdsHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val ticketRepository: TicketRepository,
+    private val gameProgressRepository: GameProgressRepository,
     private val rewardAdsHelper: RewardAdsHelper,
 ) : ViewModel() {
     private val ticketState = MutableStateFlow(Ticket())
@@ -27,12 +29,17 @@ class HomeViewModel @Inject constructor(
     val uiState = combine(
         ticketState,
         rewardAdsHelper.isAdLoaded,
-    ) { ticket, isRewardAdLoaded ->
+        gameProgressRepository.readGameProgress(),
+    ) { ticket, isRewardAdLoaded, gameProgress ->
         HomeUIState(
             ticketCount = ticket.count,
             isRewardAdLoaded = isRewardAdLoaded,
             millisUntilNextTicket = ticket.millisUntilNextRefill,
             canWatchRewardAd = isRewardAdLoaded,
+            coinCount = gameProgress.coinCount,
+            infiniteMaxLifeCount = gameProgress.infiniteMaxLifeCount,
+            nextInfiniteLifeUpgradeCost = gameProgress.nextInfiniteLifeUpgradeCost,
+            canUpgradeInfiniteLife = gameProgress.canUpgradeInfiniteLife,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -74,6 +81,12 @@ class HomeViewModel @Inject constructor(
 
     fun startInfinitePlay(onStart: () -> Unit) {
         consumeTicketsAndStart(requiredTicketCount = 3, onStart = onStart)
+    }
+
+    fun purchaseInfiniteLifeUpgrade() {
+        viewModelScope.launch {
+            gameProgressRepository.purchaseInfiniteLifeUpgrade()
+        }
     }
 
     private fun consumeTicketsAndStart(

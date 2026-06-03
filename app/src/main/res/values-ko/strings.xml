@@ -22,6 +22,14 @@
     <string name="rule_score_detail_text">"\n- 전체 점수는 항상 100점이에요.\n- 문제 수에 따라 한 문제당 점수가 달라요:\n\n5문제: 20점\n10문제: 10점\n15문제: 약 6.7점\n20문제 &amp; 무한모드: 5점\n\n- 각 문제의 점수는 ‘기본 점수 + 남은 시간(초)’로 계산됩니다!\n\n예: 5문제 모드에서 2초 남기고 2문제 정답 = 42점 (40+2)\n"</string>
     <string name="rule_caution_text">🖊️ 숫자 쓰기 주의사항</string>
     <string name="rule_link_text">📎 참고 링크</string>
+    <string name="home_next_ticket_text">다음 티켓 %1$s</string>
     <string name="home_ticket_modal_get_more_ticket_text">더 많은 티켓을 얻으세요</string>
     <string name="home_ticket_modal_watch_ads_text">시청하기</string>
+    <string name="home_ticket_modal_next_free_ticket_text">무료 티켓까지 %1$s</string>
+    <string name="home_shop_title">상점</string>
+    <string name="home_shop_infinite_life">무한 모드 생명</string>
+    <string name="home_shop_next_upgrade_text">다음 업그레이드: %1$d 코인</string>
+    <string name="home_shop_fully_upgraded_text">최대 업그레이드 완료</string>
+    <string name="home_shop_upgrade_for_text">%1$d 코인으로 업그레이드</string>
+    <string name="home_shop_max_level_text">최대 레벨</string>
 </resources>

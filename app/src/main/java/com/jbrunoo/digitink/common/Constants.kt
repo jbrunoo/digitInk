@@ -11,6 +11,10 @@ object Constants {
     const val MAX_TICKET_COUNT = 5
     const val TICKET_REFILL_INTERVAL_MILLIS = 3 * 60 * 1000L
     const val REWARD_AD_TICKET_COUNT = 3
+    const val COIN_KEY = "coin"
+    const val INFINITE_MAX_LIFE_KEY = "infinite_max_life"
+    const val DEFAULT_INFINITE_LIFE_COUNT = 5
+    const val MAX_INFINITE_LIFE_COUNT = 10
 
     const val LEADERBOARD_KEY_5 = "CgkIppS0iLUcEAIQBg"
     const val LEADERBOARD_KEY_10 = "CgkIppS0iLUcEAIQBw"
@@ -30,4 +34,6 @@ object Constants {
     const val ACHIEVEMENT_INFINITE_10_TIMES = "CgkIppS0iLUcEAIQFw"
 
     const val DATASTORE_KEY_INFINITE_PLAY_COUNT = "infinite_play_count"
+
+    val INFINITE_LIFE_UPGRADE_COSTS = listOf(10, 20, 30, 50, 100)
 }

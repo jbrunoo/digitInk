@@ -1,9 +1,11 @@
 package com.jbrunoo.digitink.di
 
 import com.jbrunoo.digitink.data.repository.ClassifierRepositoryImpl
+import com.jbrunoo.digitink.data.repository.GameProgressRepositoryImpl
 import com.jbrunoo.digitink.data.repository.ScoreRepositoryImpl
 import com.jbrunoo.digitink.data.repository.TicketRepositoryImpl
 import com.jbrunoo.digitink.domain.repository.ClassifierRepository
+import com.jbrunoo.digitink.domain.repository.GameProgressRepository
 import com.jbrunoo.digitink.domain.repository.ScoreRepository
 import com.jbrunoo.digitink.domain.repository.TicketRepository
 import dagger.Binds
@@ -26,4 +28,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindTicketRepository(repositoryImpl: TicketRepositoryImpl): TicketRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindGameProgressRepository(repositoryImpl: GameProgressRepositoryImpl): GameProgressRepository
 }

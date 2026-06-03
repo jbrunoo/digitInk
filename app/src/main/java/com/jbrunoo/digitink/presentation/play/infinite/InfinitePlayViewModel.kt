@@ -1,14 +1,11 @@
 package com.jbrunoo.digitink.presentation.play.infinite
 
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jbrunoo.digitink.common.Constants
 import com.jbrunoo.digitink.domain.repository.ClassifierRepository
+import com.jbrunoo.digitink.domain.repository.GameProgressRepository
 import com.jbrunoo.digitink.domain.repository.ScoreRepository
 import com.jbrunoo.digitink.presentation.play.domain.model.DrawPath
 import com.jbrunoo.digitink.presentation.play.domain.model.Qna
@@ -30,13 +27,13 @@ import javax.inject.Inject
 class InfinitePlayViewModel @Inject constructor(
     private val classifierRepository: ClassifierRepository,
     private val scoreRepository: ScoreRepository,
-    private val dataStore: DataStore<Preferences>,
+    private val gameProgressRepository: GameProgressRepository,
 ) : ViewModel() {
     private var _qnaIdCounter = 1
     private var isResultSaved = false
     private val _correctCount = MutableStateFlow(0)
 
-    private val _lifeCount = MutableStateFlow(5)
+    private val _lifeCount = MutableStateFlow(Constants.DEFAULT_INFINITE_LIFE_COUNT)
     private val _qnaWithPathList = MutableStateFlow(emptyList<QnaWithPath>())
 
     val uiState: StateFlow<InfinitePlayUIState> =
@@ -52,6 +49,9 @@ class InfinitePlayViewModel @Inject constructor(
         )
 
     init {
+        viewModelScope.launch {
+            _lifeCount.value = gameProgressRepository.getInfiniteMaxLifeCount()
+        }
         generateQna(repeatCount = 5)
 
         viewModelScope.launch(Dispatchers.Main) {
@@ -146,9 +146,10 @@ class InfinitePlayViewModel @Inject constructor(
         val leaderBoardKey = Constants.LEADERBOARD_KEY_INFINITE
 
         viewModelScope.launch(Dispatchers.IO) {
-            val playCount = incrementInfinitePlayCount()
+            val playCount = gameProgressRepository.incrementInfinitePlayCount()
             submitRemoteScore(leaderBoardKey, score)
             unlockAchievements(_correctCount.value, playCount)
+            gameProgressRepository.addCoins(_correctCount.value)
             scoreRepository.saveLocalScore(dataStoreKey, score)
 
             withContext(Dispatchers.Main) {
@@ -161,17 +162,4 @@ class InfinitePlayViewModel @Inject constructor(
         bmp?.let { classifierRepository.classify(it) }
 
     private fun calcScore(): Long = _correctCount.value * 5L
-
-    private suspend fun incrementInfinitePlayCount(): Int {
-        var updatedCount = 0
-        dataStore.edit { preferences ->
-            updatedCount = (preferences[infinitePlayCountKey] ?: 0) + 1
-            preferences[infinitePlayCountKey] = updatedCount
-        }
-        return updatedCount
-    }
-
-    companion object {
-        private val infinitePlayCountKey = intPreferencesKey(Constants.DATASTORE_KEY_INFINITE_PLAY_COUNT)
-    }
 }

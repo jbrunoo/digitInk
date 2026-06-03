@@ -21,6 +21,14 @@
     <string name="rule_score_detail_text">\n- Общий счет всегда составляет 100 очков.\n- В зависимости от количества заданий, очки за каждое задание различаются:\n\n  5 заданий: 20 очков\n  10 заданий: 10 очков\n  15 заданий: около 6,7 очков\n  20 заданий &amp; Бесконечный режим: 5 очков\n\n- Очки за каждое задание рассчитываются как «базовые очки + оставшееся время (в секундах)»!\n\nНапример: в режиме 5 заданий, если осталось 2 секунды и дано 2 правильных ответа = 42 очка (40+2).\n</string>
     <string name="rule_caution_text">🖊️ Важные замечания по написанию цифр</string>
     <string name="rule_link_text">📎 Полезные ссылки</string>
+    <string name="home_next_ticket_text">Следующий билет %1$s</string>
     <string name="home_ticket_modal_get_more_ticket_text">Получите больше билетов</string>
     <string name="home_ticket_modal_watch_ads_text">Смотреть</string>
+    <string name="home_ticket_modal_next_free_ticket_text">Бесплатный билет через %1$s</string>
+    <string name="home_shop_title">Магазин</string>
+    <string name="home_shop_infinite_life">Жизни в бесконечном режиме</string>
+    <string name="home_shop_next_upgrade_text">Следующее улучшение: %1$d монет</string>
+    <string name="home_shop_fully_upgraded_text">Полностью улучшено</string>
+    <string name="home_shop_upgrade_for_text">Улучшить за %1$d</string>
+    <string name="home_shop_max_level_text">Максимальный уровень</string>
 </resources>
