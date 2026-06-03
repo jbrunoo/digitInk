@@ -17,6 +17,7 @@ fun NormalPlayScreen(
     modifier: Modifier = Modifier,
     onTerminate: () -> Unit = {},
     onSubmitScore: (String, Long) -> Unit = { _, _ -> },
+    onUnlockAchievement: (Int, Int) -> Unit = { _, _ -> },
     viewModel: NormalPlayViewModel,
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -32,6 +33,7 @@ fun NormalPlayScreen(
                     playBoardState.changeGameOver()
                     viewModel.saveResultEntry(
                         submitRemoteScore = onSubmitScore,
+                        unlockAchievement = onUnlockAchievement,
                         onComplete = onTerminate,
                     )
                 }
@@ -47,6 +49,7 @@ fun NormalPlayScreen(
                     onTerminate = {
                         viewModel.saveResultEntry(
                             submitRemoteScore = onSubmitScore,
+                            unlockAchievement = onUnlockAchievement,
                             onComplete = onTerminate,
                         )
                     },

@@ -18,6 +18,7 @@ fun InfinitePlayScreen(
     modifier: Modifier = Modifier,
     onTerminate: () -> Unit = {},
     onSubmitScore: (String, Long) -> Unit = { _, _ -> },
+    onUnlockAchievements: (Int, Int) -> Unit = { _, _ -> },
     viewModel: InfinitePlayViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -33,6 +34,7 @@ fun InfinitePlayScreen(
                     playBoardState.changeGameOver() // gameOver 시 자동 스크롤 정지
                     viewModel.saveResultEntry(
                         submitRemoteScore = onSubmitScore,
+                        unlockAchievements = onUnlockAchievements,
                         onComplete = onTerminate,
                     )
                 }

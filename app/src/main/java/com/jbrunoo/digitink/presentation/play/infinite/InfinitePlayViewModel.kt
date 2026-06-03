@@ -1,6 +1,10 @@
 package com.jbrunoo.digitink.presentation.play.infinite
 
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jbrunoo.digitink.common.Constants
@@ -26,8 +30,10 @@ import javax.inject.Inject
 class InfinitePlayViewModel @Inject constructor(
     private val classifierRepository: ClassifierRepository,
     private val scoreRepository: ScoreRepository,
+    private val dataStore: DataStore<Preferences>,
 ) : ViewModel() {
     private var _qnaIdCounter = 1
+    private var isResultSaved = false
     private val _correctCount = MutableStateFlow(0)
 
     private val _lifeCount = MutableStateFlow(5)
@@ -129,14 +135,20 @@ class InfinitePlayViewModel @Inject constructor(
 
     fun saveResultEntry(
         submitRemoteScore: (String, Long) -> Unit,
+        unlockAchievements: (Int, Int) -> Unit,
         onComplete: () -> Unit,
     ) {
+        if (isResultSaved) return
+        isResultSaved = true
+
         val score = calcScore()
         val dataStoreKey = Constants.DATASTORE_KEY_INFINITE
         val leaderBoardKey = Constants.LEADERBOARD_KEY_INFINITE
 
         viewModelScope.launch(Dispatchers.IO) {
+            val playCount = incrementInfinitePlayCount()
             submitRemoteScore(leaderBoardKey, score)
+            unlockAchievements(_correctCount.value, playCount)
             scoreRepository.saveLocalScore(dataStoreKey, score)
 
             withContext(Dispatchers.Main) {
@@ -149,4 +161,17 @@ class InfinitePlayViewModel @Inject constructor(
         bmp?.let { classifierRepository.classify(it) }
 
     private fun calcScore(): Long = _correctCount.value * 5L
+
+    private suspend fun incrementInfinitePlayCount(): Int {
+        var updatedCount = 0
+        dataStore.edit { preferences ->
+            updatedCount = (preferences[infinitePlayCountKey] ?: 0) + 1
+            preferences[infinitePlayCountKey] = updatedCount
+        }
+        return updatedCount
+    }
+
+    companion object {
+        private val infinitePlayCountKey = intPreferencesKey(Constants.DATASTORE_KEY_INFINITE_PLAY_COUNT)
+    }
 }

@@ -22,8 +22,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,12 +29,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,10 +52,10 @@ private const val INFINITE_COUNT_KET = -1
 fun ResultScreen(
     navigateToHome: () -> Unit = {},
     onShowLeaderBoard: (Score) -> Unit = { _ -> },
+    onShowAchievements: () -> Unit = {},
     viewModel: ResultViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var isDialogOpen by remember { mutableStateOf(false) }
     val normalModes = listOf(5, 10, 15, 20)
 
     Scaffold(
@@ -128,56 +122,28 @@ fun ResultScreen(
                     .height(64.dp),
             ) {
                 DiButton(
-                    onClick = { isDialogOpen = true },
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "clear score history",
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                DiButton(
                     onClick = { onShowLeaderBoard(uiState.score) },
                     modifier = Modifier.weight(1f),
                 ) {
                     Image(
                         painterResource(R.drawable.games_leaderboards_white),
-                        null,
+                        contentDescription = "show leaderboards",
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                DiButton(
+                    onClick = onShowAchievements,
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Image(
+                        painterResource(R.drawable.games_achievements_white),
+                        contentDescription = "show achievements",
                         modifier = Modifier.size(24.dp),
                     )
                 }
             }
         }
-    }
-
-    if (isDialogOpen) {
-        AlertDialog(
-            title = {
-                Text(text = stringResource(R.string.result_screen_delete_button_txt))
-            },
-            onDismissRequest = { isDialogOpen = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.clearResult()
-                        isDialogOpen = false
-                    },
-                ) {
-                    Text(stringResource(R.string.delete_button_cofirm_txt))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        isDialogOpen = false
-                    },
-                ) {
-                    Text(stringResource(R.string.delete_button_dismiss_txt))
-                }
-            },
-        )
     }
 }
 

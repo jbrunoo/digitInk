@@ -2,6 +2,7 @@ package com.jbrunoo.digitink.di
 
 import android.app.Activity
 import android.content.Context
+import com.google.android.gms.games.AchievementsClient
 import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.LeaderboardsClient
 import com.google.android.gms.games.PlayGames
@@ -26,4 +27,10 @@ object PlayGamesModule {
     fun provideLeaderBoardsClient(
         @ActivityContext context: Context,
     ): LeaderboardsClient = PlayGames.getLeaderboardsClient(context as Activity)
+
+    @Provides
+    @ActivityScoped
+    fun provideAchievementsClient(
+        @ActivityContext context: Context,
+    ): AchievementsClient = PlayGames.getAchievementsClient(context as Activity)
 }

@@ -21,6 +21,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.games.AchievementsClient
 import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.LeaderboardsClient
 import com.jbrunoo.digitink.common.Constants
@@ -42,6 +43,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var gamesSignInClient: GamesSignInClient
+
+    @Inject
+    lateinit var achievementsClient: AchievementsClient
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +74,7 @@ class MainActivity : ComponentActivity() {
                             navController = rememberNavController(),
                             gamesSignInClient = gamesSignInClient,
                             leaderboardsClient = leaderboardsClient,
+                            achievementsClient = achievementsClient,
                             modifier = Modifier.padding(innerPadding),
                         )
                     }

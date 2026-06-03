@@ -39,6 +39,7 @@ class NormalPlayViewModel @Inject constructor(
 
     private var _qnaIdCounter = 1
     private var correctCount by mutableIntStateOf(0)
+    private var isResultSaved = false
 
     private val _limitTime = MutableStateFlow(questionCount * 5000L) // milliseconds
     private val _qnaWithPathList = MutableStateFlow<List<QnaWithPath>>(emptyList())
@@ -142,14 +143,19 @@ class NormalPlayViewModel @Inject constructor(
 
     fun saveResultEntry(
         submitRemoteScore: (String, Long) -> Unit,
+        unlockAchievement: (Int, Int) -> Unit,
         onComplete: () -> Unit,
     ) {
+        if (isResultSaved) return
+        isResultSaved = true
+
         val score = calcScore()
         val dataStoreKey = questionCount.datastoreKey() ?: return
         val leaderBoardKey = questionCount.leaderBoardKey() ?: return
 
         viewModelScope.launch(Dispatchers.IO) {
             submitRemoteScore(leaderBoardKey, score)
+            unlockAchievement(questionCount, correctCount)
             scoreRepository.saveLocalScore(dataStoreKey, score)
 
             withContext(Dispatchers.Main) {

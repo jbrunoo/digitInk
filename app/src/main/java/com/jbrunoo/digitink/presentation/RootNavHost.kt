@@ -12,6 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.google.android.gms.games.AchievementsClient
 import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.LeaderboardsClient
 import com.jbrunoo.digitink.presentation.home.HomeViewModel
@@ -19,15 +20,19 @@ import com.jbrunoo.digitink.presentation.home.view.HomeScreen
 import com.jbrunoo.digitink.presentation.play.infinite.InfinitePlayScreen
 import com.jbrunoo.digitink.presentation.play.normal.NormalPlayScreen
 import com.jbrunoo.digitink.presentation.result.ResultScreen
+import com.jbrunoo.digitink.presentation.utils.showAchievements
 import com.jbrunoo.digitink.presentation.utils.showLeaderboards
 import com.jbrunoo.digitink.presentation.utils.submitLocalScoresToLeaderboards
 import com.jbrunoo.digitink.presentation.utils.submitScoreToLeaderboard
+import com.jbrunoo.digitink.presentation.utils.unlockInfiniteModeAchievements
+import com.jbrunoo.digitink.presentation.utils.unlockNormalModeAchievement
 
 @Composable
 fun RootNavHost(
     navController: NavHostController,
     gamesSignInClient: GamesSignInClient,
     leaderboardsClient: LeaderboardsClient,
+    achievementsClient: AchievementsClient,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -81,6 +86,14 @@ fun RootNavHost(
                         score = score,
                     )
                 },
+                onUnlockAchievement = { questionCount, correctCount ->
+                    unlockNormalModeAchievement(
+                        gamesSignInClient = gamesSignInClient,
+                        achievementsClient = achievementsClient,
+                        questionCount = questionCount,
+                        correctCount = correctCount,
+                    )
+                },
                 viewModel = hiltViewModel(),
             )
         }
@@ -96,6 +109,14 @@ fun RootNavHost(
                         leaderboardsClient = leaderboardsClient,
                         leaderBoardKey = leaderBoardKey,
                         score = score,
+                    )
+                },
+                onUnlockAchievements = { correctCount, playCount ->
+                    unlockInfiniteModeAchievements(
+                        gamesSignInClient = gamesSignInClient,
+                        achievementsClient = achievementsClient,
+                        correctCount = correctCount,
+                        playCount = playCount,
                     )
                 },
                 viewModel = hiltViewModel(),
@@ -122,12 +143,21 @@ fun RootNavHost(
                         activity?.startActivityForResult(intent, RC_LEADERBOARD_UI)
                     }
                 },
+                onShowAchievements = {
+                    showAchievements(
+                        gamesSignInClient = gamesSignInClient,
+                        achievementsClient = achievementsClient,
+                    ) { intent ->
+                        activity?.startActivityForResult(intent, RC_ACHIEVEMENT_UI)
+                    }
+                },
             )
         }
     }
 }
 
 private const val RC_LEADERBOARD_UI = 9004
+private const val RC_ACHIEVEMENT_UI = 9005
 
 fun NavHostController.navigateWithPopUp(route: String) {
     this.navigate(route) {
