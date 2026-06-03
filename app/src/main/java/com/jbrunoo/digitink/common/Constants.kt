@@ -10,6 +10,7 @@ object Constants {
     const val TICKET_REFILL_AT_KEY = "ticket_refill_at"
     const val MAX_TICKET_COUNT = 5
     const val TICKET_REFILL_INTERVAL_MILLIS = 3 * 60 * 1000L
+    const val REWARD_AD_TICKET_COUNT = 3
 
     const val LEADERBOARD_KEY_5 = "CgkIppS0iLUcEAIQBg"
     const val LEADERBOARD_KEY_10 = "CgkIppS0iLUcEAIQBw"

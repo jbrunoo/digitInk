@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jbrunoo.digitink.common.Constants
 import com.jbrunoo.digitink.domain.model.Ticket
 import com.jbrunoo.digitink.domain.repository.TicketRepository
 import com.jbrunoo.digitink.presentation.utils.RewardAdsHelper
@@ -60,9 +61,9 @@ class HomeViewModel @Inject constructor(
     fun showRewardAd(activity: Activity) {
         if (!uiState.value.canWatchRewardAd) return
 
-        rewardAdsHelper.showRewardAd(activity) { amount ->
+        rewardAdsHelper.showRewardAd(activity) {
             viewModelScope.launch {
-                ticketRepository.plusTickets(amount)
+                ticketRepository.plusTickets(Constants.REWARD_AD_TICKET_COUNT)
             }
         }
     }
